@@ -1,0 +1,11 @@
+body { font-family: sans-serif }
+th,td { padding: 4px 8px; }
+.context { color: blue; font-size: 1.2em; font-weight: bold }
+h1 { font-weight: normal }
+
+/* table */
+table {width: 100%}
+.m, .a {width: 40%}
+thead th { background: gray; font-size: 1.2em }
+.d { text-align: center; background: lightgray }
+.headings th { font-size: 0.8em }
