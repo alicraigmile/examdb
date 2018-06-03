@@ -11,4 +11,3 @@ var logger,
 logger = morgan('combined');
 app.use(logger);
 server = app.listen(port, () => console.log(package.name + ' listening on port ' + port +  '!'));
-server.listen(port);

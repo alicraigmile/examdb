@@ -35,9 +35,8 @@
     "underscore": "^1.8.3"
   },
   "devDependencies": {
-    "mocha": "^3.2.0",
     "chai": "^3.5.0",
-    "supertest": "^2.0.1"
+    "mocha": "^5.2.0",
+    "supertest": "^3.1.0"
   }
 }
-
