@@ -1,18 +1,18 @@
 doctype html
 html
 	head
-		title GCSE AQA subjects | ExamDB
+		title #{qualification.label} #{examboard.name} subjects | ExamDB
 		meta(charset='UTF-8')
-		meta(name='description' content='The exam board AQA sets GCSE examinations in ' + courses.length + ' subjects.')
+		meta(name='description' content='The exam board ' + examboard.name + ' sets ' + qualification.label + ' examinations in ' + courses.length + ' subjects.')
 		link(rel='stylesheet' href='/examdb.css')
 
 	body
 		p(class='context')
 			a(href='/') ExamDB
 		p(class='context')
-			a(href='/pathways/gcse-aqa') GCSE AQA
+			a(href='/pathways/'+pathway.id) #{qualification.label} #{examboard.name}
 
-		p The exam board AQA sets GCSE examinations in #{courses.length} subjects.
+		p The exam board #{examboard.name} sets #{qualification.label} examinations in #{courses.length} subjects.
 
 		h1 Pick a subject
 
@@ -25,7 +25,7 @@ html
 
 		ul
 			li
-				a(href='/examboards/aqa') More qualifications from AQA
+				a(href='/examboards/'+examboard.id) More qualifications from #{examboard.name}
 			li
-				a(href='/qualifications/gcse') More GCSE providers
+				a(href='/qualifications/'+qualification.id) More #{qualification.name} providers
 
