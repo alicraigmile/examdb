@@ -1,0 +1,31 @@
+doctype html
+html
+	head
+		title GCSE AQA subjects | ExamDB
+		meta(charset='UTF-8')
+		meta(name='description' content='The exam board AQA sets GCSE examinations in ' + courses.length + ' subjects.')
+		link(rel='stylesheet' href='/examdb.css')
+
+	body
+		p(class='context')
+			a(href='/') ExamDB
+		p(class='context')
+			a(href='/pathways/gcse-aqa') GCSE AQA
+
+		p The exam board AQA sets GCSE examinations in #{courses.length} subjects.
+
+		h1 Pick a subject
+
+		ol
+			each course in courses
+				li
+					a(href='/courses/'+course.id) #{course.pos.name}
+
+		hr
+
+		ul
+			li
+				a(href='/examboards/aqa') More qualifications from AQA
+			li
+				a(href='/qualifications/gcse') More GCSE providers
+
