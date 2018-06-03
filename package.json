@@ -1,0 +1,43 @@
+{
+  "name": "examdb",
+  "version": "1.0.0",
+  "description": "A database of UK school examinations",
+  "main": "server.js",
+  "scripts": {
+    "deploy:prod": "npm run test && npm run version:patch && npm run push && npm run launch",
+    "clean": "rm -rf build",
+    "compile": "npm run compile:elasticbeanstalk",
+    "compile:elasticbeanstalk": "mkdir -p build && git archive --format=zip HEAD > build/examdb-$npm_package_version.zip",
+    "pretest": "npm run clean && npm run compile",
+    "test": "mocha test/",
+    "version:patch": "npm version patch",
+    "push": "npm run push:git && npm run push:elasticbeanstalk",
+    "push:git": "git push --tags origin HEAD:master",
+    "push:heroku": "git push heroku master",
+    "push:elasticbeanstalk": "echo 'build/exambd-$npm_package_version.zip' && echo 'push to AWS not implemented'",
+    "launch": "open https://examdb.xgusties.com",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alicraigmile/examdb.git"
+  },
+  "author": "Ali Craigmile <ali@craigmile.com> (http://ali.craigmile.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alicraigmile/examdb/issues"
+  },
+  "homepage": "https://github.com/alicraigmile/examdb#readme",
+  "dependencies": {
+    "express": "^4.14.0",
+    "morgan": "^1.7.0",
+    "pug": "^0.1.0",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "mocha": "^3.2.0",
+    "chai": "^3.5.0",
+    "supertest": "^2.0.1"
+  }
+}
+
