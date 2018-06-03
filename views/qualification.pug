@@ -1,30 +1,21 @@
-<!DOCTYPE html>
+doctype html
 html
 	head
-		title GCSE providers
+		title #{qualification.label} providers | ExamDB
 		meta(charset='UTF-8')
-		meta(name='description' content='There are 6 providers (exam boards) offering GCSE examinations.')
+		meta(name='description' content='There are #{providers.length} providers (exam boards) offering #{qualification.label} examinations.')
 		link(rel='stylesheet' href='/examdb.css')
 	body
 
 		p(class='context')
 			a(href='/') ExamDB
 		p(class='context')
-			a(href='/qualifications/gcse') GCSE
+			a(href='/qualifications/'+qualification.id) #{qualification.label}
 
-		p There are 6 providers (exam boards) offering GCSE examinations.
-		h1 Pick a GCSE provider (exam board)
+		p There are #{providers.length} providers (exam boards) offering #{qualification.label} examinations.
+		h1 Pick a #{qualification.label} provider (exam board)
 
 		ul
-			li
-				a(href='/pathways/gcse-aqa') AQA
-			li
-				a(href='/pathways/gcse-cea') CEA
-			li
-				a(href='/pathways/gcse-edexcel') EDEXCEL
-			li
-				a(href='/pathways/gcse-equqas') EDUQAS
-			li
-				a(href='/pathways/gcse-ocr') OCR
-			li
-				a(href='/pathways/gcse-wjec') WJEC
+			each provider in providers
+				li
+					a(href='/pathways/'+provider.id) #{provider.e.name}
