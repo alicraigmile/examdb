@@ -1,0 +1,132 @@
+doctype html
+html
+	head
+		title #{examboard.name} #{qualification.label} | 2008 Week commencing Mon 24 May | ExamDB
+		meta(charset='UTF-8')
+		meta(name='description' content='There are 16 examinations set by the '+examboard.name+' exam board w/c Mon 24 May 2018.')
+		link(rel='stylesheet' href='/examdb.css')
+	body
+
+		p(class='context')
+			a(href="/") ExamDB
+
+		p(class='context')
+			a(href='/pathways/'+pathway.id) #{qualification.label} #{examboard.name}
+
+
+		p There are 16 examinations set by the AQA exam board w/c Mon 24 May 2018.
+
+		h1 2008 Week commencing Mon 24 May
+
+		p
+			a(href='?date=previous') < Previous week
+
+		each day in days
+			h2 #{day.date}
+			h3 Morning
+			table
+				thead
+					tr
+						td Code
+						td Paper
+						td Notes
+						td Duration
+				tbody
+				each exam in day.morning_exams
+					tr
+						td #{exam.code}
+						td #{exam.paper}
+						td #{exam.notes}
+						td #{exam.duration}
+			h3 Afternoon
+			table
+				thead
+					tr
+						td Code
+						td Paper
+						td Notes
+						td Duration
+				tbody
+				each exam in day.afternoon_exams
+					tr
+						td #{exam.code}
+						td #{exam.paper}
+						td #{exam.notes}
+						td #{exam.duration}
+
+		<table>
+		<thead>
+		<tr>
+		<th colspan="4" class="m">Morning</th>
+		<th class="d">Day</th>
+		<th colspan="4" class="a">Afternoon</th>
+		</tr>
+		<tr class="headings">
+		<th>Code</th>
+		<th>Paper</th>
+		<th>Notes</th>
+		<th>Duration</th>
+		<th></th>
+		<th>Code</th>
+		<th>Paper</th>
+		<th>Notes</th>
+		<th>Duration</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+		<td colspan="4"></td>
+		<td class="d">Mon 24 May</td>
+		<td colspan="4"></td>
+		<tr>
+		<td>A65UF, A65UH</tg>
+		<td><a href="exam.html#gcse-aqa-mathematics">Mathematics</a> Unit 1 (Foundation & Higher Tiers)</td>
+		<td>F & H</td>
+		<td>1h 30m</td>
+		<td rowspan="4" class="d">Tue 25 May</td>
+		<td colspan="4"></td>
+		</tr>
+		<tr>
+		<td>A65UF, A65UH</tg>
+		<td><a href="exam.html#gcse-aqa-mathematics">Mathematics</a> Unit 2 (Foundation & Higher Tiers)</td>
+		<td>F & H</td>
+		<td>1h 30m</td>
+		<td colspan="4"></td>
+		</tr>
+		<tr>
+		<td>A65UF, A65UH</tg>
+		<td><a href="exam.html#gcse-aqa-mathematics">Mathematics</a> Unit 3 (Foundation & Higher Tiers)</td>
+		<td>F & H</td>
+		<td>1h 30m</td>
+		<td colspan="4"></td>
+		</tr>
+		<tr>
+		<td>A65UF, A65UH</tg>
+		<td><a href="exam.html#gcse-aqa-mathematics">Mathematics</a> Unit 4 (Foundation & Higher Tiers)</td>
+		<td>F & H</td>
+		<td>1h 30m</td>
+		<td colspan="4"></td>
+		</tr>
+		<tr>
+		<td colspan="4"></td>
+		<td class="d">Wed 26 May</td>
+		<td colspan="4"></td>
+		<tr>
+		<tr>
+		<td colspan="4"></td>
+		<td class="d">Thu 27 May</td>
+		<td>G33UR</tg>
+		<td><a href="exam.html#gcse-aqa-home-economics">Home Economics</td>
+		<td></td>
+		<td>2h</td>
+		<tr>
+		<tr>
+		<td colspan="4"></td>
+		<td class="d">Fri 28 May</td>
+		<td colspan="4"></td>
+		<tr>
+		</tbody>
+		</table>
+
+		p
+			a(href='?date=following') Following week >

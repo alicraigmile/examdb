@@ -20,7 +20,7 @@ html
         p Notes: #{exam.notes}
         p Date and time: #{exam.timeofday} of #{exam.date}
             = ' ('
-            a(href='/pathways/'+provider.id+'/calendar/week/'+exam.date) Open calendar
+            a(href='/pathways/'+provider.id+'/calendar/week?date='+exam.date) Open calendar
             = ')'
         p Duration: #{exam.duration}
         p Course: 
@@ -36,4 +36,4 @@ html
             li
                 a(href='/programmesofstudy/'+programmeofstudy.id) #{programmeofstudy.name} from other exam boards
             li
-                a(href='/pathways/'+provider.id+'/calendar/week/'+exam.date) Other AQA exams this week
+                a(href='/pathways/'+provider.id+'/calendar/week?date='+exam.date) Other AQA exams this week
