@@ -1,0 +1,20 @@
+doctype html
+html
+    head
+        title #{qualification.label} #{programmeofstudy.name} providers | ExamDB
+        meta(charset='UTF-8')
+        meta(name='description' content='There are #{courses.length} providers (exam boards) for the ' + qualification.label + ' ' + programmeofstudy.name + ' exam.')
+        link(rel='stylesheet' href='/examdb.css')
+    body
+        p(class='context')
+            a(href='/') ExamDB
+        p(class='context')
+            a(href='/programmesofstudy/'+programmeofstudy.id) #{qualification.label} #{programmeofstudy.name}
+
+        p There are #{courses.length} providers (exam boards) for the #{qualification.label} #{programmeofstudy.name} exam.
+        h1 Pick a provider
+
+        ul
+            each course in courses
+                li
+                    a(href='/courses/'+course.id) #{course.e.name}
