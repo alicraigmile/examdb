@@ -1,0 +1,20 @@
+doctype html
+html
+	head
+		title #{examboard.name} qualifications | ExamDB
+		meta(charset='UTF-8')
+		meta(name='description' content='The exam board '+examboard.name+' sets examinations in '+providers.length+' qualifications.')
+		link(rel='stylesheet' href='/examdb.css')
+	body
+
+		p(class='context')
+			a(href="/") ExamDB
+
+		h1 #{examboard.name}
+
+		p The exam board #{examboard.name} sets examinations in #{providers.length} qualifications.
+
+		ul
+			each provider in providers
+				li
+					a(href='/pathways/'+provider.id) #{provider.q.label}
