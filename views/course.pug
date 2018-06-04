@@ -1,9 +1,9 @@
 doctype html
 html
     head
-        title GCSE AQA | Mathematics exams | ExamDB
+        title #{qualification.label} #{examboard.name} | #{programmeofstudy.name} exams | ExamDB
         meta(charset='UTF-8')
-        meta(name='description' content='There are ' + exams.length + ' GCSE Mathematics examinations set by the AQA exam board.')
+        meta(name='description' content='There are ' + exams.length + ' ' + qualification.label + ' ' + course.name + ' examinations set by the '+examboard.name+' exam board.')
         link(rel='stylesheet' href='/examdb.css')
     body
         p(class='context')
