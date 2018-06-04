@@ -1,0 +1,39 @@
+doctype html
+html
+    head
+        title #{qualification.label} #{programmeofstudy.name} | #{exam.paper} | ExamDB
+        meta(charset='UTF-8')
+        meta(name='description' content='Details of the ' + programmeofstudy.name + ' ' + qualification.label + ' examination set by the ' + examboard.name + ' exam board on the ' + exam.timeofday + ' of ' + exam.date + '.')
+        link(rel='stylesheet' href='/examdb.css')
+    body
+        p(class='context')
+            a(href='/') ExamDB
+        p(class='context')
+            a(href='/pathways/'+provider.id) #{qualification.label} #{examboard.name}
+
+        p Details of the #{programmeofstudy.name} #{qualification.label} examination set by the #{examboard.name} exam board on the #{exam.timeofday} of #{exam.date}.
+        h1 #{exam.paper}
+
+        p
+            a(href='/courses/'+course.id) More like this
+        p Code: #{exam.code}
+        p Notes: #{exam.notes}
+        p Date and time: #{exam.timeofday} of #{exam.date}
+            = ' ('
+            a(href='/pathways/'+provider.id+'/calendar/week/'+exam.date) Open calendar
+            = ')'
+        p Duration: #{exam.duration}
+        p Course: 
+            a(href='/courses/'+course.id) #{course.name}
+        p Qualification:
+            a(href='/qualifications/'+qualification.id) #{qualification.label}
+        p Exam board:
+            a(href='/pathways/'+provider.id) #{examboard.name}
+
+        hr
+
+        ul
+            li
+                a(href='/programmesofstudy/'+programmeofstudy.id) #{programmeofstudy.name} from other exam boards
+            li
+                a(href='/pathways/'+provider.id+'/calendar/week/'+exam.date) Other AQA exams this week
