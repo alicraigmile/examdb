@@ -10,9 +10,11 @@ html
 		p(class='context')
 			a(href="/") ExamDB
 
-		p A database of UK school examinations. There are #{qualifications.length} qualifications examined in UK schools.
+		p A database of UK school examinations.
 
 		h1 Pick a qualification
+
+		p There are #{qualifications.length} qualifications examined in UK schools.
 
 		ul
 			each qualification in qualifications
