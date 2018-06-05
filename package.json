@@ -29,10 +29,13 @@
   },
   "homepage": "https://github.com/alicraigmile/examdb#readme",
   "dependencies": {
+    "csv-parse": "^2.4.0",
     "express": "^4.14.0",
+    "express-fileupload": "^0.4.0",
     "morgan": "^1.7.0",
     "pug": "^0.1.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "uuid": "^3.2.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",
