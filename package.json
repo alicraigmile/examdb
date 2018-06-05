@@ -11,11 +11,11 @@
     "pretest": "npm run clean && npm run compile",
     "test": "mocha test/",
     "version:patch": "npm version patch",
-    "push": "npm run push:git && npm run push:elasticbeanstalk",
+    "push": "npm run push:git && npm run push:heroku",
     "push:git": "git push -u --tags origin HEAD:master",
     "push:heroku": "git push heroku master",
     "push:elasticbeanstalk": "echo 'build/exambd-$npm_package_version.zip' && echo 'push to AWS not implemented'",
-    "launch": "open https://examdb.xgusties.com",
+    "launch": "open http://examdb.herokuapp.com",
     "start": "node server.js"
   },
   "repository": {
