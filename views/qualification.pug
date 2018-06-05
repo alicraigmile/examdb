@@ -1,9 +1,9 @@
 doctype html
 html
 	head
-		title #{qualification.label} providers | ExamDB
+		title #{qualification.name} providers | ExamDB
 		meta(charset='UTF-8')
-		meta(name='description' content='There are #{providers.length} providers (exam boards) offering #{qualification.label} examinations.')
+		meta(name='description' content='There are #{providers.length} providers (exam boards) offering #{qualification.name} examinations.')
 		link(rel='stylesheet' href='/examdb.css')
 		meta(name='viewport' content='width=device-width, initial-scale=1')
 	body
@@ -12,11 +12,11 @@ html
 				a(href='/') ExamDB
 		
 		section
-			h1 #{qualification.label} providers
+			h1 #{qualification.name} providers
 
 			h2 Pick a provider
 
-			p There are #{providers.length} providers (exam boards) offering #{qualification.label} examinations.
+			p There are #{providers.length} providers (exam boards) offering #{qualification.name} examinations.
 
 			ul
 				each provider in providers

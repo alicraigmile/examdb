@@ -1,9 +1,9 @@
 doctype html
 html
     head
-        title #{qualification.label} #{programmeofstudy.name} providers | ExamDB
+        title #{qualification.name} #{programmeofstudy.name} providers | ExamDB
         meta(charset='UTF-8')
-        meta(name='description' content='There are #{courses.length} providers (exam boards) for the ' + qualification.label + ' ' + programmeofstudy.name + ' exam.')
+        meta(name='description' content='There are #{courses.length} providers (exam boards) for the ' + qualification.name + ' ' + programmeofstudy.name + ' exam.')
         link(rel='stylesheet' href='/examdb.css')
         meta(name='viewport' content='width=device-width, initial-scale=1')
     body
@@ -12,9 +12,9 @@ html
                 a(href='/') ExamDB
 
         section
-            h1 #{qualification.label} #{programmeofstudy.name}
+            h1 #{qualification.name} #{programmeofstudy.name}
 
-            p There are #{courses.length} providers (exam boards) of the #{qualification.label} #{programmeofstudy.name} exam.
+            p There are #{courses.length} providers (exam boards) of the #{qualification.name} #{programmeofstudy.name} exam.
 
             ul
                 each course in courses

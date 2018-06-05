@@ -1,7 +1,7 @@
 doctype html
 html
 	head
-		title #{examboard.name} #{qualification.label} | 2008 Week commencing Mon 24 May | ExamDB
+		title #{examboard.name} #{qualification.name} | 2008 Week commencing Mon 24 May | ExamDB
 		meta(charset='UTF-8')
 		meta(name='description' content='There are 16 examinations set by the '+examboard.name+' exam board w/c Mon 24 May 2018.')
 		link(rel='stylesheet' href='/examdb.css')
@@ -13,7 +13,7 @@ html
 
 		section
 			p(class='context')
-				a(href='/pathways/'+pathway.id) #{qualification.label} #{examboard.name}
+				a(href='/pathways/'+pathway.id) #{qualification.name} #{examboard.name}
 
 			h1 2008 Week commencing Mon 24 May
 

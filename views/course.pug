@@ -1,9 +1,9 @@
 doctype html
 html
     head
-        title #{qualification.label} #{examboard.name} | #{programmeofstudy.name} exams | ExamDB
+        title #{qualification.name} #{examboard.name} | #{programmeofstudy.name} exams | ExamDB
         meta(charset='UTF-8')
-        meta(name='description' content='There are ' + exams.length + ' ' + qualification.label + ' ' + course.name + ' examinations set by the '+examboard.name+' exam board.')
+        meta(name='description' content='There are ' + exams.length + ' ' + qualification.name + ' ' + course.name + ' examinations set by the '+examboard.name+' exam board.')
         link(rel='stylesheet' href='/examdb.css')
         meta(name='viewport' content='width=device-width, initial-scale=1')
     body
@@ -12,10 +12,10 @@ html
                 a(href='/') ExamDB
 
         section
-            h1 #{qualification.label} #{examboard.name} #{programmeofstudy.name} exams
+            h1 #{qualification.name} #{examboard.name} #{programmeofstudy.name} exams
 
 
-            p There are #{exams.length} #{qualification.label} #{course.name} examinations set by the #{examboard.name} exam board.
+            p There are #{exams.length} #{qualification.name} #{course.name} examinations set by the #{examboard.name} exam board.
 
             table
                 thead
