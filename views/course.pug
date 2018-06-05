@@ -7,43 +7,43 @@ html
         link(rel='stylesheet' href='/examdb.css')
         meta(name='viewport' content='width=device-width, initial-scale=1')
     body
-        p(class='context')
-            a(href='/') ExamDB
+        header
+            p
+                a(href='/') ExamDB
 
-        p(class='context')
-            a(href='/pathways/'+provider.id) #{qualification.label} #{examboard.name}
+        section
+            h1 #{qualification.label} #{examboard.name} #{programmeofstudy.name} exams
 
-        h1 #{programmeofstudy.name} exams
 
-        p There are #{exams.length} #{qualification.label} #{course.name} examinations set by the #{examboard.name} exam board.
+            p There are #{exams.length} #{qualification.label} #{course.name} examinations set by the #{examboard.name} exam board.
 
-        table
-            thead
-                tr(class='headings')
-                    th Code
-                    th Paper
-                    th Notes
-                    th Date
-                    th Morning/Afternoon
-                    th Duration
-            tbody
-                each exam in exams
-                    tr
-                        td= exam.code
-                        td
-                            a(href='/exams/'+exam.id)= exam.paper
-                        td= exam.notes
-                        td= exam.date
-                        td= exam.timeofday
-                        td= exam.duration
+            table
+                thead
+                    tr(class='headings')
+                        th Code
+                        th Paper
+                        th Notes
+                        th Date
+                        th Morning/Afternoon
+                        th Duration
+                tbody
+                    each exam in exams
+                        tr
+                            td= exam.code
+                            td
+                                a(href='/exams/'+exam.id)= exam.paper
+                            td= exam.notes
+                            td= exam.date
+                            td= exam.timeofday
+                            td= exam.duration
 
-        hr
+            hr
 
-        ul
-            li
-                a(href='/programmesofstudy/'+programmeofstudy.id) #{programmeofstudy.name} from other exam boards
-            li
-                a(href='/examboards/'+examboard.id) More subjects from #{examboard.name}
+            ul
+                li
+                    a(href='/programmesofstudy/'+programmeofstudy.id) #{programmeofstudy.name} from other exam boards
+                li
+                    a(href='/examboards/'+examboard.id) More subjects from #{examboard.name}
 
 
 

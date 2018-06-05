@@ -1,24 +1,25 @@
 doctype html
 html
 	head
-		title ExamDB
+		title ExamDB; A database of UK school examinations
 		meta(charset='UTF-8')
 		meta(name='description' content='A database of UK school examinations. There are #{qualifications.length} qualifications examined in UK schools.')
 		link(rel='stylesheet' href='/examdb.css')
 		meta(name='viewport' content='width=device-width, initial-scale=1')
 	body
 
-		p(class='context')
-			a(href="/") ExamDB
+		header
+			p
+				a(href="/") ExamDB
+		section
+			h1 ExamDB ; A database of UK school examinations
 
-		p A database of UK school examinations.
+			h2 Browse qualifications
 
-		h1 Pick a qualification
+			p We have data on examinations from #{qualifications.length} qualifications which have relevance to UK schools.
 
-		p There are #{qualifications.length} qualifications examined in UK schools.
-
-		ul
-			each qualification in qualifications
-				li
-					a(href='/qualifications/'+qualification.id) #{qualification.label}
+			ul
+				each qualification in qualifications
+					li
+						a(href='/qualifications/'+qualification.id) #{qualification.label}
 

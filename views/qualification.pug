@@ -7,16 +7,18 @@ html
 		link(rel='stylesheet' href='/examdb.css')
 		meta(name='viewport' content='width=device-width, initial-scale=1')
 	body
+		header
+			p
+				a(href='/') ExamDB
+		
+		section
+			h1 #{qualification.label} providers
 
-		p(class='context')
-			a(href='/') ExamDB
-		p(class='context')
-			a(href='/qualifications/'+qualification.id) #{qualification.label}
+			h2 Pick a provider
 
-		p There are #{providers.length} providers (exam boards) offering #{qualification.label} examinations.
-		h1 Pick a #{qualification.label} provider (exam board)
+			p There are #{providers.length} providers (exam boards) offering #{qualification.label} examinations.
 
-		ul
-			each provider in providers
-				li
-					a(href='/pathways/'+provider.id) #{provider.e.name}
+			ul
+				each provider in providers
+					li
+						a(href='/pathways/'+provider.id) #{provider.e.name}

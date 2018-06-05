@@ -1,11 +1,18 @@
-body { font-family: sans-serif }
-th,td { padding: 4px 8px; }
-.context { color: blue; font-size: 1.2em; font-weight: bold }
-h1 { font-weight: normal }
+body { font-family: sans-serif; margin: 0; padding: 0; font-size: 1.4em; }
+header { background: rgba(0,0,0,0.5); font-weight: bold; font-size: 1.6em; padding: 1px; text-align: center; }
+header a { text-decoration: none; color: black; }
+header a:hover { color: blue; } 
+section {padding: 0.5rem }
+.context { color: blue; font-size: 1.2rem; font-weight: bold; }
+.context a { text-decoration: none; }
+.context a { background: lightgray; padding: 0.5em; }
+h1 { font-size: 2.0rem; font-weight: normal }
+h2 { font-size: 1.6rem; font-weight: bold; }
 
 /* table */
 table {width: 100%}
 .m, .a {width: 40%}
-thead th { background: gray; font-size: 1.2em }
+thead th { background: gray; font-size: 1.2rem }
+th,td { padding: 4px 8px; }
 .d { text-align: center; background: lightgray }
-.headings th { font-size: 0.8em }
+.headings th { font-size: 0.8rem }

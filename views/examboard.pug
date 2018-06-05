@@ -1,21 +1,25 @@
 doctype html
 html
 	head
-		title #{examboard.name} qualifications | ExamDB
+		title #{examboard.name} exam board | ExamDB
 		meta(charset='UTF-8')
 		meta(name='description' content='The exam board '+examboard.name+' sets examinations in '+providers.length+' qualifications.')
 		link(rel='stylesheet' href='/examdb.css')
 		meta(name='viewport' content='width=device-width, initial-scale=1')
 	body
 
-		p(class='context')
-			a(href="/") ExamDB
+		header
+			p
+				a(href="/") ExamDB
 
-		h1 #{examboard.name}
+		section
+			h1 #{examboard.name} (exam board)
 
-		p The exam board #{examboard.name} sets examinations in #{providers.length} qualifications.
+			h2 Qualifications
 
-		ul
-			each provider in providers
-				li
-					a(href='/pathways/'+provider.id) #{provider.q.label}
+			p The exam board #{examboard.name} sets examinations in #{providers.length} qualifications.
+
+			ul
+				each provider in providers
+					li
+						a(href='/pathways/'+provider.id) #{provider.q.label}

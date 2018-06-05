@@ -7,25 +7,27 @@ html
 		link(rel='stylesheet' href='/examdb.css')
 		meta(name='viewport' content='width=device-width, initial-scale=1')
 	body
-		p(class='context')
-			a(href='/') ExamDB
-		p(class='context')
-			a(href='/pathways/'+pathway.id) #{qualification.label} #{examboard.name}
+		header
+			p
+				a(href='/') ExamDB
 
-		p The exam board #{examboard.name} sets #{qualification.label} examinations in #{courses.length} subjects.
+		section
+			h1 #{qualification.label} #{examboard.name} subjects
 
-		h1 Pick a subject
+			p The exam board #{examboard.name} sets #{qualification.label} examinations in #{courses.length} subjects.
 
-		ol
-			each course in courses
+			h2 Pick a subject
+
+			ol
+				each course in courses
+					li
+						a(href='/courses/'+course.id) #{course.pos.name}
+
+			hr
+
+			ul
 				li
-					a(href='/courses/'+course.id) #{course.pos.name}
-
-		hr
-
-		ul
-			li
-				a(href='/examboards/'+examboard.id) More qualifications from #{examboard.name}
-			li
-				a(href='/qualifications/'+qualification.id) More providers of #{qualification.label} examinations
+					a(href='/examboards/'+examboard.id) More qualifications from #{examboard.name}
+				li
+					a(href='/qualifications/'+qualification.id) More providers of #{qualification.label} examinations
 
