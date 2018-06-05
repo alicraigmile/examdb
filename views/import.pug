@@ -1,0 +1,31 @@
+doctype html
+html
+	head
+		title Import exams data | ExamDB
+		meta(charset='UTF-8')
+		meta(name='description' content='You can import data about examinations into ExamDB. Simply upload a CSV file.')
+		link(rel='stylesheet' href='/examdb.css')
+		meta(name='viewport' content='width=device-width, initial-scale=1')
+	body
+
+		header
+			p
+				a(href="/") ExamDB
+		section
+			h1 Import examinations data
+
+			h2 CSV Upload
+
+			p You can import data about examinations into ExamDB.
+
+			p It's really simple, there are only a couple of steps.
+
+			form(method='post' action='/exams/upload' encType='multipart/form-data')
+				div
+					label(for='file') 
+						| 1. Select a CSV file 
+					input(type='file' name='file')
+				div
+					| 2. Send it to us! 
+					input(type='submit' name='' value='Upload')
+
