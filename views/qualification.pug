@@ -6,11 +6,12 @@ html
 		meta(name='description' content='There are '+ providers.length+' providers (exam boards) offering #{qualification.name} examinations.')
 		meta(name='viewport' content='width=device-width, initial-scale=1')
 		link(rel='stylesheet' href='/examdb.css')
-		link(rel='alternate' type='application/json' title='JSON' href='/qualifications/'+qualification.id+'.json')
+		link(rel='alternate' type='application/json' title='JSON format' href='/qualifications/'+qualification.id+'.json')
 	body
 		header
 			p
-				a(href='/') ExamDB
+				a(href='/' title='ExamDB Homepage')
+					img(src='/examdb.png' width='64' height='64' alt='')
 		
 		section
 			h1 #{qualification.name} providers

@@ -5,11 +5,13 @@ html
         meta(charset='UTF-8')
         meta(name='description' content='There are ' + exams.length + ' ' + qualification.name + ' ' + course.name + ' examinations set by the '+examboard.name+' exam board.')
         link(rel='stylesheet' href='/examdb.css')
+        link(rel='alternate' type='application/json' title='JSON' href='/courses/'+course.id+'.json')
         meta(name='viewport' content='width=device-width, initial-scale=1')
     body
         header
             p
-                a(href='/') ExamDB
+                a(href='/' title='ExamDB Homepage')
+                    img(src='/examdb.png' width='64' height='64' alt='')
 
         section
             h1 #{qualification.name} #{examboard.name} #{programmeofstudy.name} exams

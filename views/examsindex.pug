@@ -5,12 +5,14 @@ html
 		meta(charset='UTF-8')
 		meta(name='description' content='A database of UK school examinations. There are #{qualifications.length} qualifications examined in UK schools.')
 		link(rel='stylesheet' href='/examdb.css')
+		link(rel='alternate' type='application/json' title='All exams in JSON format' href='/exams.json')
 		meta(name='viewport' content='width=device-width, initial-scale=1')
 	body
 
 		header
 			p
-				a(href="/") ExamDB
+				a(href='/' title='ExamDB Homepage')
+					img(src='/examdb.png' width='128' height='128' alt='')
 		section
 			h1 ExamDB ; A database of UK school examinations
 

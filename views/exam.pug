@@ -5,11 +5,13 @@ html
         meta(charset='UTF-8')
         meta(name='description' content='Details of the ' + programmeofstudy.name + ' ' + qualification.name + ' examination set by the ' + examboard.name + ' exam board on the ' + exam.timeofday + ' of ' + exam.date + '.')
         link(rel='stylesheet' href='/examdb.css')
+        link(rel='alternate' type='application/json' title='JSON format' href='/exams/'+exam.id+'.json')
         meta(name='viewport' content='width=device-width, initial-scale=1')
     body
         header
             p
-                a(href='/') ExamDB
+                a(href='/' title='ExamDB Homepage')
+                    img(src='/examdb.png' width='64' height='64' alt='')
         section
             h1 #{exam.paper} (exam)
 

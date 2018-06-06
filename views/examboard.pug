@@ -6,11 +6,13 @@ html
 		meta(name='description' content='The exam board '+examboard.name+' sets examinations in '+providers.length+' qualifications.')
 		link(rel='stylesheet' href='/examdb.css')
 		meta(name='viewport' content='width=device-width, initial-scale=1')
+		link(rel='alternate' type='application/json' title='JSON format' href='/examboard/'+examboard.id+'.json')
 	body
 
 		header
 			p
-				a(href="/") ExamDB
+				a(href='/' title='ExamDB Homepage')
+					img(src='/examdb.png' width='64' height='64' alt='')
 
 		section
 			h1 #{examboard.name} (exam board)
