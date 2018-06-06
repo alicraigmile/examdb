@@ -1,0 +1,33 @@
+doctype  html
+html
+	head
+		title Search | ExamDB
+		meta(charset='UTF-8')
+		meta(name='description' content='You can search for exams by keyword, examboard, and qualification.')
+		link(rel='stylesheet' href='/examdb.css')
+		meta(name='viewport' content='width=device-width, initial-scale=1')
+	body
+
+		header
+			p
+				a(href='/' title='ExamDB Homepage')
+					img(src='/examdb.png' width='64' height='64' alt='')
+		section
+			h1 Search
+
+			p You can search for exams by keyword, examboard, and qualification.
+
+			form(method='get' action='/search' class='search')
+				div
+					input(type='text' id='query' name='q')
+					input(type='submit'  name='' value='🔍')
+
+			script
+				| document.getElementById("query").focus();
+
+
+			h2 Results for 'gcse'
+
+			ul
+				li
+					a(href="/qualifications/gcse") GCSE (examboard)
