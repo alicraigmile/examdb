@@ -3,9 +3,10 @@ html
 	head
 		title #{qualification.name} providers | ExamDB
 		meta(charset='UTF-8')
-		meta(name='description' content='There are #{providers.length} providers (exam boards) offering #{qualification.name} examinations.')
-		link(rel='stylesheet' href='/examdb.css')
+		meta(name='description' content='There are '+ providers.length+' providers (exam boards) offering #{qualification.name} examinations.')
 		meta(name='viewport' content='width=device-width, initial-scale=1')
+		link(rel='stylesheet' href='/examdb.css')
+		link(rel='alternate' type='application/json' title='JSON' href='/qualifications/'+qualification.id+'.json')
 	body
 		header
 			p
