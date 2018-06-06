@@ -26,9 +26,10 @@ html
 				| document.getElementById("query").focus();
 
 
-			if results
-				h2 Results for '#{query}'
+			if query
+				h2 #{results.length} result(s) for '#{query}'
 
+			if results.length
 				ul
 					each result in results
 						li
