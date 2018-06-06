@@ -16,6 +16,34 @@ html
 		section
 			h1 ExamDB ; A database of UK school examinations
 
+			h2 Search
+
+			p
+				small 
+					= 'e.g. '
+					a(href='/search?q=GCSE') GCSE
+					= ' '
+					a(href='/search?q=SQA') SQA
+					= ' '
+					a(href='/search?q=Mathematics') Mathematics
+					= ' '
+					a(href='/search?q=2018/06/23') 2018/06/23
+					= ' '
+					a(href='/search?q=today') today
+
+			form(method='get' action='/search' class='search')
+				div
+					input(type='text' id='query' name='q' value='')
+					input(type='submit'  name='' value='🔍')
+
+			script
+				| document.getElementById("query").focus();
+
+			p You can search for exams by examboard, qualification, subject and date.
+
+			p
+				small ℹ️ Please note, search is case sensitive
+
 			h2 Browse qualifications
 
 			p We have data on examinations from #{qualifications.length} qualifications which have relevance to UK schools.

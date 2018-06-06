@@ -15,7 +15,18 @@ html
 		section
 			h1 Search
 
-			p You can search for exams by examboard, qualification, subject and date.
+			p
+				small 
+					= 'e.g. '
+					a(href='/search?q=GCSE') GCSE
+					= ' '
+					a(href='/search?q=SQA') SQA
+					= ' '
+					a(href='/search?q=Mathematics') Mathematics
+					= ' '
+					a(href='/search?q=2018/06/23') 2018/06/23
+					= ' '
+					a(href='/search?q=today') today
 
 			form(method='get' action='/search' class='search')
 				div
@@ -25,6 +36,10 @@ html
 			script
 				| document.getElementById("query").focus();
 
+			p You can search for exams by examboard, qualification, subject and date.
+
+			p
+				small ℹ️ Please note, search is case sensitive
 
 			if query
 				h2 #{results.length} result(s) for '#{query}'
