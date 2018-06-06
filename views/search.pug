@@ -3,7 +3,7 @@ html
 	head
 		title Search | ExamDB
 		meta(charset='UTF-8')
-		meta(name='description' content='You can search for exams by keyword, examboard, and qualification.')
+		meta(name='description' content='You can search for exams by examboard, qualification, subject and date.')
 		link(rel='stylesheet' href='/examdb.css')
 		meta(name='viewport' content='width=device-width, initial-scale=1')
 	body
@@ -15,19 +15,25 @@ html
 		section
 			h1 Search
 
-			p You can search for exams by keyword, examboard, and qualification.
+			p You can search for exams by examboard, qualification, subject and date.
 
 			form(method='get' action='/search' class='search')
 				div
-					input(type='text' id='query' name='q')
+					input(type='text' id='query' name='q' value=query)
 					input(type='submit'  name='' value='🔍')
 
 			script
 				| document.getElementById("query").focus();
 
 
-			h2 Results for 'gcse'
+			if results
+				h2 Results for '#{query}'
 
-			ul
-				li
-					a(href="/qualifications/gcse") GCSE (examboard)
+				ul
+					each result in results
+						li
+							if result.isProgrammeOfStudy
+								a(href='/programmesofstudy/'+result.id) #{result.qualification} #{result.name}
+					
+							if result.isQualification
+								a(href='/qualifications/'+result.id) #{result.name}
