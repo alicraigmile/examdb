@@ -16,7 +16,8 @@
     "push:heroku": "git push heroku master",
     "push:elasticbeanstalk": "echo 'build/exambd-$npm_package_version.zip' && echo 'push to AWS not implemented'",
     "launch": "open http://examdb.herokuapp.com",
-    "start": "node server.js"
+    "start": "node server.js",
+    "changelog": "LASTTAG=`git describe --tags --abbrev=0`; echo \"======= Changes since last tag ($LASTTAG) =======\"; git log $LASTTAG..HEAD --oneline"
   },
   "repository": {
     "type": "git",
