@@ -1,6 +1,6 @@
 {
   "name": "examdb",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "A database of UK school examinations",
   "main": "server.js",
   "scripts": {
