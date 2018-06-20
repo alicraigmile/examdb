@@ -14,7 +14,33 @@ html
                     img(src='/examdb.png' width='64' height='64' alt='')
 
         section
-            h1 #{qualification.name} #{programmeofstudy.name}
+            h1 #{qualification.name} #{programmeofstudy.name} exams
+
+            h2 Exams
+
+            p There are #{exams.length}  #{qualification.name} #{programmeofstudy.name} examinations in the database.
+
+            table
+                thead
+                    tr(class='headings')
+                        th Code
+                        th Paper
+                        th Notes
+                        th Date
+                        th Morning/Afternoon
+                        th Duration
+                tbody
+                    each exam in exams
+                        tr
+                            td= exam.code
+                            td
+                                a(href='/exams/'+exam.id)= exam.paper
+                            td= exam.notes
+                            td= exam.date
+                            td= exam.timeofday
+                            td= exam.duration
+
+            h2 About the exam providers
 
             p There are #{courses.length} providers (exam boards) of the #{qualification.name} #{programmeofstudy.name} exam.
 
