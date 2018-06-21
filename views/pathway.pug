@@ -17,6 +17,12 @@ html
 
 			p The exam board #{examboard.name} sets #{qualification.name} examinations in #{courses.length} subjects.
 
+			h2 Calendar
+			ul
+				li
+					a(href='/pathways/'+pathway.id+'/calendar/week')
+						| #{qualification.name} #{examboard.name} calendar
+
 			h2 Pick a subject
 
 			ol
