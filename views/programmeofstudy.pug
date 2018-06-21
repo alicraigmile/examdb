@@ -1,12 +1,14 @@
 doctype html
 html
     head
-        title #{qualification.name} #{programmeofstudy.name} providers | ExamDB
+        title #{qualification.name} #{programmeofstudy.name} | ExamDB
         meta(charset='UTF-8')
         meta(name='description' content='There are #{courses.length} providers (exam boards) for the ' + qualification.name + ' ' + programmeofstudy.name + ' exam.')
         link(rel='stylesheet' href='/examdb.css')
         link(rel='alternate' type='application/json' title='JSON' href='/programmesofstudy/'+programmeofstudy.id+'.json')
         meta(name='viewport' content='width=device-width, initial-scale=1')
+        script(src='/library/jquery/jquery.min.js')
+        script(src='/library/jquery-tablesort/jquery.tablesort.min.js')
     body
         header
             p
@@ -32,6 +34,7 @@ html
                         th Duration
                 tbody
                     each exam in exams
+                        - var dateSort = exam.date + (exam.timeofday=='Morning' ? 'T0000' : 'T1200')
                         tr
                             td
                                 a(href='/courses/'+exam.c.id)= exam.e.name
@@ -39,7 +42,7 @@ html
                             td
                                 a(href='/exams/'+exam.id)= exam.paper
                             td= exam.notes
-                            td= exam.date
+                            td(data-sort-value=dateSort)= exam.date
                             td= exam.timeofday
                             td= exam.duration
 
@@ -61,3 +64,5 @@ html
                 each course in courses
                     li
                         a(href='/courses/'+course.id) #{course.e.name}
+        script
+            | $('table').tablesort();

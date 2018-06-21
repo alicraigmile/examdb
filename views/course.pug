@@ -7,6 +7,8 @@ html
         link(rel='stylesheet' href='/examdb.css')
         link(rel='alternate' type='application/json' title='JSON' href='/courses/'+course.id+'.json')
         meta(name='viewport' content='width=device-width, initial-scale=1')
+        script(src='/library/jquery/jquery.min.js')
+        script(src='/library/jquery-tablesort/jquery.tablesort.min.js')
     body
         header
             p
@@ -30,12 +32,13 @@ html
                         th Duration
                 tbody
                     each exam in exams
+                        - var dateSort = exam.date + (exam.timeofday=='Morning' ? 'T0000' : 'T1200')
                         tr
                             td= exam.code
                             td
                                 a(href='/exams/'+exam.id)= exam.paper
                             td= exam.notes
-                            td= exam.date
+                            td(data-sort-value=dateSort)= exam.date
                             td= exam.timeofday
                             td= exam.duration
 
@@ -67,5 +70,7 @@ html
                 li
                     a(href='/examboards/'+examboard.id) More subjects from #{examboard.name}
 
+        script
+            | $('table').tablesort();
 
 
