@@ -9,14 +9,51 @@ section {padding: 0.5rem }
 h1 { font-size: 2.0rem; font-weight: normal }
 h2 { font-size: 1.6rem; font-weight: bold; }
 input {font-size: 1.2rem }
-/* table */
-table {width: 100%}
 .m, .a {width: 40%}
-thead th { background: gray; font-size: 1.2rem }
-th,td { padding: 4px 8px; }
 .d { text-align: center; background: lightgray }
 .headings th { font-size: 0.8rem }
 
 .search input { line-height: 3rem; border: 0; padding: 0 16px; background: lightgray;}
 .search input[name='q'] { width: 60%; }
 .search input[type='submit']:hover { background: gray;}
+
+table {
+	font-size: 1em;
+	border-collapse: collapse;
+	margin: 0 auto
+}
+table, th, td {
+	border: 1px solid #999;
+	padding: 8px 16px;
+	text-align: left;
+}
+table.ex-2 {
+	min-width: 100px;
+}
+th {
+	background: #f4f4f4;
+	cursor: pointer;
+}
+
+th:hover,
+th.sorted {
+	background: #d4d4d4;
+}
+
+th.no-sort,
+th.no-sort:hover {
+	background: #f4f4f4;
+	cursor: not-allowed;
+}
+
+th.sorted.ascending:after {
+	content: "  \2191";
+}
+
+th.sorted.descending:after {
+	content: " \2193";
+}
+
+.disabled {
+	opacity: 0.5;
+}
