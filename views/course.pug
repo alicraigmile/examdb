@@ -40,11 +40,24 @@ html
                             td= exam.duration
 
 
-            if course.bitesize
-                h2 Revison guides
+            h2 Revison guides
+            ul(class='revision-guides')
+                if course.bitesize
 
-                a(href='https://www.bbc.com/education/examspecs/'+course.bitesize)
-                    img(src='/bbc-bitesize.png' alt='BBC Bitesize revision guides')
+                    li
+                        a(href='https://www.bbc.com/education/examspecs/'+course.bitesize)
+                            img(src='/bbc-bitesize.png' alt='BBC Bitesize revision guides' width='40' height='40')
+                            = ' BBC Bitesize' 
+
+                else
+                    if programmeofstudy.bitesize
+                
+                        li
+                           a(href='https://www.bbc.com/education/subjects/'+programmeofstudy.bitesize)
+                                img(src='/bbc-bitesize.png' alt='BBC Bitesize revision guides' width='40' height='40')
+                                = ' BBC Bitesize' 
+                    else
+                        li None listed
 
             hr
 

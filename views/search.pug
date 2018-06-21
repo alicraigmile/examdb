@@ -56,6 +56,9 @@ html
 							if result.isQualification
 								a(href='/qualifications/'+result.id) #{result.name} (qualification)
 
+							if result.isCourse
+								a(href='/courses/'+result.id) #{result.id} (course)
+
 							if result.isExamBoard
 								a(href='/examboards/'+result.id) #{result.name} (exam board)
  

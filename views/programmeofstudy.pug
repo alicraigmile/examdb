@@ -43,11 +43,15 @@ html
                             td= exam.timeofday
                             td= exam.duration
 
-            if programmeofstudy.bitesize
-                h2 Revison guides
-
-                a(href='https://www.bbc.com/education/subjects/'+programmeofstudy.bitesize)
-                    img(src='/bbc-bitesize.png' alt='BBC Bitesize revision guides')
+            h2 Revison guides
+            ul(class='revision-guides')
+                if programmeofstudy.bitesize
+                    li
+                        a(href='https://www.bbc.com/education/subjects/'+programmeofstudy.bitesize)
+                            img(src='/bbc-bitesize.png' alt='BBC Bitesize revision guides' width='40' height='40')
+                            = ' BBC Bitesize'
+                else
+                    li None listed
 
             h2 About the exam providers
 
