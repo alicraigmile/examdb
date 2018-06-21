@@ -20,3 +20,5 @@ th,td { padding: 4px 8px; }
 .search input { line-height: 3rem; border: 0; padding: 0 16px; background: lightgray;}
 .search input[name='q'] { width: 60%; }
 .search input[type='submit']:hover { background: gray;}
+
+.active { background-color: rgba(255,239,138,0.3); }
