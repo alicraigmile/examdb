@@ -39,6 +39,13 @@ html
                             td= exam.timeofday
                             td= exam.duration
 
+
+            if course.bitesize
+                h2 Revison guides
+
+                a(href='https://www.bbc.com/education/examspecs/'+course.bitesize)
+                    img(src='/bbc-bitesize.png' alt='BBC Bitesize revision guides')
+
             hr
 
             ul
