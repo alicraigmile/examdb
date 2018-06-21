@@ -57,3 +57,4 @@ th.sorted.descending:after {
 .disabled {
 	opacity: 0.5;
 }
+.active { background-color: rgba(255,239,138,0.3); }
