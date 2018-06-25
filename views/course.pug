@@ -62,13 +62,19 @@ html
                     else
                         li None listed
 
-            hr
+            h2 More like this
 
             ul
                 li
                     a(href='/programmesofstudy/'+programmeofstudy.id) #{programmeofstudy.name} from other exam boards
                 li
                     a(href='/examboards/'+examboard.id) More subjects from #{examboard.name}
+
+            h2 Download this data
+
+            ul
+                li
+                    a(rel='alternate' type='application/json' href='/courses/'+course.id+'.json') JSON
 
         script
             | $('table').tablesort();

@@ -25,3 +25,10 @@ html
 				each provider in providers
 					li
 						a(href='/pathways/'+provider.id) #{provider.q.name}
+
+			h2 Download this data
+
+			ul
+				li
+					a(rel='alternate' type='application/json' href='/examboard/'+examboard.id+'.json') JSON
+
