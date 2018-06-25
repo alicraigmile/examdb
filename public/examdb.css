@@ -1,13 +1,14 @@
-body { font-family: sans-serif; margin: 0; padding: 0; font-size: 1.4em; }
+body { font-family: sans-serif; margin: 0; padding: 0; font-size: 1.2em; }
 header { background: rgba(0,0,0,0.5); font-weight: bold; font-size: 1.6em; padding: 1px; text-align: center; }
 header a { text-decoration: none; color: black; }
 header a:hover { color: blue; } 
 section {padding: 0.5rem }
 .context { color: blue; font-size: 1.2rem; font-weight: bold; }
 .context a { text-decoration: none; }
-.context a { background: lightgray; padding: 0.5em; }
+.context a { background: lightgray; padding: 0.5rem; }
 h1 { font-size: 2.0rem; font-weight: normal }
 h2 { font-size: 1.6rem; font-weight: bold; }
+h3 { font-size: 1.2rem; font-weight: normal; }
 input {font-size: 1.2rem }
 .m, .a {width: 40%}
 .d { text-align: center; background: lightgray }
@@ -17,10 +18,12 @@ input {font-size: 1.2rem }
 .search input[name='q'] { width: 60%; }
 .search input[type='submit']:hover { background: gray;}
 
+
 table {
-	font-size: 1em;
+	font-size: 0.8rem;
 	border-collapse: collapse;
-	margin: 0 auto
+	margin: 0 auto;
+	width: 100%
 }
 table, th, td {
 	border: 1px solid #999;
