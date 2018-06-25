@@ -18,6 +18,9 @@ input {font-size: 1.2rem }
 .search input[name='q'] { width: 60%; }
 .search input[type='submit']:hover { background: gray;}
 
+.message {position: relative; padding: 0.5rem; padding-right: 3rem;}
+.buttonContainer {right:0.5rem; position: absolute}
+
 
 table {
 	font-size: 0.8rem;
@@ -61,3 +64,7 @@ th.sorted.descending:after {
 	opacity: 0.5;
 }
 .active { background-color: rgba(255,239,138,0.3); }
+
+.message-200 { background-color: lightgreen; }
+.message-400 { background-color: red; }
+.message-422 { background-color: red; }

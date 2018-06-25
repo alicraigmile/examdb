@@ -5,6 +5,8 @@ html
 		meta(charset='UTF-8')
 		meta(name='description' content='You can import data about examinations into ExamDB. Simply upload a CSV file.')
 		link(rel='stylesheet' href='/examdb.css')
+		script(src='/library/jquery/jquery.min.js')
+		script(src='/library/jquery-tablesort/jquery.tablesort.min.js')
 		meta(name='viewport' content='width=device-width, initial-scale=1')
 	body
 
@@ -12,7 +14,15 @@ html
 			p
 				a(href='/' title='ExamDB Homepage')
 					img(src='/examdb.png' width='64' height='64' alt='')
+
+		if message
+			div(class='message message-'+status)
+				span #{message}
+				span(class='buttonContainer')
+					button(class='close' title='close') ❌ Ok 
+
 		section
+
 			h1 Import examinations data
 
 			h2 CSV Upload
@@ -29,4 +39,5 @@ html
 				div
 					| 2. Send it to us! 
 					input(type='submit' name='' value='Upload')
-
+		script
+			| $('.message .close').click(function(e) { $('.message').slideUp() });
