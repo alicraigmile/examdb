@@ -38,5 +38,17 @@ describe('Programme of Study', function() {
 			});
 	});
 
+	it('Exams by programme of study in CSV', function(done) {
+		request(app)
+			.get('/programmesofstudy/gcse-mathematics.csv')
+			.set('Accept', 'text/csv')
+			.expect(200)
+			.end(function(err, res) {
+				if (err) return done(err);
+				expect(res.body).to.not.equal(null);
+				done();
+			});
+	});
+
 });
 
