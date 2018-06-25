@@ -6,7 +6,7 @@ html
 		meta(name='description' content='The exam board '+examboard.name+' sets examinations in '+providers.length+' qualifications.')
 		link(rel='stylesheet' href='/examdb.css')
 		meta(name='viewport' content='width=device-width, initial-scale=1')
-		link(rel='alternate' type='application/json' title='JSON format' href='/examboard/'+examboard.id+'.json')
+		link(rel='alternate' type='application/json' title='JSON format' href='/examboards/'+examboard.id+'.json')
 	body
 
 		header
@@ -30,5 +30,5 @@ html
 
 			ul
 				li
-					a(rel='alternate' type='application/json' href='/examboard/'+examboard.id+'.json') JSON
+					a(rel='alternate' type='application/json' href='/examboards/'+examboard.id+'.json') JSON
 
