@@ -17,7 +17,11 @@ html
 
 		if message
 			div(class='message message-'+status)
-				span #{message}
+				
+				span
+					strong #{headline}
+					= ': '
+					| #{message}
 				span(class='buttonContainer')
 					button(class='close' title='close') ❌ Ok 
 
