@@ -65,6 +65,9 @@ th.sorted.descending:after {
 }
 .active { background-color: rgba(255,239,138,0.3); }
 
-.message-200 { background-color: lightgreen; }
-.message-400 { background-color: red; }
-.message-422 { background-color: red; }
+.message { background-color: red; }
+.message-200 { background-color: lightgreen; } /* ok */
+.message-400 { background-color: red; } /* unaccesptable */
+.message-422 { background-color: red; } /* un-processable */
+.message-404 { background-color: orange; } /* not found */
+.message-500 { background-color: red; } /* software error */
