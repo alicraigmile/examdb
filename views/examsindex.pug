@@ -46,14 +46,14 @@ html
 			p
 				small ℹ️ Please note, search is case sensitive
 
-			h2 Browse qualifications
+			if qualifications
+				h2 Browse qualifications
 
-			p We have data on examinations from #{qualifications.length} qualifications which have relevance to UK schools.
-
-			ul
-				each qualification in qualifications
-					li
-						a(href='/qualifications/'+qualification.id) #{qualification.name}
+				p We have data on examinations from #{qualifications.length} qualifications which have relevance to UK schools.
+				ul
+					each qualification in qualifications
+						li
+							a(href='/qualifications/'+qualification.id) #{qualification.name}
 
 			h2 Contributing to ExamDB
 
