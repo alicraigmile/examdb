@@ -4,12 +4,16 @@
   "description": "A database of UK school examinations",
   "main": "server.js",
   "scripts": {
+    "prestart": "npm run compile",
+    "prelint": "npm run prettier",
     "deploy:prod": "npm run test && npm run version:patch && npm run push && npm run launch",
     "clean": "rm -rf build",
-    "compile": "npm run compile:elasticbeanstalk",
+    "compile": "npm run prettier && npm run compile:elasticbeanstalk",
     "compile:elasticbeanstalk": "mkdir -p build && git archive --format=zip HEAD > build/examdb-$npm_package_version.zip",
     "pretest": "npm run clean && npm run compile",
-    "test": "mocha test/",
+    "prettier": "prettier --tab-width=4 --single-quote --print-width=120 \"./lib/**/*.js\" \"./test/**/*js\" --write",
+    "lint": "npm run lint:js",
+    "lint:js": "eslint --ext .js lib test",
     "version:patch": "npm version patch",
     "push": "npm run push:git && npm run push:heroku",
     "push:git": "git push -u --tags origin HEAD:master",
@@ -17,6 +21,8 @@
     "push:elasticbeanstalk": "echo 'build/exambd-$npm_package_version.zip' && echo 'push to AWS not implemented'",
     "launch": "open http://examdb.herokuapp.com",
     "start": "node server.js",
+    "test": "npm run lint && npm run test:unit",
+    "test:unit": "mocha test/",
     "changelog": "LASTTAG=`git describe --tags --abbrev=0`; echo \"======= Changes since last tag ($LASTTAG) =======\"; git log $LASTTAG..HEAD --oneline"
   },
   "repository": {
@@ -39,12 +45,20 @@
     "jquery-tablesort": "0.0.11",
     "morgan": "^1.7.0",
     "pg-promise": "^8.4.4",
+    "prettier": "^1.13.7",
     "pug": "^0.1.0",
     "underscore": "^1.8.3",
     "uuid": "^3.2.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^17.0.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-jsx-a11y": "^6.1.0",
+    "eslint-plugin-prettier": "^2.6.2",
+    "eslint-plugin-react": "^7.10.0",
     "mocha": "^5.2.0",
     "supertest": "^3.1.0"
   }
