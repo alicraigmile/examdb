@@ -1,13 +1,31 @@
 #!/usr/bin/env node
 
-const package = require('./package'),
-      morgan = require('morgan'),
-      port = process.env.PORT || 5000,
-      app = require('./lib/app');
+const app = require('./lib/app'),
+	  models = require("./models");
+	  package = require('./package'),
+      http = require('http'),
+      morgan = require('morgan');
+      
+var port = process.env.PORT || '5000';
+app.set('port', port);
 
-var logger,
-    server;
-
-logger = morgan('combined');
+var logger = morgan('combined');
 app.use(logger);
-server = app.listen(port, () => console.log(package.name + ' listening on port ' + port +  '!'));
+
+var server = http.createServer(app);
+
+// sync() will create all table if they doesn't exist in database
+models.sequelize.sync().then(function () {
+	server.listen(port);
+	server.on('error', onError);
+	server.on('listening', onListening);
+});
+
+
+function onError(error) {
+	console.log(package.name + ' failed to start listening on port ' + port +  '! - ' + error);
+}
+
+function onListening() {
+	console.log(package.name + ' listening on port ' + port +  '!');
+}
