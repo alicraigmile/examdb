@@ -1,8 +1,8 @@
-#!/usr/bin/env node
+'use strict';
 
 const app = require('./lib/app'),
 	  models = require("./models");
-	  package = require('./package'),
+	  npmPackage = require('./package'),
       http = require('http'),
       morgan = require('morgan');
       
@@ -27,5 +27,5 @@ function onError(error) {
 }
 
 function onListening() {
-	console.log(package.name + ' listening on port ' + port +  '!');
+	console.log(npmPackage.name + ' listening on port ' + port +  '!');
 }
