@@ -1,7 +1,5 @@
 'use strict';
 
-const models = require('../models');
-
 module.exports = {
   up: (queryInterface, Sequelize) => {
     const date =  Date();
