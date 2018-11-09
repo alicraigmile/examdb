@@ -1,4 +1,4 @@
-import { request } from 'supertest';
+import request from 'supertest';
 import { describe, it, xit } from 'mocha';
 import { expect } from 'chai';
 import app from '../lib/app';
