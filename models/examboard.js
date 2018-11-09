@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     ExamBoard.associate = function(models) {
         // associations can be defined here
         ExamBoard.belongsTo(models.WebResource, { as: 'Homepage' });
+        ExamBoard.hasMany(models.Course);
     };
     return ExamBoard;
 };

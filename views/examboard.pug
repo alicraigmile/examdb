@@ -3,7 +3,7 @@ html
 	head
 		title #{examboard.name} exam board | ExamDB
 		meta(charset='UTF-8')
-		meta(name='description' content='The exam board '+examboard.name+' sets examinations in '+providers.length+' qualifications.')
+		meta(name='description' content='The exam board '+examboard.name+' sets examinations in '+courses.length+' courses.')
 		link(rel='stylesheet' href='/examdb.css')
 		meta(name='viewport' content='width=device-width, initial-scale=1')
 		link(rel='alternate' type='application/json' title='JSON format' href='/examboards/'+examboard.id+'.json')
@@ -15,16 +15,14 @@ html
 					img(src='/examdb.png' width='64' height='64' alt='')
 
 		section
-			h1 #{examboard.name} (exam board)
+			h1 #{examboard.name} courses
 
-			h2 Qualifications
-
-			p The exam board #{examboard.name} sets examinations in #{providers.length} qualifications.
+			p The exam board #{examboard.name} sets examinations in #{courses.length} courses.
 
 			ul
-				each provider in providers
+				each course in courses
 					li
-						a(href='/pathways/'+provider.id) #{provider.q.name}
+						a(href='/courses/'+course.id) #{courses.name}
 
 			h2 Download this data
 

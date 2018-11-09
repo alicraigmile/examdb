@@ -1,38 +1,53 @@
 import { Router } from 'express';
-
+import _ from 'underscore';
 
 module.exports = Router({ mergeParams: true })
+    .get('/examboards.json', async (req, res) => {
+        try {
+            req.db.ExamBoard.findAll().then(examboards => res.json(examboards));
+        } catch (error) {
+            res.error.json(500, 'Cannot fetch examboards data', error);
+        }
+    })
 
+    .get('/examboards', (req, res) => res.redirect('/'))
 
+    .get('/examboards/:examboard.json', (req, res) => {
+        const examboardId = req.params.examboard;
+        try {
+            req.db.ExamBoard.findByPk(examboardId, { include: [{ model: req.db.WebResource, as: 'Homepage' }] }).then(
+                examboard => {
+                    if (examboard) {
+                        examboard.getCourses().then(courses => {
+                            const output = { examboard, courses }; //debug providers -> courses
+                            res.json(output);
+                        });
+                    } else {
+                        res.error.json(404, `Exam board '${examboardId}' was not found.`);
+                    }
+                }
+            );
+        } catch (error) {
+            res.error.json(500, `Cannot fetch examboards data.`);
+        }
+    })
 
-.get('/examboards.json', (req, res) => res.json(req.store.allExamboards()))
-
-.get('/examboards', (req, res) => res.redirect('/'))
-
-.get('/examboards/:examboard.json', (req, res) => {
-    const examboardId = req.params.examboard;
-    const examboard = req.store.examboard(examboardId);
-
-    if (!examboard) return res.error.json(404, `Exam board '${examboardId}' was not found.`);
-
-    return res.json(examboard);
-})
-
-.get('/examboards/:examboard', (req, res) => {
-    const examboardId = req.params.examboard;
-    const examboard = req.store.examboard(examboardId);
-    const inflateQualification = p => {
-        p.q = req.store.qualification(p.qualification);
-        return p;
-    };
-
-    if (!examboard) return res.error.html(404, `Exam board '${examboardId}' was not found.`);
-
-    const examProviders = req.store.providersByExamboard(examboard.id);
-    const providers = _.chain(examProviders)
-        .map(inflateQualification)
-        .value();
-    const output = { examboard, providers };
-
-    return res.render('examboard', output);
-});
+    .get('/examboards/:examboard', (req, res) => {
+        const examboardId = req.params.examboard;
+        try {
+            req.db.ExamBoard.findByPk(examboardId, { include: [{ model: req.db.WebResource, as: 'Homepage' }] }).then(
+                examboard => {
+                    if (examboard) {
+                        examboard.getCourses().then(courses => {
+                            const output = { examboard, courses }; //debug providers -> courses
+                            return res.render('examboard', output);
+                        });
+                    } else {
+                        res.error.html(404, `Exam board '${examboardId}' was not found.`);
+                    }
+                }
+            );
+        } catch (error) {
+            res.error.html(500, `Cannot fetch examboards data.`);
+        }
+    });

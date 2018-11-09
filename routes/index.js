@@ -17,4 +17,3 @@ fs.readdirSync(__dirname)
     });
 
 module.exports = rootRouter;
-

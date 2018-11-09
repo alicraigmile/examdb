@@ -1,8 +1,7 @@
 import { Router } from 'express';
+import _ from 'underscore';
 
-
-module.exports = Router({ mergeParams: true })
-.get('/search', async (req, res, next) => {
+module.exports = Router({ mergeParams: true }).get('/search', async (req, res, next) => {
     try {
         // 'query' IS MIGHTY INSECURE!!!
         let query = req.query.q;
@@ -34,7 +33,7 @@ module.exports = Router({ mergeParams: true })
 
         const output = { query, results };
         res.render(template, output);
-    } catch(error) {
-        next(error)
+    } catch (error) {
+        next(error);
     }
 });

@@ -1,4 +1,9 @@
 import { Router } from 'express';
+import parse from 'csv-parse';
+import uuidv1 from 'uuid/v1';
+
+const ddmmyyyy = /^\d{2}\/\d{2}\/\d{4}$/;
+const yyyymmdd = /^\d{4}\/\d{2}\/\d{2}$/;
 
 function _importRecord(record, store) {
     const examboardName = record['Exam board'];
@@ -68,87 +73,85 @@ function _importRecord(record, store) {
     return [null, true];
 }
 
-
 module.exports = Router({ mergeParams: true })
+    .get('/exams.json', (req, res) => {
+        const renderJSONObject = exams => res.json(exams);
+        const renderJsonErrorObject = () => res.error.json(500, 'Cannot fetch exams data.');
 
-.get('/exams.json', (req, res) => {
-    const renderJSONObject = exams => res.json(exams);
-    const renderJsonErrorObject = () => res.error.json(500, 'Cannot fetch exams data.');
+        const exams = req.store.allExams();
 
-    const exams = req.store.allExams();
+        Promise.resolve(exams)
+            .then(renderJSONObject)
+            .catch(renderJsonErrorObject);
+    })
 
-    Promise.resolve(exams)
-        .then(renderJSONObject)
-        .catch(renderJsonErrorObject);
-})
+    .get('/exams', (req, res, next) => {
+        const template = 'examsindex';
+        const renderExamsIndexTemplate = qualifications => res.render(template, { qualifications });
+        const renderErrorTemplate = () => {
+            res.render(template, {});
+        };
+        const qualifications = req.store.allQualifications();
 
-.get('/exams', (req, res, next) => {
-    const template = 'examsindex';
-    const renderExamsIndexTemplate = qualifications => res.render(template, { qualifications });
-    const renderErrorTemplate = () => {
-        res.render(template, {});
-    };
-    const qualifications = req.store.allQualifications();
+        Promise.resolve(qualifications)
+            .then(renderExamsIndexTemplate)
+            .catch(renderErrorTemplate);
 
-    Promise.resolve(qualifications)
-        .then(renderExamsIndexTemplate)
-        .catch(renderErrorTemplate);
+        return next();
+    })
 
-    return next();
-})
+    .get('/exams/import', (req, res) => res.render('import'))
 
-.get('/exams/import', (req, res) => res.render('import'))
+    .post('/exams/upload', (req, res, next) => {
+        const template = 'import';
+        const sumIfTrue = (memo, item) => (item === true ? memo + 1 : memo);
+        const importRecord = record => _importRecord(record, req.store);
 
-.post('/exams/upload', (req, res, next) => {
-    const template = 'import';
-    const sumIfTrue = (memo, item) => (item === true ? memo + 1 : memo);
-    const importRecord = (record) => _importRecord(record, req.store);
+        if (!req.files) return res.error.html(400, 'No files were uploaded.', template);
 
-    if (!req.files) return res.error.html(400, 'No files were uploaded.', template);
+        // The name of the input field is "file"
+        const { file } = req.files.file;
 
-    // The name of the input field is "file"
-    const { file } = req.files.file;
+        if (!file) return res.error.html(422, 'Did you remember to upload the file?', template);
 
-    if (!file) return res.error.html(422, 'Did you remember to upload the file?', template);
+        if (file.mimetype !== 'text/csv') return res.error.html(422, 'Expected mimetype text/csv', template);
 
-    if (file.mimetype !== 'text/csv') return res.error.html(422, 'Expected mimetype text/csv', template);
+        if (file.truncated) return res.error.html(422, 'Too large', template);
 
-    if (file.truncated) return res.error.html(422, 'Too large', template);
+        parse(file.data, { columns: true }, (err, records) => {
+            if (err) return res.error.html(422, "Can't read CSV data", template);
 
-    parse(file.data, { columns: true }, (err, records) => {
-        if (err) return res.error.html(422, "Can't read CSV data", template);
+            const recordsImported = _.chain(records)
+                .map(importRecord) // DEBT needs store and db to work I think
+                .reduce(sumIfTrue)
+                .value();
+            const successMessage = `Upload successful. Imported ${recordsImported} exam records from '${file.name}'.`;
+            return res.error.html(200, successMessage, template);
+        });
+        return next();
+    })
 
-        const recordsImported = _.chain(records)
-            .map(importRecord) // DEBT needs store and db to work I think
-            .reduce(sumIfTrue)
-            .value();
-        const successMessage = `Upload successful. Imported ${recordsImported} exam records from '${file.name}'.`;
-        return res.error.html(200, successMessage, template);
+    .get('/exams/:exam.json', (req, res) => {
+        const examId = req.params.exam;
+        const exam = req.store.exam(examId);
+
+        if (!exam) return res.error.json(404, `The exam '${examId}' was not found.`);
+
+        return res.json(exam);
+    })
+
+    .get('/exams/:exam', (req, res) => {
+        const examId = req.params.exam;
+        const exam = req.store.exam(examId);
+
+        if (!exam) return res.error.html(404, `The exam '${examId}' was not found.`);
+
+        const course = req.store.course(exam.course);
+        const provider = req.store.provider(course.provider);
+        const examboard = req.store.examboard(provider.examboard);
+        const qualification = req.store.qualification(provider.qualification);
+        const programmeOfStudy = req.store.programmeOfStudy(course.programmeofstudy);
+        const output = { exam, course, provider, examboard, qualification, programmeOfStudy };
+
+        return res.render('exam', output);
     });
-    return next();
-})
-
-.get('/exams/:exam.json', (req, res) => {
-    const examId = req.params.exam;
-    const exam = req.store.exam(examId);
-
-    if (!exam) return res.error.json(404, `The exam '${examId}' was not found.`);
-
-    return res.json(exam);
-})
-
-.get('/exams/:exam', (req, res) => {
-    const examId = req.params.exam;
-    const exam = req.store.exam(examId);
-
-    if (!exam) return res.error.html(404, `The exam '${examId}' was not found.`);
-
-    const course = req.store.course(exam.course);
-    const provider = req.store.provider(course.provider);
-    const examboard = req.store.examboard(provider.examboard);
-    const qualification = req.store.qualification(provider.qualification);
-    const programmeOfStudy = req.store.programmeOfStudy(course.programmeofstudy);
-    const output = { exam, course, provider, examboard, qualification, programmeOfStudy };
-
-    return res.render('exam', output);
-});
