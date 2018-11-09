@@ -6,32 +6,49 @@ module.exports = Router({ mergeParams: true })
         try {
             req.db.Qualification.findAll().then(qualifications => res.json(qualifications));
         } catch (error) {
-            res.error.json(500, 'Cannot fetch qualifications data.');
+            res.error.json(500, 'Cannot fetch qualifications data', error);
         }
     })
 
     .get('/qualifications', (req, res) => res.redirect('/'))
 
-    .get('/qualifications/:qualification.json', (req, res) =>
-        res.error.json(501, 'JSON format not yet available. Please contact the developer for more information.')
-    )
+    .get('/qualifications/:qualification.json', (req, res) => {
+        const qualificationId = req.params.qualification;
+        try {
+            req.db.Qualification.findByPk(qualificationId).then(
+                qualification => {
+                    if (qualification) {
+                        qualification.getProgrammeOfStudies().then(programmesofstudy => {
+                            const output = { qualification, programmesofstudy };
+                            res.json(output);
+                        });
+                    } else {
+                        res.error.json(404, `Qualification '${qualificationId}' was not found.`);
+                    }
+                }
+            );
+        } catch (error) {
+            res.error.json(500, `Cannot fetch qualifications data.`);
+        }
+    })
 
     .get('/qualifications/:qualification', (req, res) => {
         const qualificationId = req.params.qualification;
-        const qualification = req.store.qualification(qualificationId);
-        const inflateExamboard = p => {
-            p.e = req.store.examboard(p.examboard);
-            return p;
-        }; // p = 'provider'
-
-        if (!qualification) return res.error.html(404, `Qualification '${qualificationId}' was not found.`);
-
-        const qualificationProviders = req.store.providersOfQualification(qualification.id);
-        const providers = _.chain(qualificationProviders)
-            .clone()
-            .map(inflateExamboard)
-            .value();
-
-        const output = { qualification, providers };
-        return res.render('qualification', output);
+        try {
+            req.db.Qualification.findByPk(qualificationId).then(
+                qualification => {
+                    if (qualification) {
+                        qualification.getProgrammeOfStudies().then(programmesofstudy => {
+                            const output = { qualification, programmesofstudy };
+                            return res.render('qualification', output);
+                        });
+                    } else {
+                        res.error.html(404, `Qualification '${qualificationId}' was not found.`);
+                    }
+                }
+            );
+        } catch (error) {
+            res.error.html(500, `Cannot fetch qualifications data.`);
+        }
     });
+

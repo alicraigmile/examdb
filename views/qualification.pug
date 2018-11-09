@@ -1,9 +1,9 @@
 doctype html
 html
 	head
-		title #{qualification.name} providers | ExamDB
+		title #{qualification.name} programmes of study | ExamDB
 		meta(charset='UTF-8')
-		meta(name='description' content='There are '+ providers.length+' providers (exam boards) offering #{qualification.name} examinations.')
+		meta(name='description' content='There are '+ programmesofstudy.length+' ' + qualification.name + ' programmes of study.')
 		meta(name='viewport' content='width=device-width, initial-scale=1')
 		link(rel='stylesheet' href='/examdb.css')
 		link(rel='alternate' type='application/json' title='JSON format' href='/qualifications/'+qualification.id+'.json')
@@ -14,16 +14,15 @@ html
 					img(src='/examdb.png' width='64' height='64' alt='')
 		
 		section
-			h1 #{qualification.name} providers
+			h1 #{qualification.name} programmes of study
 
-			h2 Pick a provider
 
-			p There are #{providers.length} providers (exam boards) offering #{qualification.name} examinations.
+			p There is/are #{programmesofstudy.length} #{qualification.name} programmes of study.
 
 			ul
-				each provider in providers
+				each programmeofstudy in programmesofstudy
 					li
-						a(href='/pathways/'+provider.id) #{provider.e.name}
+						a(href='/programmesofstudy/'+programmeofstudy.id) #{programmeofstudy.name}
 
 			h2 Download this data
 

@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     );
     Qualification.associate = function(models) {
         // associations can be defined here
+        Qualification.hasMany(models.ProgrammeOfStudy);
     };
     return Qualification;
 };
