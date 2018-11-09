@@ -1,7 +1,7 @@
 doctype html
 html
     head
-        title #{qualification.name} #{examboard.name} | #{programmeofstudy.name} exams | ExamDB
+        title #{qualification.name} #{examboard.name} | #{programmeOfStudy.name} exams | ExamDB
         meta(charset='UTF-8')
         meta(name='description' content='There are ' + exams.length + ' ' + qualification.name + ' ' + course.name + ' examinations set by the '+examboard.name+' exam board.')
         link(rel='stylesheet' href='/examdb.css')
@@ -16,7 +16,7 @@ html
                     img(src='/examdb.png' width='64' height='64' alt='')
 
         section
-            h1 #{qualification.name} #{examboard.name} #{programmeofstudy.name} exams
+            h1 #{qualification.name} #{examboard.name} #{programmeOfStudy.name} exams
 
 
             p There are #{exams.length} #{qualification.name} #{course.name} examinations set by the #{examboard.name} exam board.
@@ -56,7 +56,7 @@ html
                     if programmeofstudy.bitesize
                 
                         li
-                           a(href='https://www.bbc.com/education/subjects/'+programmeofstudy.bitesize)
+                           a(href='https://www.bbc.com/education/subjects/'+programmeOfStudy.bitesize)
                                 img(src='/bbc-bitesize.png' alt='BBC Bitesize revision guides' width='40' height='40')
                                 = ' BBC Bitesize' 
                     else
@@ -66,7 +66,7 @@ html
 
             ul
                 li
-                    a(href='/programmesofstudy/'+programmeofstudy.id) #{programmeofstudy.name} from other exam boards
+                    a(href='/programmesofstudy/'+programmeOfStudy.id) #{programmeOfStudy.name} from other exam boards
                 li
                     a(href='/examboards/'+examboard.id) More subjects from #{examboard.name}
 

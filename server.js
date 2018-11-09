@@ -1,13 +1,40 @@
-#!/usr/bin/env node
+'use strict';
 
-const package = require('./package'),
-      morgan = require('morgan'),
-      port = process.env.PORT || 5000,
-      app = require('./lib/app');
+import app from './lib/app';
+import models from './models';
+import npmPackage from './package';
+import http from 'http';
+import morgan from 'morgan';
+import fs from 'fs';
+import path from 'path';
+      
+const port = process.env.PORT || '5000';
+app.set('port', port);
 
-var logger,
-    server;
+// log only 4xx and 5xx responses to console
+app.use(morgan('dev', {
+  skip: function (req, res) { return res.statusCode < 400 }
+}))
 
-logger = morgan('combined');
-app.use(logger);
-server = app.listen(port, () => console.log(package.name + ' listening on port ' + port +  '!'));
+// log all requests to access.log
+app.use(morgan('common', {
+  stream: fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+}))
+
+const server = http.createServer(app);
+
+// sync() will create all table if they doesn't exist in database
+models.sequelize.sync().then(function () {
+	server.listen(port);
+	server.on('error', onError);
+	server.on('listening', onListening);
+});
+
+
+function onError(error) {
+	console.log(npmPackage.name + ' failed to start listening on port ' + port +  '! - ' + error);
+}
+
+function onListening() {
+	console.log(npmPackage.name + ' listening on port ' + port +  '!');
+}

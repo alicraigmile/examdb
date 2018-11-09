@@ -3,10 +3,10 @@ import { describe, it, xit } from 'mocha';
 import { expect } from 'chai';
 import app from '../lib/app';
 
-describe('Qualification', () => {
-    it('List qualifications in JSON', done => {
+describe('Examboard', () => {
+    it('List examboards in JSON', done => {
         request(app)
-            .get('/qualifications.json')
+            .get('/examboards.json')
             .set('Accept', 'application/json')
             .expect(200)
             .end((err, res) => {
@@ -16,9 +16,9 @@ describe('Qualification', () => {
             });
     });
 
-    xit('List qualifications in HTML', done => {
+    xit('List examboards in HTML', done => {
         request(app)
-            .get('/qualifications/')
+            .get('/examboards/')
             .set('Accept', 'text/html')
             .expect(200)
             .end((err, res) => {
@@ -28,27 +28,21 @@ describe('Qualification', () => {
             });
     });
 
-    it('Programmes of study by qualification JSON', done => {
+    it('Courses by examboards JSON', done => {
         request(app)
-            .get('/qualifications/1.json') // was 'gcse'
+            .get('/examboards/1.json') // changed from 'aqa', when the IDs changed
             .set('Accept', 'application/json')
             .expect(200)
             .end((err, res) => {
                 if (err) return done(err);
-                expect(res.body).to.have.property('qualification');
-                expect(res.body.qualification).to.have.property('id');
-                expect(res.body.qualification.id).to.not.equal(null);
-                expect(res.body.qualification).to.have.property('name');
-                expect(res.body.qualification.name).to.not.equal(null);
-                expect(res.body).to.have.property('programmesofstudy');
-                expect(res.body.exams).to.not.equal(null);
+                expect(res.body).to.not.equal(null);
                 return done();
             });
     });
 
-    it('Programmes of study by qualification in HTML', done => {
+    it('Courses by examboards in HTML', done => {
         request(app)
-            .get('/qualifications/1') // was 'gcse'
+            .get('/examboards/1') // changed from 'aqa', when the IDs changed
             .set('Accept', 'text/html')
             .expect(200)
             .end((err, res) => {
