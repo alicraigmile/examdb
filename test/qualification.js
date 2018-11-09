@@ -28,27 +28,27 @@ describe('Qualification', () => {
             });
     });
 
-    xit('Providers by qualification JSON', done => {
+    it('Programmes of study by qualification JSON', done => {
         request(app)
-            .get('/qualifications/gcse.json')
+            .get('/qualifications/1.json') // was 'gcse'
             .set('Accept', 'application/json')
             .expect(200)
             .end((err, res) => {
                 if (err) return done(err);
                 expect(res.body).to.have.property('qualification');
-                expect(res.body.programmeOfStudy).to.have.property('id');
-                expect(res.body.programmeOfStudy.id).to.not.equal(null);
-                expect(res.body.programmeOfStudy).to.have.property('name');
-                expect(res.body.programmeOfStudy.name).to.not.equal(null);
-                expect(res.body).to.have.property('providers');
+                expect(res.body.qualification).to.have.property('id');
+                expect(res.body.qualification.id).to.not.equal(null);
+                expect(res.body.qualification).to.have.property('name');
+                expect(res.body.qualification.name).to.not.equal(null);
+                expect(res.body).to.have.property('programmesofstudy');
                 expect(res.body.exams).to.not.equal(null);
                 return done();
             });
     });
 
-    it('Providers by qualification in HTML', done => {
+    it('Programmes of study by qualification in HTML', done => {
         request(app)
-            .get('/qualifications/gcse')
+            .get('/qualifications/1') // was 'gcse'
             .set('Accept', 'text/html')
             .expect(200)
             .end((err, res) => {

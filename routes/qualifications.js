@@ -15,18 +15,16 @@ module.exports = Router({ mergeParams: true })
     .get('/qualifications/:qualification.json', (req, res) => {
         const qualificationId = req.params.qualification;
         try {
-            req.db.Qualification.findByPk(qualificationId).then(
-                qualification => {
-                    if (qualification) {
-                        qualification.getProgrammeOfStudies().then(programmesofstudy => {
-                            const output = { qualification, programmesofstudy };
-                            res.json(output);
-                        });
-                    } else {
-                        res.error.json(404, `Qualification '${qualificationId}' was not found.`);
-                    }
+            req.db.Qualification.findByPk(qualificationId).then(qualification => {
+                if (qualification) {
+                    qualification.getProgrammeOfStudies().then(programmesofstudy => {
+                        const output = { qualification, programmesofstudy };
+                        res.json(output);
+                    });
+                } else {
+                    res.error.json(404, `Qualification '${qualificationId}' was not found.`);
                 }
-            );
+            });
         } catch (error) {
             res.error.json(500, `Cannot fetch qualifications data.`);
         }
@@ -35,20 +33,17 @@ module.exports = Router({ mergeParams: true })
     .get('/qualifications/:qualification', (req, res) => {
         const qualificationId = req.params.qualification;
         try {
-            req.db.Qualification.findByPk(qualificationId).then(
-                qualification => {
-                    if (qualification) {
-                        qualification.getProgrammeOfStudies().then(programmesofstudy => {
-                            const output = { qualification, programmesofstudy };
-                            return res.render('qualification', output);
-                        });
-                    } else {
-                        res.error.html(404, `Qualification '${qualificationId}' was not found.`);
-                    }
+            req.db.Qualification.findByPk(qualificationId).then(qualification => {
+                if (qualification) {
+                    qualification.getProgrammeOfStudies().then(programmesofstudy => {
+                        const output = { qualification, programmesofstudy };
+                        return res.render('qualification', output);
+                    });
+                } else {
+                    res.error.html(404, `Qualification '${qualificationId}' was not found.`);
                 }
-            );
+            });
         } catch (error) {
             res.error.html(500, `Cannot fetch qualifications data.`);
         }
     });
-
