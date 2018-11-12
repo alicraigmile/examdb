@@ -12,7 +12,7 @@ module.exports = Router({ mergeParams: true })
 
     .get('/examboards', (req, res) => res.redirect('/'))
 
-    .get('/examboards/:examboard.json', (req, res) => {
+    .get('/examboards/:examboard.json', async (req, res) => {
         const examboardId = req.params.examboard;
         try {
             req.db.ExamBoard.findByPk(examboardId, { include: [{ model: req.db.WebResource, as: 'Homepage' }] }).then(
@@ -32,7 +32,7 @@ module.exports = Router({ mergeParams: true })
         }
     })
 
-    .get('/examboards/:examboard', (req, res) => {
+    .get('/examboards/:examboard', async (req, res) => {
         const examboardId = req.params.examboard;
         try {
             req.db.ExamBoard.findByPk(examboardId, { include: [{ model: req.db.WebResource, as: 'Homepage' }] }).then(

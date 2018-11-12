@@ -3,8 +3,7 @@ module.exports = (sequelize, DataTypes) => {
     const Qualification = sequelize.define(
         'Qualification',
         {
-            name: DataTypes.STRING,
-            unique: true
+            name: { type: DataTypes.STRING, unique: true }
         },
         {}
     );

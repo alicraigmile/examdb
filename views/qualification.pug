@@ -17,7 +17,11 @@ html
 			h1 #{qualification.name} programmes of study
 
 
-			p There is/are #{programmesofstudy.length} #{qualification.name} programmes of study.
+			p There 
+				= programmesofstudy.length==1?' is ':' are '
+				| #{programmesofstudy.length} #{qualification.name}
+				= programmesofstudy.length==1?' programme ':' programmes '
+				| of study.
 
 			ul
 				each programmeofstudy in programmesofstudy

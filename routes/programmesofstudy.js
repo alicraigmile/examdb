@@ -2,10 +2,81 @@ import { Router } from 'express';
 import _ from 'underscore';
 
 module.exports = Router({ mergeParams: true })
-    .get('/programmesofstudy.json', (req, res) => res.json(req.store.allProgrammesOfStudy()))
+    .get('/programmesofstudy.json', async (req, res, next) => {
+        try {
+            req.db.ProgrammeOfStudy.findAll().then(programmesofstudy => res.json(programmesofstudy));
+        } catch (error) {
+            res.error.json(500, 'Cannot fetch programme of study data', error);
+        }
+    })
 
     .get('/programmesofstudy', (req, res) => res.redirect('/'))
 
+    .get('/programmesofstudy/:programmeofstudy.json', (req, res, next) => {
+        const programmeofstudyId = req.params.programmeofstudy;
+        try {
+            req.db.ProgrammeOfStudy.findByPk(programmeofstudyId, {
+                include: [{ model: req.db.Qualification }]
+            }).then(programmeofstudy => {
+                if (programmeofstudy) {
+                    programmeofstudy.getCourses().then(courses => {
+                        var exams =  _.map(courses, async (course) => { await req.db.Course.getExams()}).flatten();
+                        const output = { programmeofstudy, courses, exams }; 
+                        res.json(output);
+                    });
+                } else {
+                    res.error.json(404, `Programme of study '${programmeofstudyId}' was not found.`);
+                }
+            });
+        } catch (error) {
+            res.error.json(500, `Cannot fetch programme of study data.`);
+        }
+    })
+
+      .get('/programmesofstudy/:programmeofstudy.csv', (req, res, next) => {
+        const programmeofstudyId = req.params.programmeofstudy;
+        try {
+            req.db.ProgrammeOfStudy.findByPk(programmeofstudyId, {
+                include: [{ model: req.db.Qualification }]
+            }).then(programmeofstudy => {
+                if (programmeofstudy) {
+                    programmeofstudy.getCourses().then(courses => {
+                        var exams =  _.map(courses, async (course) => { await req.db.Course.getExams()}).flatten();
+                        const output = { programmeofstudy, courses, exams }; 
+                        return res.csv(exams, true);
+                    });
+                } else {
+                    res.error.text(404, `Programme of study '${programmeofstudyId}' was not found.`);
+                }
+            });
+        } catch (error) {
+            res.error.json(500, `Cannot fetch programme of study data.`);
+        }
+    })
+
+    .get('/programmesofstudy/:programmeofstudy',  (req, res, next) => {
+        const programmeofstudyId = req.params.programmeofstudy;
+        try {
+            req.db.ProgrammeOfStudy.findByPk(programmeofstudyId, {
+                include: [{ model: req.db.Qualification }]
+            }).then(programmeofstudy => {
+                if (programmeofstudy) {
+                    programmeofstudy.getCourses().then(courses => {
+                        var exams =  _.map(courses, async (course) => { return await req.db.Course.getExams()}).flatten();
+                        const output = { programmeofstudy, courses, exams }; 
+                        return res.render('programmeofstudy', output);
+                        next();
+                    });
+                } else {
+                    res.error.html(404, `Programme of study '${programmeofstudyId}' was not found.`);
+                }
+            });
+        } catch (error) {
+            res.error.html(500, `Cannot fetch programme of study data.`);
+        }
+    });
+
+/*
     .get('/programmesofstudy/:programmeofstudy.json', (req, res) => {
         const programmeOfStudyId = req.params.programmeofstudy;
         const programmeOfStudy = req.store.programmeOfStudy(programmeOfStudyId);
@@ -67,3 +138,5 @@ module.exports = Router({ mergeParams: true })
 
         return res.render('programmeofstudy', { programmeOfStudy, qualification, courses, exams });
     });
+
+    */

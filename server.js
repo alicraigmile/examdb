@@ -1,7 +1,7 @@
 'use strict';
 
 import app from './lib/app';
-import models from './models';
+import db from './models';
 import npmPackage from './package';
 import http from 'http';
 import morgan from 'morgan';
@@ -24,7 +24,7 @@ app.use(morgan('common', {
 const server = http.createServer(app);
 
 // sync() will create all table if they doesn't exist in database
-models.sequelize.sync().then(function () {
+db.sequelize.sync().then(function () {
 	server.listen(port);
 	server.on('error', onError);
 	server.on('listening', onListening);
@@ -38,3 +38,4 @@ function onError(error) {
 function onListening() {
 	console.log(npmPackage.name + ' listening on port ' + port +  '!');
 }
+

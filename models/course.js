@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         Course.belongsTo(models.ProgrammeOfStudy);
         Course.belongsTo(models.ExamBoard);
         Course.belongsToMany(models.WebResource, { through: 'CourseWebResource' });
+        Course.hasMany(models.Exam);
     };
     return Course;
 };

@@ -1,9 +1,9 @@
 doctype html
 html
     head
-        title #{qualification.name} #{programmeofstudy.name} | ExamDB
+        title #{programmeofstudy.Qualification.name} #{programmeofstudy.name} | ExamDB
         meta(charset='UTF-8')
-        meta(name='description' content='There are #{courses.length} providers (exam boards) for the ' + qualification.name + ' ' + programmeofstudy.name + ' exam.')
+        meta(name='description' content='There are #{courses.length} providers (exam boards) for the ' + programmeofstudy.Qualification.name + ' ' + programmeofstudy.name + ' exam.')
         link(rel='stylesheet' href='/examdb.css')
         link(rel='alternate' type='application/json' title='JSON' href='/programmesofstudy/'+programmeofstudy.id+'.json')
         link(rel='alternate' type='text/csv' title='CSV' href='/programmesofstudy/'+programmeofstudy.id+'.csv')
@@ -17,11 +17,11 @@ html
                     img(src='/examdb.png' width='64' height='64' alt='')
 
         section
-            h1 #{qualification.name} #{programmeofstudy.name} exams
+            h1 #{programmeofstudy.Qualification.name} #{programmeofstudy.name} exams
 
             h2 Exams
 
-            p There are #{exams.length}  #{qualification.name} #{programmeofstudy.name} examinations in the database.
+            p There are #{exams.length}  #{programmeofstudy.Qualification.name} #{programmeofstudy.name} examinations in the database.
 
             table
                 thead
@@ -35,17 +35,18 @@ html
                         th Duration
                 tbody
                     each exam in exams
-                        - var dateSort = exam.date + (exam.timeofday=='Morning' ? 'T0000' : 'T1200')
-                        tr
-                            td
-                                a(href='/courses/'+exam.c.id)= exam.e.name
-                            td= exam.code
-                            td
-                                a(href='/exams/'+exam.id)= exam.paper
-                            td= exam.notes
-                            td(data-sort-value=dateSort)= exam.date
-                            td= exam.timeofday
-                            td= exam.duration
+                        if exam.date
+                            - var dateSort = exam.date + (exam.timeofday=='Morning' ? 'T0000' : 'T1200')
+                            tr
+                                td
+                                    a(href='/courses/'+exam.c.id)= exam.e.name
+                                td= exam.code
+                                td
+                                    a(href='/exams/'+exam.id)= exam.paper
+                                td= exam.notes
+                                td(data-sort-value=dateSort)= exam.date
+                                td= exam.timeofday
+                                td= exam.duration
 
             h2 Revison guides
             ul(class='revision-guides')
@@ -59,12 +60,14 @@ html
 
             h2 About the exam providers
 
-            p There are #{courses.length} providers (exam boards) of the #{qualification.name} #{programmeofstudy.name} exam.
+            p There are #{courses.length} providers (exam boards) of the #{programmeofstudy.Qualification.name} #{programmeofstudy.name} exam.
 
-            ul
-                each course in courses
-                    li
-                        a(href='/courses/'+course.id) #{course.e.name}
+            if courses
+                ul
+                    each course in courses
+                        if course.id
+                            li
+                                a(href='/courses/'+course.id) #{course.name}
 
             h2 Download this data
 

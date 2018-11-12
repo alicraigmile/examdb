@@ -3,8 +3,7 @@ module.exports = (sequelize, DataTypes) => {
     const ExamBoard = sequelize.define(
         'ExamBoard',
         {
-            name: DataTypes.STRING,
-            unique: true
+            name: { type: DataTypes.STRING, unique: true }
         },
         {}
     );

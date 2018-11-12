@@ -74,29 +74,24 @@ function _importRecord(record, store) {
 }
 
 module.exports = Router({ mergeParams: true })
-    .get('/exams.json', (req, res) => {
-        const renderJSONObject = exams => res.json(exams);
-        const renderJsonErrorObject = () => res.error.json(500, 'Cannot fetch exams data.');
-
-        const exams = req.store.allExams();
-
-        Promise.resolve(exams)
-            .then(renderJSONObject)
-            .catch(renderJsonErrorObject);
+    .get('/exams.json', async (req, res, next) => {
+        try {
+            const exams = await req.db.Exam.findAll();
+            res.json(exams);
+        } catch(error) {
+            res.error.json(500, 'Cannot fetch exams data.');
+        }
+        return next();
     })
 
-    .get('/exams', (req, res, next) => {
+    .get('/exams', async(req, res, next) => {
         const template = 'examsindex';
-        const renderExamsIndexTemplate = qualifications => res.render(template, { qualifications });
-        const renderErrorTemplate = () => {
+        try {
+            const qualifications = await req.db.Qualification.findAll();
+            res.render(template, { qualifications });
+        } catch(error) {
             res.render(template, {});
-        };
-        const qualifications = req.store.allQualifications();
-
-        Promise.resolve(qualifications)
-            .then(renderExamsIndexTemplate)
-            .catch(renderErrorTemplate);
-
+        }
         return next();
     })
 
@@ -131,13 +126,39 @@ module.exports = Router({ mergeParams: true })
         return next();
     })
 
-    .get('/exams/:exam.json', (req, res) => {
+    .get('/exams/:exam.json', async (req, res, next) => {
         const examId = req.params.exam;
-        const exam = req.store.exam(examId);
 
-        if (!exam) return res.error.json(404, `The exam '${examId}' was not found.`);
+        try {
+            const exam = await req.db.Exam.findByPk(examId);
+            if (exam) { 
+                return res.json(exam)
+            } else {
+                return res.error.json(404, `Exam '${examId}' not found.`); 
+            }
+        } catch(error) {
+            return res.error.json(500, 'Cannot fetch exam.');
+        }
+        
+        return next();
+    })
 
-        return res.json(exam);
+
+    .get('/exams/:exam', async (req, res, next) => {
+        const examId = req.params.exam;
+
+        try {
+            const exam = await req.db.Exam.findByPk(examId);
+            if (exam) { 
+                return res.json(exam)
+            } else {
+                return res.error.json(404, `Exam '${examId}' not found.`); 
+            }
+        } catch(error) {
+            return res.error.json(500, 'Cannot fetch exam.');
+        }
+        
+        return next();
     })
 
     .get('/exams/:exam', (req, res) => {

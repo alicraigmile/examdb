@@ -1,9 +1,9 @@
 doctype html
 html
     head
-        title #{qualification.name} #{examboard.name} | #{programmeOfStudy.name} exams | ExamDB
+        title #{course.ExamBoard.name} | #{course.ProgrammeOfStudy.name} exams | ExamDB
         meta(charset='UTF-8')
-        meta(name='description' content='There are ' + exams.length + ' ' + qualification.name + ' ' + course.name + ' examinations set by the '+examboard.name+' exam board.')
+        meta(name='description' content='There are ' + exams.length + ' ' + course.name + ' examinations set by the '+course.ExamBoard.name+' exam board.')
         link(rel='stylesheet' href='/examdb.css')
         link(rel='alternate' type='application/json' title='JSON' href='/courses/'+course.id+'.json')
         meta(name='viewport' content='width=device-width, initial-scale=1')
@@ -16,10 +16,10 @@ html
                     img(src='/examdb.png' width='64' height='64' alt='')
 
         section
-            h1 #{qualification.name} #{examboard.name} #{programmeOfStudy.name} exams
+            h1 #{course.name} exams
 
 
-            p There are #{exams.length} #{qualification.name} #{course.name} examinations set by the #{examboard.name} exam board.
+            p There are #{exams.length} #{course.name} examinations.
 
             table
                 thead
@@ -53,10 +53,10 @@ html
                             = ' BBC Bitesize' 
 
                 else
-                    if programmeofstudy.bitesize
+                    if course.ProgrammeOfStudy.bitesize
                 
                         li
-                           a(href='https://www.bbc.com/education/subjects/'+programmeOfStudy.bitesize)
+                           a(href='https://www.bbc.com/education/subjects/'+course.ProgrammeOfStudy.bitesize)
                                 img(src='/bbc-bitesize.png' alt='BBC Bitesize revision guides' width='40' height='40')
                                 = ' BBC Bitesize' 
                     else
@@ -66,9 +66,9 @@ html
 
             ul
                 li
-                    a(href='/programmesofstudy/'+programmeOfStudy.id) #{programmeOfStudy.name} from other exam boards
+                    a(href='/programmesofstudy/'+course.ProgrammeOfStudy.id) #{course.ProgrammeOfStudy.name} from other exam boards
                 li
-                    a(href='/examboards/'+examboard.id) More subjects from #{examboard.name}
+                    a(href='/examboards/'+course.ExamBoard.id) More subjects from #{course.ExamBoard.name}
 
             h2 Download this data
 
