@@ -20,8 +20,10 @@ module.exports = Router({ mergeParams: true })
             }).then(programmeofstudy => {
                 if (programmeofstudy) {
                     programmeofstudy.getCourses().then(courses => {
-                        var exams =  _.map(courses, async (course) => { await req.db.Course.getExams()}).flatten();
-                        const output = { programmeofstudy, courses, exams }; 
+                        var exams = _.map(courses, async course => {
+                            await req.db.Course.getExams();
+                        }).flatten();
+                        const output = { programmeofstudy, courses, exams };
                         res.json(output);
                     });
                 } else {
@@ -33,7 +35,7 @@ module.exports = Router({ mergeParams: true })
         }
     })
 
-      .get('/programmesofstudy/:programmeofstudy.csv', (req, res, next) => {
+    .get('/programmesofstudy/:programmeofstudy.csv', (req, res, next) => {
         const programmeofstudyId = req.params.programmeofstudy;
         try {
             req.db.ProgrammeOfStudy.findByPk(programmeofstudyId, {
@@ -41,8 +43,10 @@ module.exports = Router({ mergeParams: true })
             }).then(programmeofstudy => {
                 if (programmeofstudy) {
                     programmeofstudy.getCourses().then(courses => {
-                        var exams =  _.map(courses, async (course) => { await req.db.Course.getExams()}).flatten();
-                        const output = { programmeofstudy, courses, exams }; 
+                        var exams = _.map(courses, async course => {
+                            await req.db.Course.getExams();
+                        }).flatten();
+                        const output = { programmeofstudy, courses, exams };
                         return res.csv(exams, true);
                     });
                 } else {
@@ -54,7 +58,7 @@ module.exports = Router({ mergeParams: true })
         }
     })
 
-    .get('/programmesofstudy/:programmeofstudy',  (req, res, next) => {
+    .get('/programmesofstudy/:programmeofstudy', (req, res, next) => {
         const programmeofstudyId = req.params.programmeofstudy;
         try {
             req.db.ProgrammeOfStudy.findByPk(programmeofstudyId, {
@@ -62,8 +66,10 @@ module.exports = Router({ mergeParams: true })
             }).then(programmeofstudy => {
                 if (programmeofstudy) {
                     programmeofstudy.getCourses().then(courses => {
-                        var exams =  _.map(courses, async (course) => { return await req.db.Course.getExams()}).flatten();
-                        const output = { programmeofstudy, courses, exams }; 
+                        var exams = _.map(courses, async course => {
+                            return await req.db.Course.getExams();
+                        }).flatten();
+                        const output = { programmeofstudy, courses, exams };
                         return res.render('programmeofstudy', output);
                         next();
                     });

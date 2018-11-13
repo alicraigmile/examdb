@@ -78,18 +78,18 @@ module.exports = Router({ mergeParams: true })
         try {
             const exams = await req.db.Exam.findAll();
             res.json(exams);
-        } catch(error) {
+        } catch (error) {
             res.error.json(500, 'Cannot fetch exams data.');
         }
         return next();
     })
 
-    .get('/exams', async(req, res, next) => {
+    .get('/exams', async (req, res, next) => {
         const template = 'examsindex';
         try {
             const qualifications = await req.db.Qualification.findAll();
             res.render(template, { qualifications });
-        } catch(error) {
+        } catch (error) {
             res.render(template, {});
         }
         return next();
@@ -131,33 +131,32 @@ module.exports = Router({ mergeParams: true })
 
         try {
             const exam = await req.db.Exam.findByPk(examId);
-            if (exam) { 
-                return res.json(exam)
+            if (exam) {
+                return res.json(exam);
             } else {
-                return res.error.json(404, `Exam '${examId}' not found.`); 
+                return res.error.json(404, `Exam '${examId}' not found.`);
             }
-        } catch(error) {
+        } catch (error) {
             return res.error.json(500, 'Cannot fetch exam.');
         }
-        
+
         return next();
     })
-
 
     .get('/exams/:exam', async (req, res, next) => {
         const examId = req.params.exam;
 
         try {
             const exam = await req.db.Exam.findByPk(examId);
-            if (exam) { 
-                return res.json(exam)
+            if (exam) {
+                return res.json(exam);
             } else {
-                return res.error.json(404, `Exam '${examId}' not found.`); 
+                return res.error.json(404, `Exam '${examId}' not found.`);
             }
-        } catch(error) {
+        } catch (error) {
             return res.error.json(500, 'Cannot fetch exam.');
         }
-        
+
         return next();
     })
 
