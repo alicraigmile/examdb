@@ -2,7 +2,7 @@
   "name": "examdb",
   "version": "1.7.2",
   "description": "A database of UK school examinations",
-  "main": "server.js",
+  "main": "src/server.js",
   "scripts": {
     "prelint": "npm run prettier",
     "deploy:prod": "npm run test && npm run version:patch && npm run push && npm run launch",
@@ -16,7 +16,7 @@
     "push:git": "git push -u --tags origin HEAD:master",
     "push:heroku": "git push heroku master",
     "launch": "open http://examdb.herokuapp.com",
-    "start": "node --require babel-core/register  --require babel-polyfill server.js",
+    "start": "node --require babel-core/register  --require babel-polyfill src/server.js",
     "test": "npm run lint && npm run test:unit",
     "test:unit": "mocha --require babel-core/register --require babel-polyfill  test/",
     "changelog": "LASTTAG=`git describe --tags --abbrev=0`; echo \"======= Changes since last tag ($LASTTAG) =======\"; git log $LASTTAG..HEAD --oneline"
