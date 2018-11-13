@@ -5,7 +5,7 @@ import 'csv-express';
 import expressError from './express-error';
 import Store from './memorystore'; // depricated
 import db from '../models';
-import routes from '../routes';
+import routes from './routes';
 
 const app = express();
 const store = new Store(); // instance
