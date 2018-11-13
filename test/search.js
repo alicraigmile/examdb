@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
-import app from '../lib/app';
+import app from '../src/app';
 
 describe('Search', () => {
     it('Search by Subject', done => {

@@ -1,6 +1,6 @@
 'use strict';
 
-import app from './lib/app';
+import app from './src/app';
 import db from './models';
 import npmPackage from './package';
 import http from 'http';
