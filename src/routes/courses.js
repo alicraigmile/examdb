@@ -12,7 +12,7 @@ const router = Router({ mergeParams: true })
 
     .get('/courses', (req, res) => res.redirect('/'))
 
-    .get('/courses/:course.json', (req, res, next) => {
+    .get('/courses/:course.json', (req, res) => {
         const courseId = req.params.course;
         try {
             req.db.Course.findByPk(courseId, {
@@ -30,7 +30,6 @@ const router = Router({ mergeParams: true })
         } catch (error) {
             res.error.json(500, `Cannot fetch course data.`);
         }
-        next();
     })
 
     /*
@@ -43,7 +42,7 @@ const router = Router({ mergeParams: true })
         const output = { course, exams, provider, examboard, qualification, programmeOfStudy };
 */
 
-    .get('/courses/:course', (req, res, next) => {
+    .get('/courses/:course', (req, res) => {
         const courseId = req.params.course;
         try {
             req.db.Course.findByPk(courseId, {
@@ -52,7 +51,7 @@ const router = Router({ mergeParams: true })
                 if (course) {
                     course.getExams().then(exams => {
                         const output = { course, exams };
-                        return res.render('course', output);
+                        res.render('course', output);
                     });
                 } else {
                     res.error.html(404, `Course '${courseId}' was not found.`);
@@ -61,7 +60,6 @@ const router = Router({ mergeParams: true })
         } catch (error) {
             res.error.html(500, `Cannot fetch course data.`);
         }
-        return next();
     });
 
 export default router;
