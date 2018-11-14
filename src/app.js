@@ -28,6 +28,7 @@ app.use('/', routes);
 
 // Log errors to console + display a nice message to the audience
 app.use((err, req, res, next) => {
+    // eslint-disable-next-line no-console
     console.error(err);
     res.send('internal server error');
     next();

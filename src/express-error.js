@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const ErrorCodes = {
     200: 'Ok',
     400: 'Unacceptable',

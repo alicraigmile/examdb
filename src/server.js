@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import path from 'path';
 import http from 'http';
 import morgan from 'morgan';
