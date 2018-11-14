@@ -1,5 +1,5 @@
-'use strict';
-module.exports = (sequelize, DataTypes) => {
+
+const model = (sequelize, DataTypes) => {
     const Course = sequelize.define(
         'Course',
         {
@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         {}
     );
-    Course.associate = function(models) {
+    Course.associate = (models) => {
         // associations can be defined here
         Course.belongsTo(models.ProgrammeOfStudy);
         Course.belongsTo(models.ExamBoard);
@@ -16,3 +16,5 @@ module.exports = (sequelize, DataTypes) => {
     };
     return Course;
 };
+
+export default model;
