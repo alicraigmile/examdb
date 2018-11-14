@@ -1,1 +1,1 @@
-web: node server.js
+web: node --require babel-core/register  --require babel-polyfill src/server.js
