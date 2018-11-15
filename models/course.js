@@ -1,4 +1,3 @@
-
 const model = (sequelize, DataTypes) => {
     const Course = sequelize.define(
         'Course',
@@ -7,7 +6,7 @@ const model = (sequelize, DataTypes) => {
         },
         {}
     );
-    Course.associate = (models) => {
+    Course.associate = models => {
         // associations can be defined here
         Course.belongsTo(models.ProgrammeOfStudy);
         Course.belongsTo(models.ExamBoard);

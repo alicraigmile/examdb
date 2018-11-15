@@ -22,21 +22,13 @@ const findProgrammesOfStudy = query =>
         tag('ProgrammeOfStudy')
     );
 const findQualifications = query =>
-    db.Qualification.findAll({ raw: true, where: { name: { [Op.like]: `%${query}%` } } }).then(
-        tag('Qualification')
-    );
+    db.Qualification.findAll({ raw: true, where: { name: { [Op.like]: `%${query}%` } } }).then(tag('Qualification'));
 const findExamboards = query =>
-    db.ExamBoard.findAll({ raw: true, where: { name: { [Op.like]: `%${query}%` } } }).then(
-        tag('ExamBoard')
-    );
+    db.ExamBoard.findAll({ raw: true, where: { name: { [Op.like]: `%${query}%` } } }).then(tag('ExamBoard'));
 const findCourses = query =>
-    db.Course.findAll({ raw: true, where: { name: { [Op.like]: `%${query}%` } } }).then(
-        tag('Course')
-    );
+    db.Course.findAll({ raw: true, where: { name: { [Op.like]: `%${query}%` } } }).then(tag('Course'));
 const findExams = query =>
-    db.Exam.findAll({ raw: true, where: { paper: { [Op.like]: `%${query}%` } } }).then(
-        tag('Exam')
-    );
+    db.Exam.findAll({ raw: true, where: { paper: { [Op.like]: `%${query}%` } } }).then(tag('Exam'));
 const searchFor = rawQuery => {
     let query = rawQuery;
     if (!query) return Promise.reject(new Error('no-query'));
@@ -60,7 +52,7 @@ const searchFor = rawQuery => {
         findExamboards(query),
         findCourses(query),
         findExams(query)
-    ]).then (_.flatten);
+    ]).then(_.flatten);
 };
 
 const router = Router({ mergeParams: true })

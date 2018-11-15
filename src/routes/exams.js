@@ -7,14 +7,13 @@ const ddmmyyyy = /^\d{2}\/\d{2}\/\d{4}$/;
 const yyyymmdd = /^\d{4}\/\d{2}\/\d{2}$/;
 
 const throwError = (code, errorMessage) => error => {
-    if (!error) error = new Error(errorMessage || 'Software error (no detail)')
+    if (!error) error = new Error(errorMessage || 'Software error (no detail)');
     if (!code) code = 500;
     error.code = code;
-    throw error
-}
+    throw error;
+};
 
 const importARecord = async (record, db) => {
-
     const examboardName = record['Exam board'];
     const qualificationName = record.Qualification;
     const courseNameRaw = record.Course;
@@ -37,62 +36,54 @@ const importARecord = async (record, db) => {
     }
 
     try {
-
-        let examBoard = await db.ExamBoard
-            .findAll({ limit: 1, where: { name: examboardName } })
-            .catch(
-                throwError(500, 'ExamBoard Database error.')
-            );
+        let examBoard = await db.ExamBoard.findAll({ limit: 1, where: { name: examboardName } }).catch(
+            throwError(500, 'ExamBoard Database error.')
+        );
 
         if (!examBoard) {
-            examBoard = await db.ExamBoard
-                .build({ name: examboardName })
-                .save();
+            examBoard = await db.ExamBoard.build({ name: examboardName }).save();
         }
 
-        let qualification = await db.Qualification
-            .findAll({ limit: 1, where: { name: qualificationName, } })
-            .catch(
-                throwError(500, 'Qualifications Database error.')
-            );
+        let qualification = await db.Qualification.findAll({ limit: 1, where: { name: qualificationName } }).catch(
+            throwError(500, 'Qualifications Database error.')
+        );
 
         if (!qualification) {
-            qualification = await db.Qualification
-                .build({ name: qualificationName })
-                .save();
+            qualification = await db.Qualification.build({ name: qualificationName }).save();
         }
 
         console.log(qualification);
 
-        const programmeOfStudy = await db.ProgrammeOfStudy
-            .build({ name: courseName, qualificationId: qualification.id })
-            .save();
+        const programmeOfStudy = await db.ProgrammeOfStudy.build({
+            name: courseName,
+            qualificationId: qualification.id
+        }).save();
 
-        const course = await db.Course
-            .build({ name: courseName, programmeOfStudyId: programmeOfStudy.id, ExamBoardId: examBoard.id })
-            .save();
+        const course = await db.Course.build({
+            name: courseName,
+            programmeOfStudyId: programmeOfStudy.id,
+            ExamBoardId: examBoard.id
+        }).save();
 
-        await db.Exam
-            .build({
-                code: examCode,
-                paper: examPaper,
-                notes: examNotes,
-                date: examDate,
-                timeOfDay: examTimeOfDay,
-                duration: examDuration,
-                CourseId: course.id
-            })
-            .save();
+        await db.Exam.build({
+            code: examCode,
+            paper: examPaper,
+            notes: examNotes,
+            date: examDate,
+            timeOfDay: examTimeOfDay,
+            duration: examDuration,
+            CourseId: course.id
+        }).save();
 
-            console.log('about to return success after insert exam....');
-            // err, success
+        console.log('about to return success after insert exam....');
+        // err, success
         return [null, true];
     } catch (error) {
         console.log('try/catch caught....');
         console.log(error);
         return [error];
     }
-}
+};
 
 const router = Router({ mergeParams: true })
     .get('/exams.json', async (req, res, next) => {
