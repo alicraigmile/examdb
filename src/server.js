@@ -33,11 +33,7 @@ app.use(
     })
 );
 
-const server = http.createServer(app);
-
-// sync() will create all table if they doesn't exist in database
-db.sequelize.sync().then(() => {
-    server.listen(port);
-    server.on('error', onError);
-    server.on('listening', onListening);
-});
+http.createServer(app)
+    .listen(port)
+    .on('error', onError)
+    .on('listening', onListening);
