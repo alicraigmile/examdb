@@ -106,7 +106,7 @@ const router = Router({ mergeParams: true })
         if (!req.files) return res.error.html(400, 'No files were uploaded.', template);
 
         // The name of the input field is "file"
-        const { file } = req.files.file;
+        const { file } = req.files;
 
         if (!file) return res.error.html(422, 'Did you remember to upload the file?', template);
 
