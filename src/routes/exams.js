@@ -8,6 +8,7 @@ const yyyymmdd = /^\d{4}\/\d{2}\/\d{2}$/;
 const throwError = (code, errorMessage) => error => {
     const defaultErrorMessage = 'Software error';
     const defaultErrorCode = 500;
+    console.log(error.message);
     const e = error || new Error(errorMessage || defaultErrorMessage);
     e.code = code || defaultErrorCode;
     throw e;
@@ -35,49 +36,46 @@ const importARecord = async (record, db) => {
         examDate = examDate.replace(/\//, '-');
     }
 
-    try {
-        let examBoard = await db.ExamBoard.findAll({ limit: 1, where: { name: examboardName } }).catch(
-            throwError(500, 'ExamBoard Database error.')
-        );
+    let examBoard = await db.ExamBoard.findAll({ limit: 1, where: { name: examboardName } }).catch(
+        throwError(500, 'ExamBoard Database error.')
+    );
 
-        if (!examBoard) {
-            examBoard = await db.ExamBoard.build({ name: examboardName }).save();
-        }
-
-        let qualification = await db.Qualification.findAll({ limit: 1, where: { name: qualificationName } }).catch(
-            throwError(500, 'Qualifications Database error.')
-        );
-
-        if (!qualification) {
-            qualification = await db.Qualification.build({ name: qualificationName }).save();
-        }
-
-        const programmeOfStudy = await db.ProgrammeOfStudy.build({
-            name: courseName,
-            qualificationId: qualification.id
-        }).save();
-
-        const course = await db.Course.build({
-            name: courseName,
-            programmeOfStudyId: programmeOfStudy.id,
-            ExamBoardId: examBoard.id
-        }).save();
-
-        await db.Exam.build({
-            code: examCode,
-            paper: examPaper,
-            notes: examNotes,
-            date: examDate,
-            timeOfDay: examTimeOfDay,
-            duration: examDuration,
-            CourseId: course.id
-        }).save();
-
-        // err, success
-        return [null, true];
-    } catch (error) {
-        return [error];
+    if (!examBoard) {
+        examBoard = await db.ExamBoard.build({ name: examboardName }).save();
     }
+
+    
+
+    let qualification = await db.Qualification.findAll({ limit: 1, where: { name: qualificationName } }).catch(
+        throwError(500, 'Qualifications Database error.')
+    );
+
+    if (!qualification) {
+        qualification = await db.Qualification.build({ name: qualificationName }).save();
+    }
+
+    const programmeOfStudy = await db.ProgrammeOfStudy.build({
+        name: courseName,
+        qualificationId: qualification.id
+    }).save();
+
+    const course = await db.Course.build({
+        name: courseName,
+        programmeOfStudyId: programmeOfStudy.id,
+        ExamBoardId: examBoard.id
+    }).save();
+
+    await db.Exam.build({
+        code: examCode,
+        paper: examPaper,
+        notes: examNotes,
+        date: examDate,
+        timeOfDay: examTimeOfDay,
+        duration: examDuration,
+        CourseId: course.id
+    }).save();
+
+
 };
 
 const router = Router({ mergeParams: true })
@@ -120,17 +118,27 @@ const router = Router({ mergeParams: true })
 
         if (file.truncated) return res.error.html(422, 'Too large', template);
 
-        parse(file.data, { columns: true }, (err, records) => {
-            if (err) return res.error.html(422, "Can't read CSV data", template);
+        try {
 
-            const recordsImported = _.chain(records)
-                .map(importRecord)
-                .reduce(sumIfTrue)
-                .value();
-            const successMessage = `Upload successful. Imported ${recordsImported} exam records from '${file.name}'.`;
-            return res.error.html(200, successMessage, template);
-        });
-        return next();
+            parse(file.data, { columns: true }, (err, records) => {
+                if (err) return res.error.html(422, "Can't read CSV data", template);
+
+                Promise.all(records.map(importRecord)).then( () => {
+                    const successMessage = `Upload successful. Imported 'x' exam records from '${file.name}'.`;
+                    return res.error.html(200, successMessage, template);                    
+                });
+                /*
+                const recordsImported = _.chain(records)
+                    .map(importRecord)
+                    .reduce(sumIfTrue)
+                    .value();
+                const successMessage = `Upload successful. Imported ${recordsImported} exam records from '${file.name}'.`;
+                return res.error.html(200, successMessage, template);
+                */
+            });
+        } catch(error) {
+            next();
+        }
     })
 
     .get('/exams/:exam.json', async (req, res) => {
