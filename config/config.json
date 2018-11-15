@@ -5,7 +5,7 @@
     "database": "database_development",
     "host": "127.0.0.1",
     "dialect": "sqlite",
-    "storage": "./db2.sqlite"
+    "storage": "./examdb-dev.db"
   },
   "test": {
     "username": "root",

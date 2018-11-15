@@ -6,72 +6,92 @@ import uuidv1 from 'uuid/v1';
 const ddmmyyyy = /^\d{2}\/\d{2}\/\d{4}$/;
 const yyyymmdd = /^\d{4}\/\d{2}\/\d{2}$/;
 
-function importARecord(record, store) {
+const throwError = (code, errorMessage) => error => {
+    if (!error) error = new Error(errorMessage || 'Software error (no detail)')
+    if (!code) code = 500;
+    error.code = code;
+    throw error
+}
+
+const importARecord = async (record, db) => {
+
     const examboardName = record['Exam board'];
-    const examboardId = examboardName.toLowerCase();
-    store.addExamboard({ id: examboardId, name: examboardName });
-
     const qualificationName = record.Qualification;
-    const qualificationId = qualificationName.toLowerCase().replace(/[^a-z0-9]/gi, '-');
-    store.addQualification({ id: qualificationId, name: qualificationName });
-
-    const providerId = `${qualificationId}-${examboardId}`;
-    store.addProvider({ id: providerId, qualification: qualificationId, examboard: examboardId });
-
     const courseNameRaw = record.Course;
     const courseName = courseNameRaw.replace(/\n/g, ' ');
-    const courseStub = courseNameRaw.toLowerCase().replace(/[^a-z0-9]/gi, '-');
-    const courseId = `${qualificationId}-${examboardId}-${courseStub}`;
-    const programmeofstudyId = `${qualificationId}-${courseStub}`;
-    const bitesizePosId = record.POS;
-    const bitesizeExamspecId = record['Exam spec'];
-
-    store.addProgrammeOfStudy({
-        id: programmeofstudyId,
-        name: courseName,
-        qualification: qualificationId,
-        bitesize: bitesizePosId
-    });
-
-    store.addCourse({
-        id: courseId,
-        provider: providerId,
-        programmeofstudy: programmeofstudyId,
-        bitesize: bitesizeExamspecId
-    });
-
-    const examId = uuidv1();
     const examCode = record.Code;
     const examPaper = record.Paper;
     const examNotes = record.Notes;
-    let examDate = record.Date;
     const examTimeOfDay = record['Morning/Afternoon'];
     const examDuration = record.Duration;
 
+    let examDate = record.Date;
     if (examDate.match(ddmmyyyy)) {
         examDate = examDate
             .split('/')
             .reverse()
             .join('-');
     }
-
     if (examDate.match(yyyymmdd)) {
         examDate = examDate.replace(/\//, '-');
     }
 
-    store.addExam({
-        id: examId,
-        course: courseId,
-        code: examCode,
-        paper: examPaper,
-        notes: examNotes,
-        date: examDate,
-        timeOfDay: examTimeOfDay,
-        duration: examDuration
-    });
+    try {
 
-    // err, success
-    return [null, true];
+        let examBoard = await db.ExamBoard
+            .findAll({ limit: 1, where: { name: examboardName } })
+            .catch(
+                throwError(500, 'ExamBoard Database error.')
+            );
+
+        if (!examBoard) {
+            examBoard = await db.ExamBoard
+                .build({ name: examboardName })
+                .save();
+        }
+
+        let qualification = await db.Qualification
+            .findAll({ limit: 1, where: { name: qualificationName, } })
+            .catch(
+                throwError(500, 'Qualifications Database error.')
+            );
+
+        if (!qualification) {
+            qualification = await db.Qualification
+                .build({ name: qualificationName })
+                .save();
+        }
+
+        console.log(qualification);
+
+        const programmeOfStudy = await db.ProgrammeOfStudy
+            .build({ name: courseName, qualificationId: qualification.id })
+            .save();
+
+        const course = await db.Course
+            .build({ name: courseName, programmeOfStudyId: programmeOfStudy.id, ExamBoardId: examBoard.id })
+            .save();
+
+        await db.Exam
+            .build({
+                code: examCode,
+                paper: examPaper,
+                notes: examNotes,
+                date: examDate,
+                timeOfDay: examTimeOfDay,
+                duration: examDuration,
+                CourseId: course.id
+            })
+            .save();
+
+            console.log('about to return success after insert exam....');
+            // err, success
+        return [null, true];
+    } catch (error) {
+        console.log('try/catch caught....');
+        console.log(error);
+        return [error];
+    }
 }
 
 const router = Router({ mergeParams: true })
@@ -98,10 +118,10 @@ const router = Router({ mergeParams: true })
 
     .get('/exams/import', (req, res) => res.render('import'))
 
-    .post('/exams/upload', (req, res, next) => {
+    .post('/exams/upload', async (req, res, next) => {
         const template = 'import';
         const sumIfTrue = (memo, item) => (item === true ? memo + 1 : memo);
-        const importRecord = record => importARecord(record, req.store);
+        const importRecord = record => importARecord(record, req.db);
 
         if (!req.files) return res.error.html(400, 'No files were uploaded.', template);
 
