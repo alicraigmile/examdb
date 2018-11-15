@@ -1,7 +1,7 @@
 doctype html
 html
     head
-        title #{course.ExamBoard.name} exams | ExamDB
+        title #{course.name} exams | ExamDB
         meta(charset='UTF-8')
         meta(name='description' content='There are ' + exams.length + ' ' + course.name + ' examinations set by the '+course.ExamBoard.name+' exam board.')
         link(rel='stylesheet' href='/examdb.css')
@@ -19,7 +19,7 @@ html
             h1 #{course.name} exams
 
 
-            p There are #{exams.length} #{course.name} examinations.
+            p There are #{exams.length} #{course.name} exams.
 
             table
                 thead

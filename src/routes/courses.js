@@ -1,6 +1,23 @@
 import { Router } from 'express';
 
 
+
+const throwError = (code, errorMessage) => error => {
+    if (!error) error = new Error(errorMessage || 'Software error (no detail)')
+    if (!code) code = 500;
+    error.code = code;
+    throw error
+}
+const throwIf = (fn, code, errorMessage) => result => {
+    if (fn(result)) {
+        console.log('throwIf true');
+        console.log(errorMessage);
+        return throwError(code, errorMessage)()
+    }
+    return result
+}
+
+
 const getExams = course => course.getExams();
 
 const router = Router({ mergeParams: true })
@@ -15,58 +32,55 @@ const router = Router({ mergeParams: true })
 
     .get('/courses', (req, res) => res.redirect('/'))
 
-    .get('/courses/:course.json', (req, res, next) => {
+    .get('/courses/:course.json', async (req, res, next) => {
         const courseId = req.params.course;
         try {
-            req.db.Course
-                .findByPk(courseId, {include: [{ model: req.db.ProgrammeOfStudy }, { model: req.db.ExamBoard }] })
-                .then(course => {console.log(course); return course;})
-                .then(course => {
-                    console.log(course);
-                    course.getExams().then(exams => {
-                        const output = { course, exams };
-                        res.json(output);
-                    });
-                })
-                .catch(error => res.error.json(404, `Course '${courseId}' was not found. ${error}`))
-                .finally(next);
+            const course = await req.db.Course
+                .findByPk(courseId, {rejectOnEmpty: true, include: [{ model: req.db.ProgrammeOfStudy }, { model: req.db.ExamBoard }] })
+                .then(
+                    throwIf(r => !r, 404, `Course '${courseId}' was not found.`),
+                    throwError(500, 'Course database error.')
+                );
+            
+            const exams = await course.getExams()
+                .catch(throwError(400, 'Exam database error.'));
+
+            const output = { course, exams };
+            res.json(output);
+
         } catch (error) {
-            console.log(error);
-            res.error.json(500, `Cannot fetch course data.`);
-            next();
+            if (error.code) {
+                res.error.json(error.code, error.message);                
+            } else {
+                next(error);
+            }
         }
     })
 
-/*
-  const courseExams = req.store.examsForCourse(course.id);
-    const provider = req.store.provider(course.provider);
-    const examboard = req.store.examboard(provider.examboard);
-    const qualification = req.store.qualification(provider.qualification);
-    const programmeOfStudy = req.store.programmeOfStudy(course.programmeofstudy);
-    const exams = _.sortBy(courseExams,  dateOrder);
-    const output = { course, exams, provider, examboard, qualification, programmeOfStudy };
 
+    .get('/courses/:course', async (req, res, next) => {
+        const courseId = req.params.course;
+        try {
+            const course = await req.db.Course
+                .findByPk(courseId, {rejectOnEmpty: true, include: [{ model: req.db.ProgrammeOfStudy }, { model: req.db.ExamBoard }] })
+                .then(
+                    throwIf(r => !r, 404, `Course '${courseId}' was not found.`),
+                    throwError(500, 'Course database error.')
+                );
+            
+            const exams = await course.getExams()
+                .catch(throwError(400, 'Exam database error.'));
 
+            const output = { course, exams };
+            res.render('course',output);
 
-.get('/courses/:course', (req, res) => {
-    const courseId = req.params.course;
-    try {
-        req.db.Course.findByPk(courseId, {
-            include: [{ model: req.db.ProgrammeOfStudy }, { model: req.db.ExamBoard }]
-        }).then(course => {
-                course.getExams().then(exams => {
-                    const output = { course, exams };
-                    res.render('course', output);
-                });
+        } catch (error) {
+            if (error.code) {
+                res.error.html(error.code, error.message);                
             } else {
-                res.error.html(404, `Course '${courseId}' was not found.`);
+                next(error);
             }
-        });
-    } catch (error) {
-        res.error.html(500, `Cannot fetch course data.`);
-    }
-});
-
-*/
+        }
+    });
 
 export default router;
