@@ -60,7 +60,6 @@ const router = Router({ mergeParams: true })
         const query = req.query.q;
         try {
             const results = await searchFor(query);
-            console.log(results);
             const output = { query, results };
             res.json(output);
         } catch (error) {

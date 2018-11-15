@@ -1,16 +1,16 @@
 import { Router } from 'express';
 import _ from 'underscore';
 import parse from 'csv-parse';
-import uuidv1 from 'uuid/v1';
 
 const ddmmyyyy = /^\d{2}\/\d{2}\/\d{4}$/;
 const yyyymmdd = /^\d{4}\/\d{2}\/\d{2}$/;
 
 const throwError = (code, errorMessage) => error => {
-    if (!error) error = new Error(errorMessage || 'Software error (no detail)');
-    if (!code) code = 500;
-    error.code = code;
-    throw error;
+    const defaultErrorMessage = 'Software error';
+    const defaultErrorCode = 500;
+    const e = error || new Error(errorMessage || defaultErrorMessage);
+    e.code = code || defaultErrorCode;
+    throw e;
 };
 
 const importARecord = async (record, db) => {
@@ -52,8 +52,6 @@ const importARecord = async (record, db) => {
             qualification = await db.Qualification.build({ name: qualificationName }).save();
         }
 
-        console.log(qualification);
-
         const programmeOfStudy = await db.ProgrammeOfStudy.build({
             name: courseName,
             qualificationId: qualification.id
@@ -75,12 +73,9 @@ const importARecord = async (record, db) => {
             CourseId: course.id
         }).save();
 
-        console.log('about to return success after insert exam....');
         // err, success
         return [null, true];
     } catch (error) {
-        console.log('try/catch caught....');
-        console.log(error);
         return [error];
     }
 };

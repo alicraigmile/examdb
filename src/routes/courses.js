@@ -1,21 +1,18 @@
 import { Router } from 'express';
 
 const throwError = (code, errorMessage) => error => {
-    if (!error) error = new Error(errorMessage || 'Software error (no detail)');
-    if (!code) code = 500;
-    error.code = code;
-    throw error;
+    const defaultErrorMessage = 'Software error';
+    const defaultErrorCode = 500;
+    const e = error || new Error(errorMessage || defaultErrorMessage);
+    e.code = code || defaultErrorCode;
+    throw e;
 };
 const throwIf = (fn, code, errorMessage) => result => {
     if (fn(result)) {
-        console.log('throwIf true');
-        console.log(errorMessage);
         return throwError(code, errorMessage)();
     }
     return result;
 };
-
-const getExams = course => course.getExams();
 
 const router = Router({ mergeParams: true })
     .get('/courses.json', async (req, res, next) => {
