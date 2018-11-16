@@ -30,8 +30,12 @@ const catchError = (error, fn) => {
     }
 };
 
+
+// nthink about TRY/CATCH in this async function (promises)
+// also think abotu wether promises are returning data or null (success or reject)
 const importRecord = (db) => async (record) => {
     
+    // this needs a try/catch as the replace will fail if data is missing. these will be more examples below.
     const examboardName = record['Exam board'];
     const qualificationName = record.Qualification;
     const courseNameRaw = record.Course;
@@ -53,6 +57,16 @@ const importRecord = (db) => async (record) => {
         examDate = examDate.replace(/\//, '-');
     }
 
+    // can we use db.Model.findOrCreate() here?
+    // http://docs.sequelizejs.com/manual/tutorial/models-usage.html
+    /*
+    db.ExamBoard.findOrCreate({where: {name: examboardName}})
+        .spread((user, created) => {
+            console.log(user.get({plain: true}))
+            console.log(created)
+    */
+
+
     let examBoard;
     try {
         examBoard = await db.ExamBoard.findAll({ limit: 1, where: { name: examboardName } });
@@ -60,11 +74,13 @@ const importRecord = (db) => async (record) => {
         throwError(500, 'ExamBoard Database error.');
     }
 
+    console.log(examBoard);
+
     if (!examBoard) {
         examBoard = await db.ExamBoard.build({ name: examboardName }).save();
     }
 
-    throw examBoard.id;
+//    throw examBoard.id;
 
     let qualification = await db.Qualification.findAll({ limit: 1, where: { name: qualificationName } }).catch(
         throwError(500, 'Qualifications Database error.')
