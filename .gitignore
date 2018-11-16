@@ -1,3 +1,8 @@
 node_modules
 build
 *.zip
+.DS_Store
+access.log
+examdb-dev.db
+**/.DS_Store
+.DS_Store
