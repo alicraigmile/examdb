@@ -31,7 +31,10 @@ const router = Router({ mergeParams: true })
         try {
             const course = await req.db.Course.findByPk(courseId, {
                 rejectOnEmpty: true,
-                include: [{ model: req.db.ProgrammeOfStudy, include: [{ model:req.db.Qualification}] }, { model: req.db.ExamBoard }]
+                include: [
+                    { model: req.db.ProgrammeOfStudy, include: [{ model: req.db.Qualification }] },
+                    { model: req.db.ExamBoard }
+                ]
             }).then(
                 throwIf(r => !r, 404, `Course '${courseId}' was not found.`),
                 throwError(500, 'Course database error.')

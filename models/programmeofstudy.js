@@ -7,7 +7,7 @@ export default (sequelize, DataTypes) => {
         {}
     );
     ProgrammeOfStudy.associate = models => {
-        const {Course, Qualification} = models;
+        const { Course, Qualification } = models;
         ProgrammeOfStudy.belongsTo(Qualification);
         ProgrammeOfStudy.hasMany(Course);
     };
