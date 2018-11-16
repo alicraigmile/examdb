@@ -4,6 +4,8 @@ const ErrorCodes = {
     400: 'Unacceptable',
     404: 'Not Found',
     410: 'Gone',
+    413: 'Payload Too Large',
+    415: 'Unsupported Media Type',
     422: 'Unprocessable Entity',
     500: 'Software Error',
     501: 'Not implmentented'
