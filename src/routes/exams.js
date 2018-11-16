@@ -1,17 +1,31 @@
 import { Router } from 'express';
 import _ from 'underscore';
 import parse from 'csv-parse';
+import { jSXNamespacedName } from 'babel-types';
 
 const ddmmyyyy = /^\d{2}\/\d{2}\/\d{4}$/;
 const yyyymmdd = /^\d{4}\/\d{2}\/\d{2}$/;
 
-const throwError = (code, errorMessage) => error => {
-    const defaultErrorMessage = 'Software error';
-    const defaultErrorCode = 500;
-    console.log(error.message);
-    const e = error || new Error(errorMessage || defaultErrorMessage);
-    e.code = code || defaultErrorCode;
-    throw e;
+const throwError = (code, errorMessage) => () => {
+    const error = Error();
+    error.code = code;
+    error.message = errorMessage;
+    throw error;
+};
+const throwIf = (fn, code, errorMessage) => result => {
+    if (fn(result)) {
+        return throwError(code, errorMessage)();
+    }
+    return result;
+};
+
+const catchError = (error, fn) => {
+    const canCatch = error => error instanceof Error && error.code;
+    if (canCatch(error)) {
+        fn();
+    } else {
+        throw error;
+    }
 };
 
 const importARecord = async (record, db) => {
@@ -44,8 +58,6 @@ const importARecord = async (record, db) => {
         examBoard = await db.ExamBoard.build({ name: examboardName }).save();
     }
 
-    
-
     let qualification = await db.Qualification.findAll({ limit: 1, where: { name: qualificationName } }).catch(
         throwError(500, 'Qualifications Database error.')
     );
@@ -74,22 +86,19 @@ const importARecord = async (record, db) => {
         duration: examDuration,
         CourseId: course.id
     }).save();
-
-
 };
 
 const router = Router({ mergeParams: true })
-    .get('/exams.json', async (req, res, next) => {
+    .get('/exams.json', async (req, res) => {
         try {
             const exams = await req.db.Exam.findAll();
             res.json(exams);
         } catch (error) {
             res.error.json(500, 'Cannot fetch exams data.');
         }
-        return next();
     })
 
-    .get('/exams', async (req, res, next) => {
+    .get('/exams', async (req, res) => {
         const template = 'examsindex';
         try {
             const qualifications = await req.db.Qualification.findAll();
@@ -97,12 +106,11 @@ const router = Router({ mergeParams: true })
         } catch (error) {
             res.render(template, {});
         }
-        return next();
     })
 
     .get('/exams/import', (req, res) => res.render('import'))
 
-    .post('/exams/upload', async (req, res, next) => {
+    .post('/exams/upload', async (req, res) => {
         const template = 'import';
         const sumIfTrue = (memo, item) => (item === true ? memo + 1 : memo);
         const importRecord = record => importARecord(record, req.db);
@@ -119,14 +127,17 @@ const router = Router({ mergeParams: true })
         if (file.truncated) return res.error.html(422, 'Too large', template);
 
         try {
-
-            parse(file.data, { columns: true }, (err, records) => {
+            parse(file.data, { columns: true }, async (err, records) => {
                 if (err) return res.error.html(422, "Can't read CSV data", template);
 
-                Promise.all(records.map(importRecord)).then( () => {
-                    const successMessage = `Upload successful. Imported 'x' exam records from '${file.name}'.`;
-                    return res.error.html(200, successMessage, template);                    
-                });
+                const imported = await Promise.all(records.map(importRecord)).catch(throwError());
+
+                const successCount = _.filter(imported, r => r).size();
+                const successMessage = `Upload successful. Imported '${successCount}' exam records from '${
+                    file.name
+                }'.`;
+                res.error.html(200, successMessage, template);
+
                 /*
                 const recordsImported = _.chain(records)
                     .map(importRecord)
@@ -136,55 +147,51 @@ const router = Router({ mergeParams: true })
                 return res.error.html(200, successMessage, template);
                 */
             });
-        } catch(error) {
-            next();
+        } catch (error) {
+            res.error.html(500, `Unexpected error - ${error}`, template);
         }
     })
 
     .get('/exams/:exam.json', async (req, res) => {
         const examId = req.params.exam;
+        //       throw(Error('not enough cats'));
 
         try {
-            const exam = await req.db.Exam.findByPk(examId);
-            if (exam) {
-                res.json(exam);
-            } else {
-                res.error.json(404, `Exam '${examId}' not found.`);
-            }
+            //throw Error('dogs rule');
+            //jamCats();
+            // fetch exam by id
+            //throwError(501, 'still not enough cats')();
+
+            const exam = await req.db.Exam.findByPk(examId, {
+                include: [{ model: req.db.Course }]
+            }).then(throwIf(r => !r, 404, `Exam '${examId}' not found.`), throwError(500, 'Exam database error'));
+
+            res.json(exam);
         } catch (error) {
-            res.error.json(500, 'Cannot fetch exam.');
+            catchError(error, () => res.error.json(error.code, error.message));
         }
     })
 
     .get('/exams/:exam', async (req, res) => {
         const examId = req.params.exam;
+        const template = 'exam';
+
+        //       throw(Error('not enough cats'));
 
         try {
-            const exam = await req.db.Exam.findByPk(examId);
-            if (exam) {
-                res.json(exam);
-            } else {
-                res.error.json(404, `Exam '${examId}' not found.`);
-            }
+            //throw Error('dogs rule');
+            //jamCats();
+            // fetch exam by id
+            //throwError(501, 'still not enough cats')();
+
+            const exam = await req.db.Exam.findByPk(examId, {
+                include: [{ model: req.db.Course }]
+            }).then(throwIf(r => !r, 404, `Exam '${examId}' not found.`), throwError(500, 'Exam database error'));
+
+            res.render(template, { exam });
         } catch (error) {
-            res.error.json(500, 'Cannot fetch exam.');
+            catchError(error, () => res.error.html(error.code, error.message));
         }
-    })
-
-    .get('/exams/:exam', (req, res) => {
-        const examId = req.params.exam;
-        const exam = req.store.exam(examId);
-
-        if (!exam) return res.error.html(404, `The exam '${examId}' was not found.`);
-
-        const course = req.store.course(exam.course);
-        const provider = req.store.provider(course.provider);
-        const examboard = req.store.examboard(provider.examboard);
-        const qualification = req.store.qualification(provider.qualification);
-        const programmeOfStudy = req.store.programmeOfStudy(course.programmeofstudy);
-        const output = { exam, course, provider, examboard, qualification, programmeOfStudy };
-
-        return res.render('exam', output);
     });
 
 export default router;
