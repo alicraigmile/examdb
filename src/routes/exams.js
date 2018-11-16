@@ -1,19 +1,15 @@
 import { Router } from 'express';
 import _ from 'underscore';
 import { Promise } from 'bluebird';
-import csvParse from 'csv-parse';
-//import parse from 'csv-parse';
+import csvParser from 'csv-parse';
 
-import { triggerAsyncId } from 'async_hooks';
-import { formatWithOptions } from 'util';
-
-const parse = Promise.promisify(csvParse);
+const csvParse = Promise.promisify(csvParser);
 
 const ddmmyyyy = /^\d{2}\/\d{2}\/\d{4}$/;
 const yyyymmdd = /^\d{4}\/\d{2}\/\d{2}$/;
 
-const throwError = (code, errorMessage) => () => {
-    const error = Error();
+const throwError = (code, errorMessage) => (originalSin) => {
+    const error = Error(); // debug
     error.code = code;
     error.message = errorMessage;
     throw error;
@@ -34,7 +30,8 @@ const catchError = (error, fn) => {
     }
 };
 
-const importRecord = async (record, db) => {
+const importRecord = (db) => async (record) => {
+    
     const examboardName = record['Exam board'];
     const qualificationName = record.Qualification;
     const courseNameRaw = record.Course;
@@ -57,17 +54,17 @@ const importRecord = async (record, db) => {
     }
 
     let examBoard;
-    try { 
+    try {
         examBoard = await db.ExamBoard.findAll({ limit: 1, where: { name: examboardName } });
-    } catch(error) {
-        throwError(500, 'ExamBoard Database error.')
+    } catch (error) {
+        throwError(500, 'ExamBoard Database error.');
     }
 
     if (!examBoard) {
         examBoard = await db.ExamBoard.build({ name: examboardName }).save();
     }
 
-    throw(examBoard.id);
+    throw examBoard.id;
 
     let qualification = await db.Qualification.findAll({ limit: 1, where: { name: qualificationName } }).catch(
         throwError(500, 'Qualifications Database error.')
@@ -98,7 +95,7 @@ const importRecord = async (record, db) => {
         CourseId: course.id
     }).save();
 
-    // so that the async promise doesn't reject 
+    // so that the async promise doesn't reject
     return true;
 };
 
@@ -123,52 +120,57 @@ const router = Router({ mergeParams: true })
         }
     })
 
+    .get('/exams/upload', (req, res) => res.redirect('/exams/import'))
+
     .get('/exams/import', (req, res) => res.render('import'))
 
     .post('/exams/upload', async (req, res) => {
         const template = 'import';
 
+        // check that we have an acceptable file to work with
+        let file;
         try {
-
-            // if (!req.files) return res.error.html(, template);
-            throwIf(files => !files, 400, 'No files were uploaded.')(req.files);
-
-            // The name of the input field is "file"
-            const { file } = req.files;
-
-            // if (!file) return res.error.html(422, 'Did you remember to upload the file?', template);
+            ({ file } = req.files);
             throwIf(f => !f, 422, 'Did you remember to upload the file?')(file);
-
-            // if (file.mimetype !== 'text/csv') return res.error.html(422, 'Expected mimetype text/csv', template);
-            throwIf(f => f.mimetype !== 'text/csv', 422, 'Expected file of type text/csv')(file);
-
-            // if (file.truncated) return res.error.html(422, 'Too large', template);
-            throwIf(f => f.truncated, 422, 'Too large')(file);
-
-            const csvParserOptions = { columns: true };
-            parse(file.data, csvParserOptions)
-                .then( records => {
-                    records.forEach( record => {
-                        throw Error('mock parse failed');
-                        
-                    })
-                });
-                /*
-
-                if (err) return res.error.html(422, "Can't read CSV data", template);
-
-                // const imported = await Promise.all(records.map(importRecord));
-                const imported = [await importRecord(records[0], req.db)];
-
-                const successCount = _.filter(imported, r => r).length;
-                const successMessage = `Upload successful. Imported '${successCount}' exam records from '${
-                    file.name
-                }'.`;
-                return res.error.html(200, successMessage, template);
-                */
-        } catch (error) {
-            catchError(error, () => res.error.html(500, `Unexpected error - ${error}`, template));
+            throwIf(f => f.mimetype !== 'text/csv', 415, 'Upload your exam data in text/csv format')(file);
+            throwIf(f => f.truncated, 413, 'Try splitting the records across several smaller files')(file);
+        } catch(error) {
+            catchError(error, () => res.error.html(error.code, error.message, template));
+            return true; // as 'file' is required for next step, we need to bug out here
         }
+
+        // parse csv file to extract a set of exam data records
+        let records = [];
+        try {
+            const csvParserOptions = { columns: true }; 
+            records = await csvParse(file.data, csvParserOptions);
+        } catch(error) {
+            res.error.html(422, error, template);
+            return true; // errors here are fatal too, so we need to bug out here
+        }   
+
+        console.log(records);
+        // no records found 400 (Bad Request)
+        if (records.length===0) {
+            res.error.html(400, `No records found`, template)
+            return true; // no data, no need to continue. bug out.
+        }
+
+        // import each exam data record into the database
+        let imported = [];
+        try {
+            const promises = _.map(records, importRecord(req.db));
+            imported = await Promise.all([promises]);
+        } catch (error) {
+            // catch and ignore
+        }
+
+        const totalRecordCount = records.length;
+        const successCount = _.filter(imported, r => r).length;
+        const successMessage = `Upload complete. Imported ${successCount} of ${totalRecordCount} exam records from '${file.name}'.`;
+        res.error.html(200, successMessage, template); // not officially an error of course if 200 - OK.
+        return true;
+
     })
 
     .get('/exams/:exam.json', async (req, res) => {
@@ -176,10 +178,10 @@ const router = Router({ mergeParams: true })
         //       throw(Error('not enough cats'));
 
         try {
-            //throw Error('dogs rule');
-            //jamCats();
+            // throw Error('dogs rule');
+            // jamCats();
             // fetch exam by id
-            //throwError(501, 'still not enough cats')();
+            // throwError(501, 'still not enough cats')();
 
             const exam = await req.db.Exam.findByPk(examId, {
                 include: [{ model: req.db.Course }]
