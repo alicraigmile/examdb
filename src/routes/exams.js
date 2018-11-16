@@ -34,34 +34,34 @@ const catchError = (error, fn) => {
 // nthink about TRY/CATCH in this async function (promises)
 // also think abotu wether promises are returning data or null (success or reject)
 const importRecord = (db) => async (record) => {
-    
-    // this needs a try/catch as the replace will fail if data is missing. these will be more examples below.
-    const examboardName = record['Exam board'];
-    const qualificationName = record.Qualification;
-    const courseNameRaw = record.Course;
-    const courseName = courseNameRaw.replace(/\n/g, ' ');
-    const examCode = record.Code;
-    const examPaper = record.Paper;
-    const examNotes = record.Notes;
-    const examTimeOfDay = record['Morning/Afternoon'];
-    const examDuration = record.Duration;
 
-    let examDate = record.Date;
-    if (examDate.match(ddmmyyyy)) {
-        examDate = examDate
+    const { Course, Exam, ExamBoard, Qualification, ProgrammeOfStudy } = db;
+
+    // this needs a try/catch as the replace will fail if data is missing. these will be more examples below.
+    // eslint-disable-next-line no-useless-computed-key
+    const { ['Exam board']:examBoardName, Qualification:qualificationName, Course:courseName, Code:examCode, Notes:examNotes, Paper:examPaper, ['Morning/Afternoon']:examTimeOfDay, Duration:examDuration, Date:examDate } = record;
+
+    const courseName2 = courseName.replace(/\n/g, ' ');
+    
+    let examDate2 = examDate;
+    if (examDate2.match(ddmmyyyy)) {
+        examDate2 = examDate2
             .split('/')
             .reverse()
             .join('-');
     }
-    if (examDate.match(yyyymmdd)) {
-        examDate = examDate.replace(/\//, '-');
+    if (examDate2.match(yyyymmdd)) {
+        examDate2 = examDate2.replace(/\//, '-');
     }
+
+    const programmeOfStudyName = `${qualificationName} ${courseName2}`;
+    const courseName3 = `${qualificationName} ${courseName2} ${examBoardName}`;
 
     // can we use db.Model.findOrCreate() here?
     // http://docs.sequelizejs.com/manual/tutorial/models-usage.html
     /*
-    db.ExamBoard.findOrCreate({where: {name: examboardName}})
-        .spread((user, created) => {
+    ExamBoard.findOrCreate({where: {name: examBoardName}})
+        (user, created) => {
             console.log(user.get({plain: true}))
             console.log(created)
     */
@@ -69,47 +69,46 @@ const importRecord = (db) => async (record) => {
 
     let examBoard;
     try {
-        examBoard = await db.ExamBoard.findAll({ limit: 1, where: { name: examboardName } });
+        let created = false;
+        [examBoard, created] = await ExamBoard.findOrCreate({ where: { name: examBoardName } });
+        console.log(` created: ${created}`)
     } catch (error) {
         throwError(500, 'ExamBoard Database error.');
+        return false;
     }
 
-    console.log(examBoard);
+    // console.log(examBoard.id);
+    // throw examBoard.id;
 
-    if (!examBoard) {
-        examBoard = await db.ExamBoard.build({ name: examboardName }).save();
+    let qualification;
+    try {
+        let created = false;
+        [qualification, created] = await Qualification.findOrCreate({ where: { name: qualificationName } });
+        console.log(` created: ${created}`)
+    } catch (error) {
+        throwError(500, 'Qualifications Database error.');
+        return false;
     }
 
-//    throw examBoard.id;
+    // pos
+    const [programmeOfStudy, c2] = await ProgrammeOfStudy.findOrCreate({ where: { name: programmeOfStudyName } });
+    programmeOfStudy.setQualification(qualification);
 
-    let qualification = await db.Qualification.findAll({ limit: 1, where: { name: qualificationName } }).catch(
-        throwError(500, 'Qualifications Database error.')
-    );
+    // course
+    const [course, c3] = await Course.findOrCreate({ where: { name: courseName3 } });
+    await course.setProgrammeOfStudy(programmeOfStudy);
+    await course.setExamBoard(examBoard);
 
-    if (!qualification) {
-        qualification = await db.Qualification.build({ name: qualificationName }).save();
-    }
-
-    const programmeOfStudy = await db.ProgrammeOfStudy.build({
-        name: courseName,
-        qualificationId: qualification.id
-    }).save();
-
-    const course = await db.Course.build({
-        name: courseName,
-        programmeOfStudyId: programmeOfStudy.id,
-        ExamBoardId: examBoard.id
-    }).save();
-
-    await db.Exam.build({
+    // exam
+    const exam = await Exam.create({
         code: examCode,
         paper: examPaper,
         notes: examNotes,
         date: examDate,
         timeOfDay: examTimeOfDay,
-        duration: examDuration,
-        CourseId: course.id
-    }).save();
+        duration: examDuration
+    });
+    exam.setCourse(course);
 
     // so that the async promise doesn't reject
     return true;
@@ -216,11 +215,6 @@ const router = Router({ mergeParams: true })
         //       throw(Error('not enough cats'));
 
         try {
-            //throw Error('dogs rule');
-            //jamCats();
-            // fetch exam by id
-            //throwError(501, 'still not enough cats')();
-
             const exam = await req.db.Exam.findByPk(examId, {
                 include: [{ model: req.db.Course }]
             }).then(throwIf(r => !r, 404, `Exam '${examId}' not found.`), throwError(500, 'Exam database error'));
