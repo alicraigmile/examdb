@@ -1,6 +1,7 @@
+import path from 'path';
 import express from 'express';
 import fileUpload from 'express-fileupload';
-import path from 'path';
+import 'express-async-errors';
 import 'csv-express';
 import expressError from './express-error';
 import Store from './memorystore'; // depricated

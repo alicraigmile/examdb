@@ -1,9 +1,9 @@
 doctype html
 html
     head
-        title #{qualification.name} #{programmeOfStudy.name} | #{exam.paper} | ExamDB
+        title #{exam.Course.name} | #{exam.paper} | ExamDB
         meta(charset='UTF-8')
-        meta(name='description' content='Details of the ' + programmeOfStudy.name + ' ' + qualification.name + ' examination set by the ' + examboard.name + ' exam board on the ' + exam.timeofday + ' of ' + exam.date + '.')
+        meta(name='description' content='Details of the ' + exam.Course.name + ' examination set on the ' + exam.timeofday + ' of ' + exam.date + '.')
         link(rel='stylesheet' href='/examdb.css')
         link(rel='alternate' type='application/json' title='JSON format' href='/exams/'+exam.id+'.json')
         meta(name='viewport' content='width=device-width, initial-scale=1')
@@ -15,49 +15,16 @@ html
         section
             h1 #{exam.paper} (exam)
 
-            p This #{qualification.name} #{programmeOfStudy.name} examination, set by the #{examboard.name} exam board, is scheduled to take place on the #{exam.timeofday} of #{exam.date} and will run for #{exam.duration}.
+            p This #{exam.Course.name} examination, is scheduled to take place on the #{exam.timeofday} of #{exam.date} and will run for #{exam.duration}.
 
             p
-                a(href='/courses/'+course.id) More like this
+                a(href='/courses/'+exam.Course.id) More like this
             p Code: #{exam.code}
             p Notes: #{exam.notes}
             p Date and time: #{exam.timeofday} of #{exam.date}
                 = ' ('
-                a(href='/pathways/'+provider.id+'/calendar/week?date='+exam.date) Open calendar
+                a(href='/course/'+exam.Course.id+'/calendar/week?date='+exam.date) Open calendar
                 = ')'
             p Duration: #{exam.duration}
             p Course: 
-                a(href='/courses/'+course.id) #{course.name}
-            p Qualification:
-                a(href='/qualifications/'+qualification.id) #{qualification.name}
-            p Exam board:
-                a(href='/pathways/'+provider.id) #{examboard.name}
-
-            h2 Revison guides
-            ul(class='revision-guides')
-                if course.bitesize
-
-                    li
-                        a(href='https://www.bbc.com/education/examspecs/'+course.bitesize)
-                            img(src='/bbc-bitesize.png' alt='BBC Bitesize revision guides' width='40' height='40')
-                            = ' Revise for this exam with BBC bitesize' 
-
-                else
-                    if programmeofstudy.bitesize
-                
-                        li
-                           a(href='https://www.bbc.com/education/subjects/'+programmeOfStudy.bitesize)
-                                img(src='/bbc-bitesize.png' alt='BBC Bitesize revision guides' width='40' height='40')
-                                = ' Revise for this exam with BBC Bitesize' 
-                    else
-                        li None listed
-
-            hr
-
-            ul
-                li
-                    a(href='/pathways/'+provider.id) More subjects from #{qualification.name} #{examboard.name}
-                li
-                    a(href='/programmesofstudy/'+programmeOfStudy.id) #{programmeOfStudy.name} from other exam boards
-                li
-                    a(href='/pathways/'+provider.id+'/calendar/week?date='+exam.date) Other AQA exams this week
+                a(href='/courses/'+exam.Course.id) #{exam.Course.name}
