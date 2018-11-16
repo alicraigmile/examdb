@@ -1,6 +1,13 @@
 import { Router } from 'express';
 import _ from 'underscore';
-import parse from 'csv-parse';
+import { Promise } from 'bluebird';
+import csvParse from 'csv-parse';
+//import parse from 'csv-parse';
+
+import { triggerAsyncId } from 'async_hooks';
+import { formatWithOptions } from 'util';
+
+const parse = Promise.promisify(csvParse);
 
 const ddmmyyyy = /^\d{2}\/\d{2}\/\d{4}$/;
 const yyyymmdd = /^\d{4}\/\d{2}\/\d{2}$/;
@@ -27,7 +34,7 @@ const catchError = (error, fn) => {
     }
 };
 
-const importARecord = async (record, db) => {
+const importRecord = async (record, db) => {
     const examboardName = record['Exam board'];
     const qualificationName = record.Qualification;
     const courseNameRaw = record.Course;
@@ -49,13 +56,18 @@ const importARecord = async (record, db) => {
         examDate = examDate.replace(/\//, '-');
     }
 
-    let examBoard = await db.ExamBoard.findAll({ limit: 1, where: { name: examboardName } }).catch(
+    let examBoard;
+    try { 
+        examBoard = await db.ExamBoard.findAll({ limit: 1, where: { name: examboardName } });
+    } catch(error) {
         throwError(500, 'ExamBoard Database error.')
-    );
+    }
 
     if (!examBoard) {
         examBoard = await db.ExamBoard.build({ name: examboardName }).save();
     }
+
+    throw(examBoard.id);
 
     let qualification = await db.Qualification.findAll({ limit: 1, where: { name: qualificationName } }).catch(
         throwError(500, 'Qualifications Database error.')
@@ -85,6 +97,9 @@ const importARecord = async (record, db) => {
         duration: examDuration,
         CourseId: course.id
     }).save();
+
+    // so that the async promise doesn't reject 
+    return true;
 };
 
 const router = Router({ mergeParams: true })
@@ -114,7 +129,6 @@ const router = Router({ mergeParams: true })
         const template = 'import';
 
         try {
-            const importRecord = record => importARecord(record, req.db);
 
             // if (!req.files) return res.error.html(, template);
             throwIf(files => !files, 400, 'No files were uploaded.')(req.files);
@@ -131,17 +145,27 @@ const router = Router({ mergeParams: true })
             // if (file.truncated) return res.error.html(422, 'Too large', template);
             throwIf(f => f.truncated, 422, 'Too large')(file);
 
-            parse(file.data, { columns: true }, async (err, records) => {
+            const csvParserOptions = { columns: true };
+            parse(file.data, csvParserOptions)
+                .then( records => {
+                    records.forEach( record => {
+                        throw Error('mock parse failed');
+                        
+                    })
+                });
+                /*
+
                 if (err) return res.error.html(422, "Can't read CSV data", template);
 
-                const imported = await Promise.all(records.map(importRecord));
+                // const imported = await Promise.all(records.map(importRecord));
+                const imported = [await importRecord(records[0], req.db)];
 
                 const successCount = _.filter(imported, r => r).length;
                 const successMessage = `Upload successful. Imported '${successCount}' exam records from '${
                     file.name
                 }'.`;
                 return res.error.html(200, successMessage, template);
-            });
+                */
         } catch (error) {
             catchError(error, () => res.error.html(500, `Unexpected error - ${error}`, template));
         }
