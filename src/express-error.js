@@ -23,21 +23,21 @@ function registerErrorHandlers(options, req, res, next) {
         const headline = errorHeadline(status);
         const jsonMessage = `${headline}: ${message}`;
         console.error(debug);
-        res.status(status).json({ status, message: jsonMessage });
+        return res.status(status).json({ status, message: jsonMessage });
     };
 
     res.error.html = function htmlErrorMessage(status, message, template) {
         const headline = errorHeadline(status);
         const errorTemplate = template || 'error';
 
-        res.status(status).render(errorTemplate, { status, message, headline });
+        return res.status(status).render(errorTemplate, { status, message, headline });
     };
 
     res.error.text = function textErrorMessage(status, message) {
         const headline = errorHeadline(status);
         const textMessage = `${headline}: ${message}`;
 
-        res.status(status).send(textMessage);
+        return res.status(status).send(textMessage);
     };
 
     next();

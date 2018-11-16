@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import _ from 'underscore';
 import parse from 'csv-parse';
-import { jSXNamespacedName } from 'babel-types';
 
 const ddmmyyyy = /^\d{2}\/\d{2}\/\d{4}$/;
 const yyyymmdd = /^\d{4}\/\d{2}\/\d{2}$/;
@@ -20,7 +19,7 @@ const throwIf = (fn, code, errorMessage) => result => {
 };
 
 const catchError = (error, fn) => {
-    const canCatch = error => error instanceof Error && error.code;
+    const canCatch = e => e instanceof Error && e.code;
     if (canCatch(error)) {
         fn();
     } else {
@@ -94,7 +93,8 @@ const router = Router({ mergeParams: true })
             const exams = await req.db.Exam.findAll();
             res.json(exams);
         } catch (error) {
-            res.error.json(500, 'Cannot fetch exams data.');
+            catchError(error, () => res.error.json(error.code, error.message));
+            // res.error.json(500, 'Cannot fetch exams data.');
         }
     })
 
@@ -104,7 +104,7 @@ const router = Router({ mergeParams: true })
             const qualifications = await req.db.Qualification.findAll();
             res.render(template, { qualifications });
         } catch (error) {
-            res.render(template, {});
+            catchError(error, () => res.render(template, {}));
         }
     })
 
@@ -112,43 +112,38 @@ const router = Router({ mergeParams: true })
 
     .post('/exams/upload', async (req, res) => {
         const template = 'import';
-        const sumIfTrue = (memo, item) => (item === true ? memo + 1 : memo);
-        const importRecord = record => importARecord(record, req.db);
-
-        if (!req.files) return res.error.html(400, 'No files were uploaded.', template);
-
-        // The name of the input field is "file"
-        const { file } = req.files;
-
-        if (!file) return res.error.html(422, 'Did you remember to upload the file?', template);
-
-        if (file.mimetype !== 'text/csv') return res.error.html(422, 'Expected mimetype text/csv', template);
-
-        if (file.truncated) return res.error.html(422, 'Too large', template);
 
         try {
+            const importRecord = record => importARecord(record, req.db);
+
+            // if (!req.files) return res.error.html(, template);
+            throwIf(files => !files, 400, 'No files were uploaded.')(req.files);
+
+            // The name of the input field is "file"
+            const { file } = req.files;
+
+            // if (!file) return res.error.html(422, 'Did you remember to upload the file?', template);
+            throwIf(f => !f, 422, 'Did you remember to upload the file?')(file);
+
+            // if (file.mimetype !== 'text/csv') return res.error.html(422, 'Expected mimetype text/csv', template);
+            throwIf(f => f.mimetype !== 'text/csv', 422, 'Expected file of type text/csv')(file);
+
+            // if (file.truncated) return res.error.html(422, 'Too large', template);
+            throwIf(f => f.truncated, 422, 'Too large')(file);
+
             parse(file.data, { columns: true }, async (err, records) => {
                 if (err) return res.error.html(422, "Can't read CSV data", template);
 
-                const imported = await Promise.all(records.map(importRecord)).catch(throwError());
+                const imported = await Promise.all(records.map(importRecord));
 
-                const successCount = _.filter(imported, r => r).size();
+                const successCount = _.filter(imported, r => r).length;
                 const successMessage = `Upload successful. Imported '${successCount}' exam records from '${
                     file.name
                 }'.`;
-                res.error.html(200, successMessage, template);
-
-                /*
-                const recordsImported = _.chain(records)
-                    .map(importRecord)
-                    .reduce(sumIfTrue)
-                    .value();
-                const successMessage = `Upload successful. Imported ${recordsImported} exam records from '${file.name}'.`;
                 return res.error.html(200, successMessage, template);
-                */
             });
         } catch (error) {
-            res.error.html(500, `Unexpected error - ${error}`, template);
+            catchError(error, () => res.error.html(500, `Unexpected error - ${error}`, template));
         }
     })
 
