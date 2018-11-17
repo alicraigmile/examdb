@@ -28,12 +28,13 @@ const router = Router({ mergeParams: true })
 
     .get('/courses/:course.json', async (req, res, next) => {
         const courseId = req.params.course;
+        const { Course, ExamBoard, ProgrammeOfStudy, Qualification, WebResource } = req.db;
         try {
-            const course = await req.db.Course.findByPk(courseId, {
+            const course = await Course.findByPk(courseId, {
                 rejectOnEmpty: true,
                 include: [
-                    { model: req.db.ProgrammeOfStudy, include: [{ model: req.db.Qualification }] },
-                    { model: req.db.ExamBoard }
+                    { model: ProgrammeOfStudy, include: [{ model: Qualification }] },
+                    { model: ExamBoard, include: [{ model: WebResource, as: 'Homepage'}]}
                 ]
             }).then(
                 throwIf(r => !r, 404, `Course '${courseId}' was not found.`),
