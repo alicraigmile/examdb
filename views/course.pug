@@ -32,14 +32,14 @@ html
                         th Duration
                 tbody
                     each exam in exams
-                        - var dateSort = exam.date + (exam.timeofday=='Morning' ? 'T0000' : 'T1200')
+                        - var dateSort = exam.date + (exam.timeOfDay=='Morning' ? 'T0000' : 'T1200')
                         tr
                             td= exam.code
                             td
                                 a(href='/exams/'+exam.id)= exam.paper
                             td= exam.notes
                             td(data-sort-value=dateSort)= exam.date
-                            td= exam.timeofday
+                            td= exam.timeOfDay
                             td= exam.duration
 
 
