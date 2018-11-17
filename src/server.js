@@ -4,7 +4,6 @@ import http from 'http';
 import morgan from 'morgan';
 import fs from 'fs';
 import app from './app';
-import db from '../models';
 import npmPackage from '../package';
 
 const port = process.env.PORT || '5000';
