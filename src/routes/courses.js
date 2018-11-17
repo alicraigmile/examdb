@@ -27,14 +27,14 @@ const router = Router({ mergeParams: true })
     .get('/courses', (req, res) => res.redirect('/'))
 
     .get('/courses/:course.json', async (req, res, next) => {
-        const courseId = req.params.course;
         const { Course, ExamBoard, ProgrammeOfStudy, Qualification, WebResource } = req.db;
+        const courseId = req.params.course;
         try {
             const course = await Course.findByPk(courseId, {
                 rejectOnEmpty: true,
                 include: [
                     { model: ProgrammeOfStudy, include: [{ model: Qualification }] },
-                    { model: ExamBoard, include: [{ model: WebResource, as: 'Homepage'}]}
+                    { model: ExamBoard, include: [{ model: WebResource, as: 'Homepage' }] }
                 ]
             }).then(
                 throwIf(r => !r, 404, `Course '${courseId}' was not found.`),
@@ -55,11 +55,15 @@ const router = Router({ mergeParams: true })
     })
 
     .get('/courses/:course', async (req, res, next) => {
+        const { Course, ExamBoard, ProgrammeOfStudy, Qualification, WebResource } = req.db;
         const courseId = req.params.course;
         try {
-            const course = await req.db.Course.findByPk(courseId, {
+            const course = await Course.findByPk(courseId, {
                 rejectOnEmpty: true,
-                include: [{ model: req.db.ProgrammeOfStudy }, { model: req.db.ExamBoard }]
+                include: [
+                    { model: ProgrammeOfStudy, include: [{ model: Qualification }] },
+                    { model: ExamBoard, include: [{ model: WebResource, as: 'Homepage' }] }
+                ]
             }).then(
                 throwIf(r => !r, 404, `Course '${courseId}' was not found.`),
                 throwError(500, 'Course database error.')
