@@ -1,5 +1,4 @@
-'use strict';
-module.exports = (sequelize, DataTypes) => {
+const model = (sequelize, DataTypes) => {
     const WebResource = sequelize.define(
         'WebResource',
         {
@@ -13,3 +12,5 @@ module.exports = (sequelize, DataTypes) => {
     };
     return WebResource;
 };
+
+export default model;

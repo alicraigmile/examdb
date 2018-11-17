@@ -13,7 +13,7 @@ const model = (sequelize, DataTypes) => {
     );
     Exam.associate = function(models) {
         const { Course } = models;
-        Exam.belongsTo(models.Course);
+        Exam.belongsTo(Course);
     };
     return Exam;
 };

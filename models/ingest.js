@@ -1,5 +1,4 @@
-'use strict';
-module.exports = (sequelize, DataTypes) => {
+const model = (sequelize, DataTypes) => {
     const Ingest = sequelize.define(
         'Ingest',
         {
@@ -8,9 +7,11 @@ module.exports = (sequelize, DataTypes) => {
         {}
     );
     Ingest.associate = function(models) {
-        // associations can be defined here
-        Ingest.belongsTo(models.WebResource, { as: 'Source' });
-        Ingest.belongsTo(models.User, { as: 'Initiator' });
+        const { User, WebResource } = models;
+        Ingest.belongsTo(WebResource, { as: 'Source' });
+        Ingest.belongsTo(User, { as: 'Initiator' });
     };
     return Ingest;
 };
+
+export default model;

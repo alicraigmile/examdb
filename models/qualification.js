@@ -1,5 +1,4 @@
-'use strict';
-module.exports = (sequelize, DataTypes) => {
+const model = (sequelize, DataTypes) => {
     const Qualification = sequelize.define(
         'Qualification',
         {
@@ -8,8 +7,10 @@ module.exports = (sequelize, DataTypes) => {
         {}
     );
     Qualification.associate = function(models) {
-        // associations can be defined here
-        Qualification.hasMany(models.ProgrammeOfStudy);
+        const { ProgrammeOfStudy } = models;
+        Qualification.hasMany(ProgrammeOfStudy);
     };
     return Qualification;
 };
+
+export default model;
