@@ -1,5 +1,4 @@
-'use strict';
-module.exports = (sequelize, DataTypes) => {
+const model = (sequelize, DataTypes) => {
     const Exam = sequelize.define(
         'Exam',
         {
@@ -13,8 +12,10 @@ module.exports = (sequelize, DataTypes) => {
         {}
     );
     Exam.associate = function(models) {
-        // associations can be defined here
+        const { Course } = models;
         Exam.belongsTo(models.Course);
     };
     return Exam;
 };
+
+export default model;

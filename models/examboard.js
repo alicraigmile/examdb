@@ -1,5 +1,4 @@
-'use strict';
-module.exports = (sequelize, DataTypes) => {
+const model = (sequelize, DataTypes) => {
     const ExamBoard = sequelize.define(
         'ExamBoard',
         {
@@ -8,9 +7,11 @@ module.exports = (sequelize, DataTypes) => {
         {}
     );
     ExamBoard.associate = function(models) {
-        // associations can be defined here
-        ExamBoard.belongsTo(models.WebResource, { as: 'Homepage' });
-        ExamBoard.hasMany(models.Course);
+        const { Course, WebResource } = models;
+        ExamBoard.belongsTo(WebResource, { as: 'Homepage' });
+        ExamBoard.hasMany(Course);
     };
     return ExamBoard;
 };
+
+export default model;

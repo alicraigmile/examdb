@@ -1,4 +1,4 @@
-export default (sequelize, DataTypes) => {
+const model = (sequelize, DataTypes) => {
     const ProgrammeOfStudy = sequelize.define(
         'ProgrammeOfStudy',
         {
@@ -13,3 +13,5 @@ export default (sequelize, DataTypes) => {
     };
     return ProgrammeOfStudy;
 };
+
+export default model;

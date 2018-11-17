@@ -7,11 +7,11 @@ const model = (sequelize, DataTypes) => {
         {}
     );
     Course.associate = models => {
-        // associations can be defined here
-        Course.belongsTo(models.ProgrammeOfStudy);
-        Course.belongsTo(models.ExamBoard);
-        Course.belongsToMany(models.WebResource, { through: 'CourseWebResource' });
-        Course.hasMany(models.Exam);
+        const { Exam, ExamBoard, ProgrammeOfStudy, WebResource } = models;
+        Course.belongsTo(ProgrammeOfStudy);
+        Course.belongsTo(ExamBoard);
+        Course.belongsToMany(WebResource, { through: 'CourseWebResource' });
+        Course.hasMany(Exam);
     };
     return Course;
 };
