@@ -7,9 +7,6 @@ const model = (sequelize, DataTypes) => {
         },
         {}
     );
-    WebResource.associate = function(models) {
-        // associations can be defined here
-    };
     return WebResource;
 };
 
