@@ -4,6 +4,7 @@ html
         title #{exam.Course.name} | #{exam.paper} | ExamDB
         meta(charset='UTF-8')
         meta(name='description' content='Details of the ' + exam.Course.name + ' examination set on the ' + exam.timeofday + ' of ' + exam.date + '.')
+        include meta.pug
         link(rel='stylesheet' href='/examdb.css')
         link(rel='alternate' type='application/json' title='JSON format' href='/exams/'+exam.id+'.json')
         meta(name='viewport' content='width=device-width, initial-scale=1')

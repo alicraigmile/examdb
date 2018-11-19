@@ -4,6 +4,7 @@ html
 		title #{qualification.name} #{examboard.name} subjects | ExamDB
 		meta(charset='UTF-8')
 		meta(name='description' content='The exam board ' + examboard.name + ' sets ' + qualification.name + ' examinations in ' + courses.length + ' subjects.')
+		include meta.pug
 		link(rel='stylesheet' href='/examdb.css')
 		meta(name='viewport' content='width=device-width, initial-scale=1')
 	body

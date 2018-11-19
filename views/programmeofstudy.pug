@@ -3,8 +3,9 @@ html
     head
         title #{programmeofstudy.Qualification.name} #{programmeofstudy.name} | ExamDB
         meta(charset='UTF-8')
-        meta(name='description' content='There are #{courses.length} providers (exam boards) for the ' + programmeofstudy.Qualification.name + ' ' + programmeofstudy.name + ' exam.')
+        meta(name='description' content='There are #{courses.length} providers (exam boards) for the ' + programmeofstudy.name + ' exam.')
         link(rel='stylesheet' href='/examdb.css')
+        include meta.pug
         link(rel='alternate' type='application/json' title='JSON' href='/programmesofstudy/'+programmeofstudy.id+'.json')
         link(rel='alternate' type='text/csv' title='CSV' href='/programmesofstudy/'+programmeofstudy.id+'.csv')
         meta(name='viewport' content='width=device-width, initial-scale=1')
@@ -17,11 +18,11 @@ html
                     img(src='/examdb.png' width='64' height='64' alt='')
 
         section
-            h1 #{programmeofstudy.Qualification.name} #{programmeofstudy.name} exams
+            h1 #{programmeofstudy.name} exams
 
             h2 Exams
 
-            p There are #{exams.length}  #{programmeofstudy.Qualification.name} #{programmeofstudy.name} examinations in the database.
+            p There are #{exams.length} #{programmeofstudy.name} examinations in the database.
 
             table
                 thead
@@ -60,7 +61,7 @@ html
 
             h2 About the exam providers
 
-            p There are #{courses.length} providers (exam boards) of the #{programmeofstudy.Qualification.name} #{programmeofstudy.name} exam.
+            p There are #{courses.length} providers (exam boards) of the #{programmeofstudy.name} exam.
 
             if courses
                 ul

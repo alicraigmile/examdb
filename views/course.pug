@@ -4,6 +4,7 @@ html
         title #{course.name} exams | ExamDB
         meta(charset='UTF-8')
         meta(name='description' content='There are ' + exams.length + ' ' + course.name + ' examinations set by the '+course.ExamBoard.name+' exam board.')
+        include meta.pug
         link(rel='stylesheet' href='/examdb.css')
         link(rel='alternate' type='application/json' title='JSON' href='/courses/'+course.id+'.json')
         meta(name='viewport' content='width=device-width, initial-scale=1')

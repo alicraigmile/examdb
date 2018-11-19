@@ -4,6 +4,7 @@ html
 		title #{qualification.name} programmes of study | ExamDB
 		meta(charset='UTF-8')
 		meta(name='description' content='There are '+ programmesofstudy.length+' ' + qualification.name + ' programmes of study.')
+		include meta.pug
 		meta(name='viewport' content='width=device-width, initial-scale=1')
 		link(rel='stylesheet' href='/examdb.css')
 		link(rel='alternate' type='application/json' title='JSON format' href='/qualifications/'+qualification.id+'.json')

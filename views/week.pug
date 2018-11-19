@@ -4,6 +4,7 @@ html
 		title #{examboard.name} #{qualification.name} | 2008 Week commencing Mon 24 May | ExamDB
 		meta(charset='UTF-8')
 		meta(name='description' content='There are ' + numberOfExamsThisWeek + ' examinations set by the '+examboard.name+' exam board w/c ' + weekCommencing + '.')
+		include meta.pug
 		link(rel='stylesheet' href='/examdb.css')
 		meta(name='viewport' content='width=device-width, initial-scale=1')
 		script(src='/library/jquery/jquery.min.js')
