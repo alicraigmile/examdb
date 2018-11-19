@@ -9,7 +9,7 @@ const model = (sequelize, DataTypes) => {
     );
     WebResource.associate = models => {
         const { Dataset } = models;
-        WebResource.hasOne(Dataset);
+        WebResource.belongsTo(Dataset);
     };
     return WebResource;
 };
