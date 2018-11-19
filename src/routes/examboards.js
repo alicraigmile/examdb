@@ -2,9 +2,11 @@ import { Router } from 'express';
 
 const router = Router({ mergeParams: true })
     .get('/examboards.json', async (req, res) => {
-        const { ExamBoard } = req.db;
+        const { ExamBoard, WebResource } = req.db;
         try {
-            ExamBoard.findAll().then(examboards => res.json(examboards));
+            ExamBoard.findAll({ include: [{ model: WebResource, as: 'Homepage' }] }).then(examboards =>
+                res.json(examboards)
+            );
         } catch (error) {
             res.error.json(500, 'Cannot fetch examboards data', error);
         }
@@ -16,7 +18,9 @@ const router = Router({ mergeParams: true })
         const { ExamBoard, WebResource } = req.db;
         const examboardId = req.params.examboard;
         try {
-            ExamBoard.findByPk(examboardId, { include: [{ model: WebResource, as: 'Homepage' }] }).then(examboard => {
+            ExamBoard.findByPk(examboardId, {
+                include: [{ model: WebResource, as: 'Homepage' }]
+            }).then(examboard => {
                 if (examboard) {
                     examboard.getCourses().then(courses => {
                         const output = { examboard, courses };
@@ -35,7 +39,9 @@ const router = Router({ mergeParams: true })
         const { ExamBoard, WebResource } = req.db;
         const examboardId = req.params.examboard;
         try {
-            ExamBoard.findByPk(examboardId, { include: [{ model: WebResource, as: 'Homepage' }] }).then(examboard => {
+            ExamBoard.findByPk(examboardId, {
+                include: [{ model: WebResource, as: 'Homepage' }]
+            }).then(examboard => {
                 if (examboard) {
                     examboard.getCourses().then(courses => {
                         const output = { examboard, courses };
