@@ -16,8 +16,9 @@ const throwIf = (fn, code, errorMessage) => result => {
 
 const router = Router({ mergeParams: true })
     .get('/courses.json', async (req, res, next) => {
+        const { Course } = req.db;
         try {
-            req.db.Course.findAll().then(courses => res.json(courses));
+            Course.findAll().then(res.json);
         } catch (error) {
             res.error.json(500, 'Cannot fetch courses data', error);
         }
@@ -40,11 +41,8 @@ const router = Router({ mergeParams: true })
                 throwIf(r => !r, 404, `Course '${courseId}' was not found.`),
                 throwError(500, 'Course database error.')
             );
-
             const exams = await course.getExams().catch(throwError(400, 'Exam database error.'));
-
-            const output = { course, exams };
-            res.json(output);
+            res.json({ course, exams });
         } catch (error) {
             if (error.code) {
                 res.error.json(error.code, error.message);
@@ -68,11 +66,8 @@ const router = Router({ mergeParams: true })
                 throwIf(r => !r, 404, `Course '${courseId}' was not found.`),
                 throwError(500, 'Course database error.')
             );
-
             const exams = await course.getExams().catch(throwError(400, 'Exam database error.'));
-
-            const output = { course, exams };
-            res.render('course', output);
+            res.render('course', { course, exams });
         } catch (error) {
             if (error.code) {
                 res.error.html(error.code, error.message);
