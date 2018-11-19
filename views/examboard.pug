@@ -4,7 +4,7 @@ html
 		title #{examboard.name} exam board | ExamDB
 		meta(charset='UTF-8')
 		meta(name='description' content='The exam board '+examboard.name+' sets examinations in '+courses.length+' courses.')
-        include meta.pug
+		include meta.pug
 		link(rel='stylesheet' href='/examdb.css')
 		meta(name='viewport' content='width=device-width, initial-scale=1')
 		link(rel='alternate' type='application/json' title='JSON format' href='/examboards/'+examboard.id+'.json')
