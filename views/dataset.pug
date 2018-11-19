@@ -1,0 +1,34 @@
+doctype html
+html
+    head
+        title Dataset: '#{dataset.name}' | ExamDB
+        meta(charset='UTF-8')
+        if dataset.IngestUser
+            meta(name='description' content='Dataset \'' + dataset.name + '\' was ingested by '+dataset.IngestUser.id+' on  '+dataset.createdAt +'.')
+        else
+            meta(name='description' content='Dataset \'' + dataset.name + '\' was ingested by unknown user on  '+dataset.createdAt +'.')
+        include meta.pug
+        link(rel='stylesheet' href='/examdb.css')
+        link(rel='alternate' type='application/json' title='JSON' href='/datasets/'+dataset.id+'.json')
+        meta(name='viewport' content='width=device-width, initial-scale=1')
+        script(src='/library/jquery/jquery.min.js')
+        script(src='/library/jquery-tablesort/jquery.tablesort.min.js')
+    body
+        header
+            p
+                a(href='/' title='ExamDB Homepage')
+                    img(src='/examdb.png' width='64' height='64' alt='')
+
+        section
+            h1 Dataset '#{dataset.name}'
+            
+            if dataset.IngestUser
+                p Dataset #{dataset.nam} was ingested by #{dataset.IngestUser.id} on #{dataset.createdAt}.
+            else
+                p Dataset #{dataset.nam} was ingested by unknown user on #{dataset.createdAt}.
+
+            h2 Download this data
+
+            ul
+                li
+                    a(rel='alternate' type='application/json' href='/datasets/'+dataset.id+'.json') JSON
