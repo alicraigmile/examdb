@@ -6,7 +6,7 @@ const model = (sequelize, DataTypes) => {
         },
         {}
     );
-    ExamBoard.associate = function(models) {
+    ExamBoard.associate = models => {
         const { Course, WebResource } = models;
         ExamBoard.belongsTo(WebResource, { as: 'Homepage' });
         ExamBoard.hasMany(Course);

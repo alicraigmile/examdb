@@ -6,7 +6,7 @@ const model = (sequelize, DataTypes) => {
         },
         {}
     );
-    Qualification.associate = function(models) {
+    Qualification.associate = models => {
         const { ProgrammeOfStudy } = models;
         Qualification.hasMany(ProgrammeOfStudy);
     };

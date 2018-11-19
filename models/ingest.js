@@ -6,7 +6,7 @@ const model = (sequelize, DataTypes) => {
         },
         {}
     );
-    Ingest.associate = function(models) {
+    Ingest.associate = models => {
         const { User, WebResource } = models;
         Ingest.belongsTo(WebResource, { as: 'Source' });
         Ingest.belongsTo(User, { as: 'Initiator' });
