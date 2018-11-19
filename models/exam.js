@@ -12,8 +12,9 @@ const model = (sequelize, DataTypes) => {
         {}
     );
     Exam.associate = models => {
-        const { Course } = models;
+        const { Course, Dataset } = models;
         Exam.belongsTo(Course);
+        Exam.hasOne(Dataset);
     };
     return Exam;
 };

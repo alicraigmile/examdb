@@ -7,7 +7,8 @@ const model = (sequelize, DataTypes) => {
         {}
     );
     Qualification.associate = models => {
-        const { ProgrammeOfStudy } = models;
+        const { Dataset, ProgrammeOfStudy } = models;
+        Qualification.hasOne(Dataset);
         Qualification.hasMany(ProgrammeOfStudy);
     };
     return Qualification;

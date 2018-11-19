@@ -7,9 +7,10 @@ const model = (sequelize, DataTypes) => {
         {}
     );
     ExamBoard.associate = models => {
-        const { Course, WebResource } = models;
-        ExamBoard.belongsTo(WebResource, { as: 'Homepage' });
+        const { Course, Dataset, WebResource } = models;
         ExamBoard.hasMany(Course);
+        ExamBoard.hasOne(Dataset);
+        ExamBoard.belongsTo(WebResource, { as: 'Homepage' });
     };
     return ExamBoard;
 };

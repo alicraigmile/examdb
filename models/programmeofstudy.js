@@ -7,9 +7,10 @@ const model = (sequelize, DataTypes) => {
         {}
     );
     ProgrammeOfStudy.associate = models => {
-        const { Course, Qualification } = models;
-        ProgrammeOfStudy.belongsTo(Qualification);
+        const { Course, Dataset, Qualification } = models;
         ProgrammeOfStudy.hasMany(Course);
+        ProgrammeOfStudy.hasOne(Dataset);
+        ProgrammeOfStudy.belongsTo(Qualification);
     };
     return ProgrammeOfStudy;
 };

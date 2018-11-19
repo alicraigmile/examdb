@@ -7,11 +7,12 @@ const model = (sequelize, DataTypes) => {
         {}
     );
     Course.associate = models => {
-        const { Exam, ExamBoard, ProgrammeOfStudy, WebResource } = models;
-        Course.belongsTo(ProgrammeOfStudy);
-        Course.belongsTo(ExamBoard);
-        Course.belongsToMany(WebResource, { through: 'CourseWebResource' });
+        const { Exam, ExamBoard, Dataset, ProgrammeOfStudy, WebResource } = models;
+        Course.hasOne(Dataset);
         Course.hasMany(Exam);
+        Course.belongsTo(ExamBoard);
+        Course.belongsTo(ProgrammeOfStudy);
+        Course.belongsToMany(WebResource, { through: 'CourseWebResource' });
     };
     return Course;
 };
