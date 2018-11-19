@@ -7,9 +7,8 @@ const model = (sequelize, DataTypes) => {
         {}
     );
     Dataset.associate = models => {
-        const { User, WebResource } = models;
-        Dataset.belongsTo(User, { as: 'Initiator' });
-        Dataset.belongsTo(WebResource, { as: 'Source' });
+        const { User } = models;
+        Dataset.belongsTo(User, { as: 'IngestUser' });
     };
     return Dataset;
 };
