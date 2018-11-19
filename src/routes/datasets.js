@@ -51,7 +51,6 @@ const router = Router({ mergeParams: true })
         const datasetId = req.params.dataset;
         try {
             const dataset = await Dataset.findByPk(datasetId, {
-                rejectOnEmpty: true,
                 include: [{ model: User, as: 'IngestUser' }]
             }).then(
                 throwIf(r => !r, 404, `Dataset '${datasetId}' was not found.`),

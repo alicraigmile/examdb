@@ -32,7 +32,7 @@ const catchError = (error, fn) => {
 
 // nthink about TRY/CATCH in this async function (promises)
 // also think abotu wether promises are returning data or null (success or reject)
-const importRecord = db => async record => {
+const importRecord = (db, datasetId) => async record => {
     const { Course, Exam, ExamBoard, Qualification, ProgrammeOfStudy } = db;
 
     // this needs a try/catch as the replace will fail if data is missing. these will be more examples below.
@@ -68,7 +68,10 @@ const importRecord = db => async record => {
 
     let examBoard;
     try {
-        [examBoard] = await ExamBoard.findOrCreate({ where: { name: examBoardName } });
+        [examBoard] = await ExamBoard.findOrCreate({
+            where: { name: examBoardName },
+            defaults: { DatasetId: datasetId }
+        });
         // [examBoard, created]
     } catch (error) {
         throwError(500, 'ExamBoard Database error.');
@@ -141,10 +144,21 @@ const router = Router({ mergeParams: true })
             return true; // no data, no need to continue. bug out.
         }
 
+        // init a new dataset object
+        let datasetId;
+        try {
+            const { Dataset } = req.db;
+            const dataset = await Dataset.create({ name: file.name });
+            datasetId = dataset.get('id');
+        } catch (error) {
+            res.error.html(422, error, template);
+            return true; // can't write to DB so we need to bug out here
+        }
+
         // import each exam data record into the database
         let imported = [];
         try {
-            const promises = _.map(records, importRecord(req.db));
+            const promises = _.map(records, importRecord(req.db, datasetId));
             imported = await Promise.all([promises]);
         } catch (error) {
             // catch and ignore
