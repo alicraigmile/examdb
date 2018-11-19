@@ -1,13 +1,13 @@
 doctype html
 html
     head
-        title #{programmeofstudy.Qualification.name} #{programmeofstudy.name} | ExamDB
+        title #{programmeOfStudy.name} | ExamDB
         meta(charset='UTF-8')
-        meta(name='description' content='There are #{courses.length} providers (exam boards) for the ' + programmeofstudy.name + ' exam.')
+        meta(name='description' content='There are #{courses.length} providers (exam boards) for the ' + programmeOfStudy.name + ' exam.')
         link(rel='stylesheet' href='/examdb.css')
         include meta.pug
-        link(rel='alternate' type='application/json' title='JSON' href='/programmesofstudy/'+programmeofstudy.id+'.json')
-        link(rel='alternate' type='text/csv' title='CSV' href='/programmesofstudy/'+programmeofstudy.id+'.csv')
+        link(rel='alternate' type='application/json' title='JSON' href='/programmesofstudy/'+programmeOfStudy.id+'.json')
+        link(rel='alternate' type='text/csv' title='CSV' href='/programmesofstudy/'+programmeOfStudy.id+'.csv')
         meta(name='viewport' content='width=device-width, initial-scale=1')
         script(src='/library/jquery/jquery.min.js')
         script(src='/library/jquery-tablesort/jquery.tablesort.min.js')
@@ -18,11 +18,11 @@ html
                     img(src='/examdb.png' width='64' height='64' alt='')
 
         section
-            h1 #{programmeofstudy.name} exams
+            h1 #{programmeOfStudy.name} exams
 
             h2 Exams
 
-            p There are #{exams.length} #{programmeofstudy.name} examinations in the database.
+            p There are #{exams.length} #{programmeOfStudy.name} examinations in the database.
 
             table
                 thead
@@ -51,9 +51,9 @@ html
 
             h2 Revison guides
             ul(class='revision-guides')
-                if programmeofstudy.bitesize
+                if programmeOfStudy.bitesize
                     li
-                        a(href='https://www.bbc.com/education/subjects/'+programmeofstudy.bitesize)
+                        a(href='https://www.bbc.com/education/subjects/'+programmeOfStudy.bitesize)
                             img(src='/bbc-bitesize.png' alt='BBC Bitesize revision guides' width='40' height='40')
                             = ' BBC Bitesize'
                 else
@@ -61,7 +61,7 @@ html
 
             h2 About the exam providers
 
-            p There are #{courses.length} providers (exam boards) of the #{programmeofstudy.name} exam.
+            p There are #{courses.length} providers (exam boards) of the #{programmeOfStudy.name} exam.
 
             if courses
                 ul
@@ -76,9 +76,9 @@ html
 
             ul
                 li
-                    a(rel='alternate' type='application/json' href='/programmesofstudy/'+programmeofstudy.id+'.json') JSON
+                    a(rel='alternate' type='application/json' href='/programmesofstudy/'+programmeOfStudy.id+'.json') JSON
                 li
-                    a(rel='alternate' type='text/csv' href='/programmesofstudy/'+programmeofstudy.id+'.csv') CSV
+                    a(rel='alternate' type='text/csv' href='/programmesofstudy/'+programmeOfStudy.id+'.csv') CSV
 
         script
             | $('table').tablesort();

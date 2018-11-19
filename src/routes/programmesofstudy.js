@@ -13,22 +13,22 @@ const router = Router({ mergeParams: true })
 
     .get('/programmesofstudy', (req, res) => res.redirect('/'))
 
-    .get('/programmesofstudy/:programmeofstudy.json', async (req, res) => {
-        const programmeofstudyId = req.params.programmeofstudy;
+    .get('/programmesofstudy/:programmeOfStudy.json', async (req, res) => {
+        const programmeOfStudyId = req.params.programmeOfStudy;
         try {
-            req.db.ProgrammeOfStudy.findByPk(programmeofstudyId, {
+            req.db.ProgrammeOfStudy.findByPk(programmeOfStudyId, {
                 include: [{ model: req.db.Qualification }]
-            }).then(programmeofstudy => {
-                if (programmeofstudy) {
-                    programmeofstudy.getCourses().then(courses => {
+            }).then(programmeOfStudy => {
+                if (programmeOfStudy) {
+                    programmeOfStudy.getCourses().then(courses => {
                         const exams = _.map(courses, async course => {
                             await req.db.Course.build(course).getExams();
                         }).flatten();
-                        const output = { programmeofstudy, courses, exams };
+                        const output = { programmeOfStudy, courses, exams };
                         res.json(output);
                     });
                 } else {
-                    res.error.json(404, `Programme of study '${programmeofstudyId}' was not found.`);
+                    res.error.json(404, `Programme of study '${programmeOfStudyId}' was not found.`);
                 }
             });
         } catch (error) {
@@ -36,14 +36,14 @@ const router = Router({ mergeParams: true })
         }
     })
 
-    .get('/programmesofstudy/:programmeofstudy.csv', async (req, res) => {
-        const programmeofstudyId = req.params.programmeofstudy;
+    .get('/programmesofstudy/:programmeOfStudy.csv', async (req, res) => {
+        const programmeOfStudyId = req.params.programmeOfStudy;
         try {
-            req.db.ProgrammeOfStudy.findByPk(programmeofstudyId, {
+            req.db.ProgrammeOfStudy.findByPk(programmeOfStudyId, {
                 include: [{ model: req.db.Qualification }]
-            }).then(programmeofstudy => {
-                if (programmeofstudy) {
-                    programmeofstudy.getCourses().then(courses => {
+            }).then(programmeOfStudy => {
+                if (programmeOfStudy) {
+                    programmeOfStudy.getCourses().then(courses => {
                         const exams = _.map(courses, async course => {
                             // this may be broken
                             await req.db.Course.build(course).getExams();
@@ -51,7 +51,7 @@ const router = Router({ mergeParams: true })
                         return res.csv(exams, true);
                     });
                 } else {
-                    res.error.text(404, `Programme of study '${programmeofstudyId}' was not found.`);
+                    res.error.text(404, `Programme of study '${programmeOfStudyId}' was not found.`);
                 }
             });
         } catch (error) {
@@ -59,23 +59,23 @@ const router = Router({ mergeParams: true })
         }
     })
 
-    .get('/programmesofstudy/:programmeofstudy', (req, res) => {
-        const programmeofstudyId = req.params.programmeofstudy;
+    .get('/programmesofstudy/:programmeOfStudy', (req, res) => {
+        const programmeOfStudyId = req.params.programmeOfStudy;
         try {
-            req.db.ProgrammeOfStudy.findByPk(programmeofstudyId, {
+            req.db.ProgrammeOfStudy.findByPk(programmeOfStudyId, {
                 include: [{ model: req.db.Qualification }]
-            }).then(programmeofstudy => {
-                if (programmeofstudy) {
-                    programmeofstudy.getCourses().then(courses => {
+            }).then(programmeOfStudy => {
+                if (programmeOfStudy) {
+                    programmeOfStudy.getCourses().then(courses => {
                         const exams = _.map(
                             courses,
                             async course => req.db.Course.build(course).getExams() // await
                         ).flatten();
-                        const output = { programmeofstudy, courses, exams };
+                        const output = { programmeOfStudy, courses, exams };
                         return res.render('programmeofstudy', output);
                     });
                 } else {
-                    res.error.html(404, `Programme of study '${programmeofstudyId}' was not found.`);
+                    res.error.html(404, `Programme of study '${programmeOfStudyId}' was not found.`);
                 }
             });
         } catch (error) {

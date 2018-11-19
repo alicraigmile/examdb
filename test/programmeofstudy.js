@@ -6,7 +6,7 @@ import app from '../src/app';
 describe('Programme of Study', () => {
     it('Exams by programme of study in JSON', done => {
         request(app)
-            .get('/programmesofstudy/gcse-mathematics.json')
+            .get('/programmesofstudy/1.json')
             .set('Accept', 'application/json')
             .expect(200)
             .end((err, res) => {
@@ -16,7 +16,7 @@ describe('Programme of Study', () => {
                 expect(res.body.programmeOfStudy.id).to.not.equal(null);
                 expect(res.body.programmeOfStudy).to.have.property('name');
                 expect(res.body.programmeOfStudy.name).to.not.equal(null);
-                expect(res.body.programmeOfStudy).to.have.property('qualification');
+                expect(res.body.programmeOfStudy).to.have.property('Qualification');
                 expect(res.body.programmeOfStudy.qualification).to.not.equal(null);
                 expect(res.body).to.have.property('exams');
                 expect(res.body.exams).to.not.equal(null);
@@ -26,7 +26,7 @@ describe('Programme of Study', () => {
 
     it('Exams by programme of study in HTML', done => {
         request(app)
-            .get('/programmesofstudy/gcse-mathematics')
+            .get('/programmesofstudy/1')
             .set('Accept', 'text/html')
             .expect(200)
             .end((err, res) => {
@@ -38,7 +38,7 @@ describe('Programme of Study', () => {
 
     it('Exams by programme of study in CSV', done => {
         request(app)
-            .get('/programmesofstudy/gcse-mathematics.csv')
+            .get('/programmesofstudy/1.csv')
             .set('Accept', 'text/csv')
             .expect(200)
             .end((err, res) => {
