@@ -66,6 +66,28 @@ const fetchExamboardByName = db => async examBoardName => {
 };
 
 // given a db connection,
+// returns a function which promises to look up an course by name
+// note: the function will create the course if it does not exist
+const fetchProgrammeOfStudyByName = db => async programmeOfStudyName => {
+    const { ProgrammeOfStudy } = db;
+    const [programmeOfStudy] = await ProgrammeOfStudy.findOrCreate({
+        where: { name: programmeOfStudyName }
+    });
+    return programmeOfStudy;
+};
+
+// given a db connection,
+// returns a function which promises to look up an course by name
+// note: the function will create the course if it does not exist
+const fetchCourseByName = db => async courseName => {
+    const { Course } = db;
+    const [course] = await Course.findOrCreate({
+        where: { name: courseName }
+    });
+    return course;
+};
+
+// given a db connection,
 // returns a function which promises to look up a qualification by name
 // note: the function will create the qualification if it does not exist
 const fetchQualificationByName = db => async qualificationName => {
@@ -206,7 +228,7 @@ const router = Router({ mergeParams: true })
             .map(recordProgrammeOfStudyName)
             .unique()
             .value();
-        const programmesOfStudyPromises = _.map(programmesOfStudy, fetchQualificationByName(req.db));
+        const programmesOfStudyPromises = _.map(programmesOfStudy, fetchProgrammeOfStudyByName(req.db));
         programmesOfStudyInDataset = _.object(programmesOfStudy, await Promise.all(programmesOfStudyPromises));
 
         // scan the dataset for courses
@@ -216,7 +238,7 @@ const router = Router({ mergeParams: true })
             .map(recordCourseName)
             .unique()
             .value();
-        const coursesPromises = _.map(courses, fetchQualificationByName(req.db));
+        const coursesPromises = _.map(courses, fetchCourseByName(req.db));
         coursesInDataset = _.object(courses, await Promise.all(coursesPromises));
 
         // scan the dataset for exams
