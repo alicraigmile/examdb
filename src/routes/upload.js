@@ -33,19 +33,16 @@ const catchError = (error, fn) => {
 
 // given a record
 // returns the name of the programme of study
-const recordProgrammeOfStudyName = (record) => {
-    const {
-        Course: courseName,
-        Qualification: qualificationName
-    } = record;
+const recordProgrammeOfStudyName = record => {
+    const { Course: courseName, Qualification: qualificationName } = record;
 
     const courseName2 = courseName.replace(/\n/g, ' ');
     return `${qualificationName} ${courseName2}`;
-}
+};
 
 // given a record
 // returns the name of the programme of study
-const recordCourseName = (record) => {
+const recordCourseName = record => {
     const {
         Course: courseName,
         // eslint-disable-next-line no-useless-computed-key
@@ -55,52 +52,45 @@ const recordCourseName = (record) => {
 
     const courseName2 = courseName.replace(/\n/g, ' ');
     return `${qualificationName} ${courseName2} ${examBoardName}`;
-}
-
-
-// given a record
-// returns an exam
-// XXXXXXXX
-const recordExam = (record) => {
-    const {
-        Course: courseName,
-        Qualification: qualificationName
-    } = record;
-
-    const courseName2 = courseName.replace(/\n/g, ' ');
-    return `${qualificationName} ${courseName2}`;
-}
+};
 
 // given a db connection,
 // returns a function which promises to look up an examboard by name
 // note: the function will create the examboard if it does not exist
-const fetchExamboardByName = (db) => async examBoardName => {
+const fetchExamboardByName = db => async examBoardName => {
     const { ExamBoard } = db;
     const [examBoard] = await ExamBoard.findOrCreate({
         where: { name: examBoardName }
     });
     return examBoard;
-}
+};
 
 // given a db connection,
 // returns a function which promises to look up a qualification by name
 // note: the function will create the qualification if it does not exist
-const fetchQualificationByName = (db) => async qualificationName => {
+const fetchQualificationByName = db => async qualificationName => {
     const { Qualification } = db;
     const [qualification] = await Qualification.findOrCreate({
         where: { name: qualificationName }
     });
     return qualification;
-}
+};
 
-
-const saveExam = (db, examBoardsInDataset, qualificationsInDataset, programmesOfStudyInDataset, coursesInDataset) => async record => {
+const saveExam = (
+    db,
+    examBoardsInDataset,
+    qualificationsInDataset,
+    programmesOfStudyInDataset,
+    // eslint-disable-next-line no-unused-vars
+    coursesInDataset
+) => async record => {
     const { Exam } = db;
 
     // this needs a try/catch as the replace will fail if data is missing. these will be more examples below.
     const {
-        // eslint-disable-next-line no-useless-computed-key
+        // eslint-disable-next-line no-useless-computed-key,no-unused-vars
         ['Exam board']: examBoardName,
+        // eslint-disable-next-line no-unused-vars
         Qualification: qualificationName,
         Course: courseName,
         Code: examCode,
@@ -112,6 +102,7 @@ const saveExam = (db, examBoardsInDataset, qualificationsInDataset, programmesOf
         Date: examDate
     } = record;
 
+    // eslint-disable-next-line no-unused-vars
     const courseName2 = courseName.replace(/\n/g, ' ');
 
     let examDate2 = examDate;
@@ -124,21 +115,20 @@ const saveExam = (db, examBoardsInDataset, qualificationsInDataset, programmesOf
     if (examDate2.match(yyyymmdd)) {
         examDate2 = examDate2.replace(/\//, '-');
     }
-    console.log(`DATE DATE DATE '${examCode}' -> '${examDate2}' DATE DATE DATE`)
 
+    /*
     const programmeOfStudyName = `${qualificationName} ${courseName2}`;
     const courseName3 = `${qualificationName} ${courseName2} ${examBoardName}`;
-
-
     const examBoard = examBoardsInDataset[examBoardName];
     const qualification = qualificationsInDataset[qualificationName];
     const programmeOfStudy = programmesOfStudyInDataset[programmeOfStudyName];
     const course = coursesInDataset[courseName3];
 
     // this is very hacky and doesn't belong here.
-    // await programmeOfStudy.setQualification(qualification);
-    // await course.setProgrammeOfStudy(programmeOfStudy);
-    // await course.setExamBoard(examBoard);
+    await programmeOfStudy.setQualification(qualification);
+    await course.setProgrammeOfStudy(programmeOfStudy);
+    await course.setExamBoard(examBoard);
+    */
 
     // exam
     const exam = await Exam.create({
@@ -149,7 +139,7 @@ const saveExam = (db, examBoardsInDataset, qualificationsInDataset, programmesOf
         timeOfDay: examTimeOfDay,
         duration: examDuration
     });
-    //let c = await exam.setCourse(course);
+    // let c = await exam.setCourse(course);
 
     // so that the async promise doesn't reject
     return Promise.resolve(exam);
@@ -188,44 +178,67 @@ const router = Router({ mergeParams: true })
             res.error.html(400, `No records found`, template);
             return true; // no data, no need to continue. bug out.
         }
-        
+
         // scan the dataset for examboards
         // then fetch (or create) entries for them in the db
         let examBoardsInDataset = [];
-        const examBoards = _.chain(records).pluck('Exam board').unique().value();
+        const examBoards = _.chain(records)
+            .pluck('Exam board')
+            .unique()
+            .value();
         const examBoardPromises = _.map(examBoards, fetchExamboardByName(req.db));
         examBoardsInDataset = _.object(examBoards, await Promise.all(examBoardPromises));
 
         // scan the dataset for qualifications
         // then fetch (or create) entries for them in the db
         let qualificationsInDataset = [];
-        const qualifications = _.chain(records).pluck('Qualification').unique().value();
+        const qualifications = _.chain(records)
+            .pluck('Qualification')
+            .unique()
+            .value();
         const qualificationsPromises = _.map(qualifications, fetchQualificationByName(req.db));
         qualificationsInDataset = _.object(qualifications, await Promise.all(qualificationsPromises));
 
         // scan the dataset for programmes of study
         // then fetch (or create) entries for them in the db
         let programmesOfStudyInDataset = [];
-        const programmesOfStudy = _.chain(records).map(recordProgrammeOfStudyName).unique().value();
+        const programmesOfStudy = _.chain(records)
+            .map(recordProgrammeOfStudyName)
+            .unique()
+            .value();
         const programmesOfStudyPromises = _.map(programmesOfStudy, fetchQualificationByName(req.db));
         programmesOfStudyInDataset = _.object(programmesOfStudy, await Promise.all(programmesOfStudyPromises));
 
         // scan the dataset for courses
         // then fetch (or create) entries for them in the db
         let coursesInDataset = [];
-        const courses = _.chain(records).map(recordCourseName).unique().value();
+        const courses = _.chain(records)
+            .map(recordCourseName)
+            .unique()
+            .value();
         const coursesPromises = _.map(courses, fetchQualificationByName(req.db));
         coursesInDataset = _.object(courses, await Promise.all(coursesPromises));
 
         // scan the dataset for exams
         // then record entries for them in the db
         let examsInDataset = [];
-        const examsPromises = _.map(records, saveExam(req.db, examBoardsInDataset, qualificationsInDataset, programmesOfStudyInDataset, coursesInDataset));
+        const examsPromises = _.map(
+            records,
+            saveExam(req.db, examBoardsInDataset, qualificationsInDataset, programmesOfStudyInDataset, coursesInDataset)
+        );
         examsInDataset = await Promise.all(examsPromises);
-                 
+
         // eslint-disable-next-line no-console
-        console.log(_.chain(examsInDataset).values().map((a) => a.get({
-            plain: true})).value());
+        console.log(
+            _.chain(examsInDataset)
+                .values()
+                .map(a =>
+                    a.get({
+                        plain: true
+                    })
+                )
+                .value()
+        );
 
         /*
         // eslint-disable-next-line no-console
@@ -250,7 +263,6 @@ const router = Router({ mergeParams: true })
             // eslint-disable-next-line no-empty
         } catch(error) {}
         */
-        console.log('outputting page');
         const imported = [];
         const totalRecordCount = records.length;
         const successCount = _.filter(imported, r => r).length;
