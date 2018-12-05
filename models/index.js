@@ -3,6 +3,7 @@
 import fs from 'fs';
 import path from 'path';
 import Sequelize from 'sequelize';
+import PoolLessSequelize from '../src/pool-less-sequelize';
 
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
@@ -30,6 +31,6 @@ Object.keys(db).forEach(modelName => {
 });
 
 db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+db.Sequelize = PoolLessSequelize;
 
 export default db;
