@@ -1,12 +1,10 @@
 {
   "development": {
-    "username": "root",
+    "username": "alic",
     "password": null,
-    "database": "database_development",
+    "database": "examdb",
     "host": "127.0.0.1",
-    "dialect": "sqlite",
-    "storage": "./examdb-dev.db",
-    "logging": false
+    "dialect": "postgres"
   },
   "test": {
     "username": "root",
