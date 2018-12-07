@@ -5,7 +5,7 @@ const router = Router({ mergeParams: true })
     .get('/courses.json', async (req, res, next) => {
         const { Course } = req.db;
         try {
-            Course.findAll().then(res.json);
+            res.json(await Course.findAll());
         } catch (error) {
             res.error.json(500, 'Cannot fetch courses data', error);
         }
