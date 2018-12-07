@@ -21,7 +21,7 @@
     "start": "node --require babel-core/register  --require babel-polyfill src/server.js",
     "debug": "node --nolazy --inspect-brk=9229 --require babel-core/register  --require babel-polyfill src/server.js",
     "test": "npm run lint && npm run db:setup && npm run test:unit",
-    "test:unit": "mocha --require babel-core/register --require babel-polyfill  test/",
+    "test:unit": "mocha --require babel-core/register --require babel-polyfill \"./test/**/*js\"",
     "changelog": "LASTTAG=`git describe --tags --abbrev=0`; echo \"======= Changes since last tag ($LASTTAG) =======\"; git log $LASTTAG..HEAD --oneline"
   },
   "repository": {
