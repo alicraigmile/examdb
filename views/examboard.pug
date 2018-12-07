@@ -3,7 +3,7 @@ html
 	head
 		title #{examboard.name} exam board | ExamDB
 		meta(charset='UTF-8')
-		meta(name='description' content='The exam board '+examboard.name+' sets examinations in '+courses.length+' courses.')
+		meta(name='description' content='The exam board '+examboard.name+' sets examinations in '+examboard.Courses.length+' courses.')
 		include meta.pug
 		link(rel='stylesheet' href='/examdb.css')
 		meta(name='viewport' content='width=device-width, initial-scale=1')
@@ -18,10 +18,10 @@ html
 		section
 			h1 #{examboard.name} courses
 
-			p The exam board #{examboard.name} sets examinations in #{courses.length} courses.
+			p The exam board #{examboard.name} sets examinations in #{examboard.Courses.length} courses.
 
 			ul
-				each course in courses
+				each course in examboard.Courses
 					li
 						a(href='/courses/'+course.id) #{course.name}
 

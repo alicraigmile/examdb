@@ -15,17 +15,14 @@ const router = Router({ mergeParams: true })
     .get('/examboards', (req, res) => res.redirect('/'))
 
     .get('/examboards/:examboard.json', async (req, res) => {
-        const { ExamBoard, WebResource } = req.db;
+        const { Course, ExamBoard, WebResource } = req.db;
         const examboardId = req.params.examboard;
         try {
             ExamBoard.findByPk(examboardId, {
-                include: [{ model: WebResource, as: 'Homepage' }]
+                include: [{ model: WebResource, as: 'Homepage' }, {model: Course, order: [[Course, 'id','ASC']]}]
             }).then(examboard => {
                 if (examboard) {
-                    examboard.getCourses().then(courses => {
-                        const output = { examboard, courses };
-                        res.json(output);
-                    });
+                    res.json(examboard);
                 } else {
                     res.error.json(404, `Exam board '${examboardId}' was not found.`);
                 }
@@ -36,17 +33,18 @@ const router = Router({ mergeParams: true })
     })
 
     .get('/examboards/:examboard', async (req, res) => {
-        const { ExamBoard, WebResource } = req.db;
+        const { Course, ExamBoard, WebResource } = req.db;
         const examboardId = req.params.examboard;
         try {
             ExamBoard.findByPk(examboardId, {
-                include: [{ model: WebResource, as: 'Homepage' }]
+                include: [
+                    { model: WebResource, as: 'Homepage' },
+                    { model: Course },
+                ],
+                order: [[ Course, 'name', 'ASC' ]]
             }).then(examboard => {
                 if (examboard) {
-                    examboard.getCourses().then(courses => {
-                        const output = { examboard, courses };
-                        return res.render('examboard', output);
-                    });
+                    return res.render('examboard', {examboard});
                 } else {
                     res.error.html(404, `Exam board '${examboardId}' was not found.`);
                 }
