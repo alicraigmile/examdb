@@ -1,18 +1,5 @@
 import { Router } from 'express';
-
-const throwError = (code, errorMessage) => error => {
-    const defaultErrorMessage = 'Software error';
-    const defaultErrorCode = 500;
-    const e = error || new Error(errorMessage || defaultErrorMessage);
-    e.code = code || defaultErrorCode;
-    throw e;
-};
-const throwIf = (fn, code, errorMessage) => result => {
-    if (fn(result)) {
-        return throwError(code, errorMessage)();
-    }
-    return result;
-};
+import { throwError, throwIf } from '../helpers';
 
 const router = Router({ mergeParams: true })
     .get('/courses.json', async (req, res, next) => {
