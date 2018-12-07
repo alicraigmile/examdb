@@ -3,7 +3,7 @@ html
     head
         title #{course.name} exams | ExamDB
         meta(charset='UTF-8')
-        meta(name='description' content='There are ' + exams.length + ' ' + course.name + ' examinations set by the '+course.ExamBoard.name+' exam board.')
+        meta(name='description' content='There are ' + course.Exams.length + ' ' + course.name + ' examinations set by the '+course.ExamBoard.name+' exam board.')
         include meta.pug
         link(rel='stylesheet' href='/examdb.css')
         link(rel='alternate' type='application/json' title='JSON' href='/courses/'+course.id+'.json')
@@ -20,7 +20,7 @@ html
             h1 #{course.name} exams
 
 
-            p There are #{exams.length} #{course.name} exams.
+            p There are #{course.Exams.length} #{course.name} exams.
 
             table
                 thead
@@ -32,7 +32,7 @@ html
                         th Morning/Afternoon
                         th Duration
                 tbody
-                    each exam in exams
+                    each exam in course.Exams
                         - var dateSort = exam.date + (exam.timeOfDay=='Morning' ? 'T0000' : 'T1200')
                         tr
                             td= exam.code

@@ -21,15 +21,15 @@ const router = Router({ mergeParams: true })
             const course = await Course.findByPk(courseId, {
                 include: [
                     { model: ProgrammeOfStudy, include: [{ model: Qualification }] },
-                    { model: ExamBoard, include: [{ model: WebResource, as: 'Homepage' }] }
-                ]
+                    { model: ExamBoard, include: [{ model: WebResource, as: 'Homepage' }] },
+                    { model: Exam }
+                ],
+                order: [[Exam, 'date', 'ASC']]
             });
             if (! course) {
                 throwError(404, `Course '${courseId}' was not found.`);
             }   
-
-            const exams = await course.getExams().catch(throwError(400, 'Exam database error.'));
-            res.json({ course, exams });
+            res.json({ course });
         } catch (error) {
             if (error.code) {
                 res.error.json(error.code, error.message);
@@ -40,21 +40,22 @@ const router = Router({ mergeParams: true })
     })
 
     .get('/courses/:course', async (req, res, next) => {
-        const { Course, ExamBoard, ProgrammeOfStudy, Qualification, WebResource } = req.db;
+        const { Course, Exam, ExamBoard, ProgrammeOfStudy, Qualification, WebResource } = req.db;
         const courseId = req.params.course;
         try {
             const course = await Course.findByPk(courseId, {
                 rejectOnEmpty: true,
                 include: [
                     { model: ProgrammeOfStudy, include: [{ model: Qualification }] },
-                    { model: ExamBoard, include: [{ model: WebResource, as: 'Homepage' }] }
-                ]
+                    { model: ExamBoard, include: [{ model: WebResource, as: 'Homepage' }] },
+                    { model: Exam }
+                ], 
+                order: [[Exam, 'date', 'ASC']]
             }).then(
                 throwIf(r => !r, 404, `Course '${courseId}' was not found.`),
                 throwError(500, 'Course database error.')
             );
-            const exams = await course.getExams().catch(throwError(400, 'Exam database error.'));
-            res.render('course', { course, exams });
+            res.render('course', { course });
         } catch (error) {
             if (error.code) {
                 res.error.html(error.code, error.message);
