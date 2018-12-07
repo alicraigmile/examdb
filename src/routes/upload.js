@@ -7,11 +7,6 @@ import Record from '../record';
 
 const csvParse = Promise.promisify(csvParser);
 
-const makeExamAssociations = course => exam => {
-    exam.setCourse(course);
-    return exam;
-};
-
 // given a db connection,
 // returns a function which promises to look up an examboard by name
 // note: the function will create the examboard if it does not exist
@@ -25,17 +20,6 @@ const fetchExamboardByName = db => async examBoardName => {
 
 
 // given a db connection,
-// returns a function which promises to look up an course by name
-// note: the function will create the course if it does not exist
-const fetchCourseByName = db => async courseName => {
-    const { Course } = db;
-    const [course] = await Course.findOrCreate({
-        where: { name: courseName }
-    });
-    return course;
-};
-
-// given a db connection,
 // returns a function which promises to look up a qualification by name
 // note: the function will create the qualification if it does not exist
 const fetchQualificationByName = db => async qualificationName => {
@@ -46,20 +30,20 @@ const fetchQualificationByName = db => async qualificationName => {
     return qualification;
 };
 
-// given a set of records, scan for examboards
+// given a set of records, scan for exam boards
 // then fetch (or create) entries for them in the db
 // returns an object with promises for each, keyed by examboard name
 // there is an option to cache the promises if request
-const scanForExamboards = (db, cache) => records => {
+const scanForExamBoards = (db, cache) => records => {
     const uniqueExamBoardNames = _.chain(records)
         .pluck('examBoardName')
         .unique()
         .value();
 
-    const examboards = _.object(uniqueExamBoardNames, _.map(uniqueExamBoardNames, fetchExamboardByName(db)));
-    cache.examboards = examboards;
+    const examBoards = _.object(uniqueExamBoardNames, _.map(uniqueExamBoardNames, fetchExamboardByName(db)));
+    cache.examBoards = examBoards;
 
-    return examboards;
+    return examBoards;
 };
 
 // given a set of records, scan for qualifications
@@ -133,31 +117,51 @@ const scanForProgrammesOfStudy = (db, cache) => records => {
 // returns an object with promises for each, keyed by programmes of study name
 // there is an option to cache the promises
 const scanForCourses = (db, cache) => records => {
-    const getCourseName = record => record.courseNameLong();
 
-    const uniqueCourseNames = _.chain(records)
-        .map(getCourseName)
-        .unique()
+    const courseNameFromRecord = record => record.courseNameLong();
+    const courseStubFromRecord = record => ({
+        courseName: record.courseNameLong(),
+        examBoardName: record.examBoardName,
+        programmeOfStudyName: record.programmeOfStudyName()
+    });
+    
+    // extract the names of programmes of study from the CSV records
+    // return a unique list of those
+    // (along with details of the associated qualification )
+    const stubs = _.chain(records)
+        .unique(courseNameFromRecord)
+        .map(courseStubFromRecord)
         .value();
+    
+    const uniqueNames = _.pluck(stubs, 'courseName');
 
-    const courses = _.object(uniqueCourseNames, _.map(uniqueCourseNames, fetchCourseByName(db)));
+    const promises = _.map(stubs, async stub => {
+        const { Course } = db;
+
+        // const [course, created] = await Course.findOrCreate({
+        const [course] = await Course.findOrCreate({
+            where: { name: stub.courseName }
+        });
+        
+        // if (created) {
+        const programmeOfStudy = await cache.programmesOfStudy[stub.programmeOfStudyName];
+        const examBoard = await cache.examBoards[stub.examBoardName];
+        course.setProgrammeOfStudy(programmeOfStudy);
+        course.setExamBoard(examBoard);
+        // }
+        
+        return course;
+    });
+
+    const courses = _.object(uniqueNames, promises);
     cache.courses = courses;
-    return courses;
+
+    return Promise.all(promises);
 };
 
 const saveExam = (db, cache) => async record => {
     const { Exam } = db;
-    // this needs a try/catch as the replace will fail if data is missing. these will be more examples below.
-
-    const course = await cache.courses[record.courseNameLong()];
-
-    // this is very hacky and doesn't belong here.
-    /*
-    await programmeOfStudy.setQualification(qualification);
-    await course.setProgrammeOfStudy(programmeOfStudy);
-    await course.setExamBoard(examBoard);
-    */
-
+    
     // exam
     const examDetails = {
         code: record.examCode,
@@ -167,7 +171,9 @@ const saveExam = (db, cache) => async record => {
         timeOfDay: record.examTimeOfDay,
         duration: record.examDuration
     };
-    const exam = await Exam.create(examDetails).then(makeExamAssociations(course));
+    const exam = await Exam.create(examDetails);
+    const course = await cache.courses[record.courseNameLong()];
+    await exam.setCourse(course);
 
     // so that the async promise doesn't reject
     return Promise.resolve(exam);
@@ -239,7 +245,7 @@ const router = Router({ mergeParams: true })
         // then fetch (or create) entries for them in the db.
         // we can then find them in the cache
         scanForQualifications(req.db, cache)(records);
-        scanForExamboards(req.db, cache)(records);
+        scanForExamBoards(req.db, cache)(records);
         scanForProgrammesOfStudy(req.db, cache)(records);
         scanForCourses(req.db, cache)(records);
         scanForExams(req.db, cache)(records);
