@@ -3,8 +3,9 @@ import _ from 'underscore';
 
 const router = Router({ mergeParams: true })
     .get('/programmesofstudy.json', async (req, res, next) => {
+        const { ProgrammeOfStudy } = req.db;
         try {
-            req.db.ProgrammeOfStudy.findAll().then(programmesofstudy => res.json(programmesofstudy));
+            res.json(await ProgrammeOfStudy.findAll());
         } catch (error) {
             res.error.json(500, 'Cannot fetch programme of study data', error);
         }
@@ -13,9 +14,9 @@ const router = Router({ mergeParams: true })
 
     .get('/programmesofstudy', (req, res) => res.redirect('/'))
 
-    .get('/programmesofstudy/:programmeOfStudy.json', async (req, res) => {
+    .get('/programmesofstudy/:programmeOfStudyId.json', async (req, res) => {
         const { Course, Qualification, ProgrammeOfStudy } = req.db;
-        const programmeOfStudyId = req.params.programmeOfStudy;
+        const { programmeOfStudyId } = req.params;
         try {
             ProgrammeOfStudy.findByPk(programmeOfStudyId, {
                 include: [{ model: Qualification }]
@@ -37,9 +38,9 @@ const router = Router({ mergeParams: true })
         }
     })
 
-    .get('/programmesofstudy/:programmeOfStudy.csv', async (req, res) => {
+    .get('/programmesofstudy/:programmeOfStudyId.csv', async (req, res) => {
         const { Course, Qualification, ProgrammeOfStudy } = req.db;
-        const programmeOfStudyId = req.params.programmeOfStudy;
+        const { programmeOfStudyId } = req.params;
         try {
             ProgrammeOfStudy.findByPk(programmeOfStudyId, {
                 include: [{ model: Qualification }]
@@ -61,9 +62,9 @@ const router = Router({ mergeParams: true })
         }
     })
 
-    .get('/programmesofstudy/:programmeOfStudy', (req, res) => {
+    .get('/programmesofstudy/:programmeOfStudyId', (req, res) => {
         const { Course, Qualification, ProgrammeOfStudy } = req.db;
-        const programmeOfStudyId = req.params.programmeOfStudy;
+        const { programmeOfStudyId } = req.params;
         try {
             ProgrammeOfStudy.findByPk(programmeOfStudyId, {
                 include: [{ model: Qualification }]
