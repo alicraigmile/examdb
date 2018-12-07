@@ -3,40 +3,11 @@ import _ from 'underscore';
 import csvParser from 'csv-parse';
 import Promise from 'bluebird';
 import Router from 'express-promise-router';
-import { throwIf, catchError, toISODate } from '../helpers';
+import { throwIf, catchError } from '../helpers';
 import Record from '../record';
+import { isImportNamespaceSpecifier } from 'babel-types';
 
 const csvParse = Promise.promisify(csvParser);
-
-// given a record
-// returns the name of the qualification
-const recordQualificationName = record => {
-    const { Qualification: qualificationName } = record;
-    return qualificationName;
-};
-
-// given a record
-// returns the name of the programme of study
-const recordProgrammeOfStudyName = record => {
-    const { Course: courseName, Qualification: qualificationName } = record;
-
-    const courseName2 = courseName.replace(/\n/g, ' ');
-    return `${qualificationName} ${courseName2}`;
-};
-
-// given a record
-// returns the name of the programme of study
-const recordCourseName = record => {
-    const {
-        Course: courseName,
-        // eslint-disable-next-line no-useless-computed-key
-        ['Exam board']: examBoardName,
-        Qualification: qualificationName
-    } = record;
-
-    const courseName2 = courseName.replace(/\n/g, ' ');
-    return `${qualificationName} ${courseName2} ${examBoardName}`;
-};
 
 const makeExamAssociations = course => exam => {
     exam.setCourse(course);
@@ -59,7 +30,7 @@ const fetchExamboardByName = db => async examBoardName => {
 // note: the function will create the  programme of study if it does not exist
 const fetchProgrammeOfStudyByName = db => async programmeOfStudyName => {
     const { ProgrammeOfStudy } = db;
-    const [programmeOfStudy] = ProgrammeOfStudy.findOrCreate({
+    const [programmeOfStudy] = await ProgrammeOfStudy.findOrCreate({
         where: { name: programmeOfStudyName }
     });
     return programmeOfStudy;
@@ -93,15 +64,12 @@ const fetchQualificationByName = db => async qualificationName => {
 // there is an option to cache the promises if request
 const scanForExamboards = (db, cache) => records => {
     const uniqueExamBoardNames = _.chain(records)
-        .pluck('Exam board')
+        .pluck('examBoardName')
         .unique()
         .value();
 
     const examboards = _.object(uniqueExamBoardNames, _.map(uniqueExamBoardNames, fetchExamboardByName(db)));
-
-    if (cache) {
-        cache.examboards = examboards;
-    }
+    cache.examboards = examboards;
 
     return examboards;
 };
@@ -112,7 +80,7 @@ const scanForExamboards = (db, cache) => records => {
 // there is an option to cache the promises if request
 const scanForQualifications = (db, cache) => records => {
     const uniqueQualificationNames = _.chain(records)
-        .map(recordQualificationName)
+        .pluck('qualificationName')
         .unique()
         .value();
 
@@ -128,18 +96,29 @@ const scanForQualifications = (db, cache) => records => {
 // then fetch (or create) entries for them in the db
 // returns an object with promises for each, keyed by programmes of study name
 // there is an option to cache the promises
-const scanForProgrammesOfStudy = (db, cache) => records => {
-    const uniqueProgrammeOfStudyNames = _.chain(records)
-        .map(recordProgrammeOfStudyName)
-        .unique(recordProgrammeOfStudyName)
-        .value();
 
-    const programmesOfStudy = _.object(
-        uniqueProgrammeOfStudyNames,
-        _.map(uniqueProgrammeOfStudyNames, fetchProgrammeOfStudyByName(db))
-    );
+const scanForProgrammesOfStudy = (db, cache) => records => {
+    const posName = record => record.programmeOfStudyName();
+    // extract any relevant details of a programmes of study from a CSV record
+    const extractDeets = record => ({
+        name: record.programmeOfStudyName(),
+        qualification: record.qualificationName
+    });
+
+    // given a stub, return the real programme of study
+    const expandProgrammeOfStudy = stub => fetchProgrammeOfStudyByName(db, stub.qualification)(stub.name);
+    
+    const programmesOfStudyStubs = _.chain(records)
+        .unique(posName)
+        .map(extractDeets)
+        .value();
+        
+    const names = _.pluck(programmesOfStudyStubs, 'name');
+    const promises = _.map(programmesOfStudyStubs, expandProgrammeOfStudy);
+
+    const programmesOfStudy = _.object(names, promises);
     cache.programmesOfStudy = programmesOfStudy;
-    return programmesOfStudy;
+    return Promise.all(promises);
 };
 
 // given a set of records, scan for programmes of study
@@ -147,8 +126,11 @@ const scanForProgrammesOfStudy = (db, cache) => records => {
 // returns an object with promises for each, keyed by programmes of study name
 // there is an option to cache the promises
 const scanForCourses = (db, cache) => records => {
+
+    const getCourseName = record => record.courseNameLong();
+
     const uniqueCourseNames = _.chain(records)
-        .map(recordCourseName)
+        .map(getCourseName)
         .unique()
         .value();
 
@@ -160,34 +142,8 @@ const scanForCourses = (db, cache) => records => {
 const saveExam = (db, cache) => async record => {
     const { Exam } = db;
     // this needs a try/catch as the replace will fail if data is missing. these will be more examples below.
-    const {
-        // eslint-disable-next-line no-useless-computed-key,no-unused-vars
-        ['Exam board']: examBoardName,
-        // eslint-disable-next-line no-unused-vars
-        Qualification: qualificationName,
-        Course: rawCourseName,
-        Code: examCode,
-        Notes: examNotes,
-        Paper: examPaper,
-        // eslint-disable-next-line no-useless-computed-key
-        ['Morning/Afternoon']: examTimeOfDay,
-        Duration: examDuration,
-        Date: rawExamDate
-    } = record;
 
-    // eslint-disable-next-line no-unused-vars
-    const examDate = toISODate(rawExamDate);
-
-    /*
-   const programmeOfStudyName = `${qualificationName} ${courseName2}`;
-    const examBoard = examBoardsInDataset[examBoardName];
-    const qualification = qualificationsInDataset[qualificationName];
-    const programmeOfStudy = programmesOfStudyInDataset[programmeOfStudyName];
-    */
-
-    const courseName = rawCourseName.replace(/\n/g, ' ');
-    const courseName3 = `${qualificationName} ${courseName} ${examBoardName}`;
-    const course = await cache.courses[courseName3];
+    const course = await cache.courses[record.courseNameLong()];
 
     // this is very hacky and doesn't belong here.
     /*
@@ -198,17 +154,25 @@ const saveExam = (db, cache) => async record => {
 
     // exam
     const examDetails = {
-        code: examCode,
-        paper: examPaper,
-        notes: examNotes,
-        date: examDate,
-        timeOfDay: examTimeOfDay,
-        duration: examDuration
+        code: record.examCode,
+        paper: record.examPaper,
+        notes: record.examNotes,
+        date: record.examDate,
+        timeOfDay: record.examTimeOfDay,
+        duration: record.examDuration
     };
     const exam = await Exam.create(examDetails).then(makeExamAssociations(course));
 
     // so that the async promise doesn't reject
     return Promise.resolve(exam);
+};
+
+// we are assuming each record represents one exam
+const scanForExams = (db, cache) => records => {
+    const examsPromises = _.map(records, saveExam(db, cache));
+    cache.exams = examsPromises;
+    return Promise.all(cache.exams);
+
 };
 
 const router = Router({ mergeParams: true })
@@ -248,66 +212,40 @@ const router = Router({ mergeParams: true })
         // parse the CSV records into a format examdb can understand.
         // make sure they match the schema too, or they're no good to us!
         let records = [];
-        try {
-            records = _.map(csvRecords, data => new Record(data));
-        } catch (err) {
-            res.error.html(400, `The CSV parsed ok, but the data does not meet the examdb schema - ${err}`, template);
-            return true; // bad data, no need to continue. bug out.
-        }
+        let errors = [];
+        _.each(csvRecords, data => {
+            try {
+                const record = new Record(data);
+                records.push(record);
+            } catch (err) {
+                errors.push(err);
+            }
+        });
 
-        const cache = {};
+        const cache = {
+            courses: [],
+            exams: [],
+            examBoards: [],
+            programmesOfStudy: [],
+            qualifications: []
+        };
 
         // scan the dataset for examboards
         // then fetch (or create) entries for them in the db.
         // we can then find them in the cache
-        scanForExamboards(req.db, cache)(records);
         scanForQualifications(req.db, cache)(records);
+        scanForExamboards(req.db, cache)(records);
         scanForProgrammesOfStudy(req.db, cache)(records);
         scanForCourses(req.db, cache)(records);
+        scanForExams(req.db, cache)(records);
 
-        // refactor? scanForExams(req.db, cache)(records)
-        let examsInDataset = [];
-        const examsPromises = _.map(records, saveExam(req.db, cache));
-        examsInDataset = await Promise.all(examsPromises);
+        // we'll need to wait for them to complete importing before contining
+        await Promise.all(cache.exams);
 
-        // eslint-disable-next-line no-console
-        console.log(
-            _.chain(examsInDataset)
-                .values()
-                .map(a =>
-                    a.get({
-                        plain: true
-                    })
-                )
-                .value()
-        );
+        const imported = _.filter(cache.exams, (promise) => promise.isFulfilled);
 
-        /*
-        // eslint-disable-next-line no-console
-        console.log(_.chain(qualificationsInDataset).values().map((a) => a.get({
-            plain: true})).value());
-
-        // eslint-disable-next-line no-console
-        console.log(_.chain(examBoardsInDataset).values().map((a) => a.get({
-            plain: true})).value());
-        */
-
-        /*
-        // import each exam data record into the database
-        let imported = [];
-        try {
-            const promises = _.map(records, importRecord(req.db, datasetId));
-            imported = await Promise.each([promises]).then(
-                () => console.log('all promised fulfilled!'),
-                () => console.log('one or more promises failed')
-            );
-            // catch and ignore
-            // eslint-disable-next-line no-empty
-        } catch(error) {}
-        */
-        const imported = [];
-        const totalRecordCount = records.length;
-        const successCount = _.filter(imported, r => r).length;
+        const totalRecordCount = csvRecords.length;
+        const successCount = imported.length;
         const successMessage = `Upload complete. Imported ${successCount} of ${totalRecordCount} exam records from '${
             file.name
         }'.`;
