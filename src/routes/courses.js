@@ -5,7 +5,7 @@ const router = Router({ mergeParams: true })
     .get('/courses.json', async (req, res, next) => {
         const { Course } = req.db;
         try {
-            res.json(await Course.findAll());
+            res.json(await Course.findAll({order: [['id','ASC']]}));
         } catch (error) {
             res.error.json(500, 'Cannot fetch courses data', error);
         }
@@ -15,19 +15,19 @@ const router = Router({ mergeParams: true })
     .get('/courses', (req, res) => res.redirect('/'))
 
     .get('/courses/:course.json', async (req, res, next) => {
-        const { Course, ExamBoard, ProgrammeOfStudy, Qualification, WebResource } = req.db;
+        const { Course, Exam, ExamBoard, ProgrammeOfStudy, Qualification, WebResource, Sequelize } = req.db;
         const courseId = req.params.course;
         try {
             const course = await Course.findByPk(courseId, {
-                rejectOnEmpty: true,
                 include: [
                     { model: ProgrammeOfStudy, include: [{ model: Qualification }] },
                     { model: ExamBoard, include: [{ model: WebResource, as: 'Homepage' }] }
                 ]
-            }).then(
-                throwIf(r => !r, 404, `Course '${courseId}' was not found.`),
-                throwError(500, 'Course database error.')
-            );
+            });
+            if (! course) {
+                throwError(404, `Course '${courseId}' was not found.`);
+            }   
+
             const exams = await course.getExams().catch(throwError(400, 'Exam database error.'));
             res.json({ course, exams });
         } catch (error) {
