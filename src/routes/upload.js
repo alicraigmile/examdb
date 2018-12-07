@@ -23,16 +23,6 @@ const fetchExamboardByName = db => async examBoardName => {
     return examBoard;
 };
 
-// given a db connection,
-// returns a function which promises to look up a programme of study by name
-// note: the function will create the  programme of study if it does not exist
-const fetchProgrammeOfStudyByName = db => async programmeOfStudyName => {
-    const { ProgrammeOfStudy } = db;
-    const [programmeOfStudy] = await ProgrammeOfStudy.findOrCreate({
-        where: { name: programmeOfStudyName }
-    });
-    return programmeOfStudy;
-};
 
 // given a db connection,
 // returns a function which promises to look up an course by name
@@ -90,32 +80,51 @@ const scanForQualifications = (db, cache) => records => {
     return qualifications;
 };
 
+
+
 // given a set of records, scan for programmes of study
 // then fetch (or create) entries for them in the db
 // returns an object with promises for each, keyed by programmes of study name
 // there is an option to cache the promises
 
 const scanForProgrammesOfStudy = (db, cache) => records => {
-    const posName = record => record.programmeOfStudyName();
-    // extract any relevant details of a programmes of study from a CSV record
-    const extractDeets = record => ({
-        name: record.programmeOfStudyName(),
-        qualification: record.qualificationName
+    
+    const posNameFromRecord = record => record.programmeOfStudyName();
+    const posStubFromRecord = record => ({
+        programmeOfStudyName: record.programmeOfStudyName(),
+        qualificationName: record.qualificationName
+    });
+    
+    // extract the names of programmes of study from the CSV records
+    // return a unique list of those
+    // (along with details of the associated qualification )
+    const stubs = _.chain(records)
+        .unique(posNameFromRecord)
+        .map(posStubFromRecord)
+        .value();
+    
+    const uniqueNames = _.pluck(stubs, 'programmeOfStudyName');
+
+    const promises = _.map(stubs, async stub => {
+
+        const { ProgrammeOfStudy } = db;
+       
+        // const [programmeOfStudy, created] = await ProgrammeOfStudy.findOrCreate({
+        const [programmeOfStudy] = await ProgrammeOfStudy.findOrCreate({
+            where: { name: stub.programmeOfStudyName }
+        });
+        
+        // if (created) {
+        const qualification = await cache.qualifications[stub.qualificationName];
+        programmeOfStudy.setQualification(qualification);
+        // };
+      
+        return programmeOfStudy;
     });
 
-    // given a stub, return the real programme of study
-    const expandProgrammeOfStudy = stub => fetchProgrammeOfStudyByName(db, stub.qualification)(stub.name);
-
-    const programmesOfStudyStubs = _.chain(records)
-        .unique(posName)
-        .map(extractDeets)
-        .value();
-
-    const names = _.pluck(programmesOfStudyStubs, 'name');
-    const promises = _.map(programmesOfStudyStubs, expandProgrammeOfStudy);
-
-    const programmesOfStudy = _.object(names, promises);
+    const programmesOfStudy = _.object(uniqueNames, promises);
     cache.programmesOfStudy = programmesOfStudy;
+
     return Promise.all(promises);
 };
 
