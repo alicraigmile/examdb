@@ -4,6 +4,7 @@ import csvParser from 'csv-parse';
 import Promise from 'bluebird';
 import Router from 'express-promise-router';
 import { throwIf, catchError, toISODate } from '../helpers';
+import Record from '../record';
 
 const csvParse = Promise.promisify(csvParser);
 
@@ -54,11 +55,11 @@ const fetchExamboardByName = db => async examBoardName => {
 };
 
 // given a db connection,
-// returns a function which promises to look up an course by name
-// note: the function will create the course if it does not exist
+// returns a function which promises to look up a programme of study by name
+// note: the function will create the  programme of study if it does not exist
 const fetchProgrammeOfStudyByName = db => async programmeOfStudyName => {
     const { ProgrammeOfStudy } = db;
-    const [programmeOfStudy] = await ProgrammeOfStudy.findOrCreate({
+    const [programmeOfStudy] = ProgrammeOfStudy.findOrCreate({
         where: { name: programmeOfStudyName }
     });
     return programmeOfStudy;
@@ -130,7 +131,7 @@ const scanForQualifications = (db, cache) => records => {
 const scanForProgrammesOfStudy = (db, cache) => records => {
     const uniqueProgrammeOfStudyNames = _.chain(records)
         .map(recordProgrammeOfStudyName)
-        .unique()
+        .unique(recordProgrammeOfStudyName)
         .value();
 
     const programmesOfStudy = _.object(
@@ -229,19 +230,29 @@ const router = Router({ mergeParams: true })
         }
 
         // parse csv file to extract a set of exam data records
-        let records = [];
+        let csvRecords = [];
         try {
             const csvParserOptions = { columns: true };
-            records = await csvParse(file.data, csvParserOptions);
+            csvRecords = await csvParse(file.data, csvParserOptions);
         } catch (error) {
             res.error.html(422, error, template);
             return true; // errors here are fatal too, so we need to bug out here
         }
 
         // no records found 400 (Bad Request)
-        if (records.length === 0) {
+        if (csvRecords.length === 0) {
             res.error.html(400, `No records found`, template);
             return true; // no data, no need to continue. bug out.
+        }
+
+        // parse the CSV records into a format examdb can understand.
+        // make sure they match the schema too, or they're no good to us!
+        let records = [];
+        try {
+            records = _.map(csvRecords, data => new Record(data));
+        } catch (err) {
+            res.error.html(400, `The CSV parsed ok, but the data does not meet the examdb schema - ${err}`, template);
+            return true; // bad data, no need to continue. bug out.
         }
 
         const cache = {};
