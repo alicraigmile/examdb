@@ -1,11 +1,9 @@
-// import { Router } from 'express';
 import _ from 'underscore';
 import csvParser from 'csv-parse';
 import Promise from 'bluebird';
 import Router from 'express-promise-router';
 import { throwIf, catchError } from '../helpers';
 import Record from '../record';
-import { isImportNamespaceSpecifier } from 'babel-types';
 
 const csvParse = Promise.promisify(csvParser);
 
@@ -107,12 +105,12 @@ const scanForProgrammesOfStudy = (db, cache) => records => {
 
     // given a stub, return the real programme of study
     const expandProgrammeOfStudy = stub => fetchProgrammeOfStudyByName(db, stub.qualification)(stub.name);
-    
+
     const programmesOfStudyStubs = _.chain(records)
         .unique(posName)
         .map(extractDeets)
         .value();
-        
+
     const names = _.pluck(programmesOfStudyStubs, 'name');
     const promises = _.map(programmesOfStudyStubs, expandProgrammeOfStudy);
 
@@ -126,7 +124,6 @@ const scanForProgrammesOfStudy = (db, cache) => records => {
 // returns an object with promises for each, keyed by programmes of study name
 // there is an option to cache the promises
 const scanForCourses = (db, cache) => records => {
-
     const getCourseName = record => record.courseNameLong();
 
     const uniqueCourseNames = _.chain(records)
@@ -172,7 +169,6 @@ const scanForExams = (db, cache) => records => {
     const examsPromises = _.map(records, saveExam(db, cache));
     cache.exams = examsPromises;
     return Promise.all(cache.exams);
-
 };
 
 const router = Router({ mergeParams: true })
@@ -211,8 +207,8 @@ const router = Router({ mergeParams: true })
 
         // parse the CSV records into a format examdb can understand.
         // make sure they match the schema too, or they're no good to us!
-        let records = [];
-        let errors = [];
+        const records = [];
+        const errors = [];
         _.each(csvRecords, data => {
             try {
                 const record = new Record(data);
@@ -242,7 +238,7 @@ const router = Router({ mergeParams: true })
         // we'll need to wait for them to complete importing before contining
         await Promise.all(cache.exams);
 
-        const imported = _.filter(cache.exams, (promise) => promise.isFulfilled);
+        const imported = _.filter(cache.exams, promise => promise.isFulfilled);
 
         const totalRecordCount = csvRecords.length;
         const successCount = imported.length;
