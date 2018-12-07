@@ -3,7 +3,7 @@ html
     head
         title #{programmeOfStudy.name} | ExamDB
         meta(charset='UTF-8')
-        meta(name='description' content='There are #{courses.length} providers (exam boards) for the ' + programmeOfStudy.name + ' exam.')
+        meta(name='description' content='There are #{programmeOfStudy.Courses.length} providers (exam boards) for the ' + programmeOfStudy.name + ' exam.')
         link(rel='stylesheet' href='/examdb.css')
         include meta.pug
         link(rel='alternate' type='application/json' title='JSON' href='/programmesofstudy/'+programmeOfStudy.id+'.json')
@@ -22,7 +22,7 @@ html
 
             h2 Exams
 
-            p There are #{exams.length} #{programmeOfStudy.name} examinations in the database.
+            p There are #{programmeOfStudy.Exams.length} #{programmeOfStudy.name} examinations in the database.
 
             table
                 thead
@@ -35,7 +35,7 @@ html
                         th Morning/Afternoon
                         th Duration
                 tbody
-                    each exam in exams
+                    each exam in programmeOfStudy.Exams
                         if exam.date
                             - var dateSort = exam.date + (exam.timeofday=='Morning' ? 'T0000' : 'T1200')
                             tr
@@ -61,11 +61,11 @@ html
 
             h2 About the exam providers
 
-            p There are #{courses.length} providers (exam boards) of the #{programmeOfStudy.name} exam.
+            p There are #{programmeOfStudy.Courses.length} providers (exam boards) of the #{programmeOfStudy.name} exam.
 
-            if courses
+            if programmeOfStudy.Courses
                 ul
-                    each course in courses
+                    each course in programmeOfStudy.Courses
                         if course.id
                             li
                                 a(href='/courses/'+course.id) #{course.name}

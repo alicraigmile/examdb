@@ -15,47 +15,37 @@ const router = Router({ mergeParams: true })
     .get('/programmesofstudy', (req, res) => res.redirect('/'))
 
     .get('/programmesofstudy/:programmeOfStudyId.json', async (req, res) => {
-        const { Course, Qualification, ProgrammeOfStudy } = req.db;
+        const { Course, Exam, Qualification, ProgrammeOfStudy } = req.db;
         const { programmeOfStudyId } = req.params;
         try {
             ProgrammeOfStudy.findByPk(programmeOfStudyId, {
-                include: [{ model: Qualification }]
+                include: [{ model: Qualification },{ model: Course, include:[{model:Exam}] }]
             }).then(programmeOfStudy => {
                 if (programmeOfStudy) {
-                    programmeOfStudy.getCourses().then(courses => {
-                        const exams = _.map(courses, async course => {
-                            await Course.build(course).getExams();
-                        }).flatten();
-                        const output = { programmeOfStudy, courses, exams };
-                        res.json(output);
-                    });
+                    const output = { programmeOfStudy };
+                    res.json({output});
+                
                 } else {
                     res.error.json(404, `Programme of study '${programmeOfStudyId}' was not found.`);
                 }
             });
         } catch (error) {
-            res.error.json(500, `Cannot fetch programme of study data.`);
+            res.error.json(500, `Cannot fetch programme of study data. - ${error}`);
         }
     })
 
     .get('/programmesofstudy/:programmeOfStudyId.csv', async (req, res) => {
-        const { Course, Qualification, ProgrammeOfStudy } = req.db;
+        const { Course, Exam, Qualification, ProgrammeOfStudy } = req.db;
         const { programmeOfStudyId } = req.params;
         try {
             ProgrammeOfStudy.findByPk(programmeOfStudyId, {
-                include: [{ model: Qualification }]
+                include: [{ model: Qualification },{ model: Course, include:[{model:Exam}] }]
             }).then(programmeOfStudy => {
                 if (programmeOfStudy) {
-                    programmeOfStudy.getCourses().then(courses => {
-                        const exams = _.map(courses, async course => {
-                            // this may be broken
-                            await Course.build(course).getExams();
-                        }).flatten();
-                        return res.csv(exams, true);
-                    });
-                } else {
-                    res.error.text(404, `Programme of study '${programmeOfStudyId}' was not found.`);
+                    const exams = _.map(programmeOfStudy.Courses, course => course.Exams).flatten();
+                    return res.csv(exams, true);
                 }
+                res.error.text(404, `Programme of study '${programmeOfStudyId}' was not found.`);
             });
         } catch (error) {
             res.error.json(500, `Cannot fetch programme of study data.`);
