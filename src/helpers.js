@@ -1,4 +1,3 @@
-
 export const throwError = (code, errorMessage) => () => {
     const error = Error(); // debug
     error.code = code;
@@ -23,23 +22,32 @@ export const catchError = (error, fn) => {
 };
 
 const ddmmyyyy = /^\d{2}\/\d{2}\/\d{4}$/;
-export const isDDMMYYYY = (date) => date.match(ddmmyyyy);
+export const isDDMMYYYY = date => date.match(ddmmyyyy) !== null;
 // 20/12/2019 => true
 
 const yyyymmdd = /^\d{4}\/\d{2}\/\d{2}$/;
-export const isYYYYMMDD = (date) => date.match(yyyymmdd);
-// 2019/12/20 => true
+export const isYYYYMMDD = date => date.match(yyyymmdd) !== null;
 
-export const reverseDate = (date) => date.split('/').reverse().join('-');
-// 20/12/2019 => 2019-12-20
+export const reverseDate = date =>
+    date
+        .split('/')
+        .reverse()
+        .join('/');
+// 20/12/2019 => 2019/12/20
 
-export const toISODate = (date) => {
-    let isoDate;
-    if (date.match(ddmmyyyy)) {
-        isoDate = reverseDate(date);
-    } else {
-        isoDate = date;
+export const toISODate = date => {
+    const isSupportedDateFormat = isDDMMYYYY(date) || isYYYYMMDD(date);
+    if (!isSupportedDateFormat) {
+        throw new Error('unsupported date format');
     }
-    isoDate = date.replace(/\//, '-');
+
+    let isoDate = date;
+    if (isDDMMYYYY(date)) {
+        isoDate = reverseDate(date);
+    }
+
+    isoDate = isoDate.replace(/\//g, '-');
     return isoDate;
-}
+};
+// 20/12/2019 => 2019-12-20
+// 2019/12/20 => 2019-12-20
