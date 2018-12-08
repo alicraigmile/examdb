@@ -40,11 +40,11 @@ const router = Router({ mergeParams: true })
             ProgrammeOfStudy.findByPk(programmeOfStudyId, {
                 include: [{ model: Qualification },{ model: Course, include:[{model:Exam}] }]
             }).then(programmeOfStudy => {
-                if (programmeOfStudy) {
-                    const exams = _.map(programmeOfStudy.Courses, course => course.Exams).flatten();
-                    return res.csv(exams, true);
+                if (! programmeOfStudy) {
+                    return res.error.text(404, `Programme of study '${programmeOfStudyId}' was not found.`);
                 }
-                res.error.text(404, `Programme of study '${programmeOfStudyId}' was not found.`);
+                const exams = _.map(programmeOfStudy.Courses, course => course.Exams).flatten().map(exam => exam.get({ plain: true }));
+                return res.csv(exams, true);
             });
         } catch (error) {
             res.error.json(500, `Cannot fetch programme of study data.`);
