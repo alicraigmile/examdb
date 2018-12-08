@@ -22,7 +22,7 @@ html
 
             h2 Exams
 
-            p There are #{programmeOfStudy.Exams.length} #{programmeOfStudy.name} examinations in the database.
+            p There are #{exams.length} #{programmeOfStudy.name} examinations in the database.
 
             table
                 thead
@@ -35,12 +35,12 @@ html
                         th Morning/Afternoon
                         th Duration
                 tbody
-                    each exam in programmeOfStudy.Exams
+                    each exam in exams
                         if exam.date
                             - var dateSort = exam.date + (exam.timeofday=='Morning' ? 'T0000' : 'T1200')
                             tr
                                 td
-                                    a(href='/courses/'+exam.c.id)= exam.e.name
+                                    a(href='/courses/'+exam.Course.id)= exam.Course.name
                                 td= exam.code
                                 td
                                     a(href='/exams/'+exam.id)= exam.paper
@@ -53,7 +53,7 @@ html
             ul(class='revision-guides')
                 if programmeOfStudy.bitesize
                     li
-                        a(href='https://www.bbc.com/education/subjects/'+programmeOfStudy.bitesize)
+                        a(href='https://www.bbc.com/bitesize/subjects/'+programmeOfStudy.bitesize)
                             img(src='/bbc-bitesize.png' alt='BBC Bitesize revision guides' width='40' height='40')
                             = ' BBC Bitesize'
                 else

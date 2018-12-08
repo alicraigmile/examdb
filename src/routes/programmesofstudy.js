@@ -22,8 +22,7 @@ const router = Router({ mergeParams: true })
                 include: [{ model: Qualification },{ model: Course, include:[{model:Exam}] }]
             }).then(programmeOfStudy => {
                 if (programmeOfStudy) {
-                    const output = { programmeOfStudy };
-                    res.json({output});
+                    res.json({programmeOfStudy});
                 
                 } else {
                     res.error.json(404, `Programme of study '${programmeOfStudyId}' was not found.`);
@@ -52,28 +51,22 @@ const router = Router({ mergeParams: true })
         }
     })
 
-    .get('/programmesofstudy/:programmeOfStudyId', (req, res) => {
-        const { Course, Qualification, ProgrammeOfStudy } = req.db;
+    .get('/programmesofstudy/:programmeOfStudyId', async (req, res) => {
+        const { Course, Exam, Qualification, ProgrammeOfStudy } = req.db;
         const { programmeOfStudyId } = req.params;
         try {
             ProgrammeOfStudy.findByPk(programmeOfStudyId, {
-                include: [{ model: Qualification }]
+                include: [{ model: Qualification },{ model: Course, include:[{model:Exam, include:[{model:Course}]}] }]
             }).then(programmeOfStudy => {
-                if (programmeOfStudy) {
-                    programmeOfStudy.getCourses().then(courses => {
-                        const exams = _.map(
-                            courses,
-                            async course => Course.build(course).getExams() // await
-                        ).flatten();
-                        const output = { programmeOfStudy, courses, exams };
-                        return res.render('programmeofstudy', output);
-                    });
-                } else {
-                    res.error.html(404, `Programme of study '${programmeOfStudyId}' was not found.`);
+                if (! programmeOfStudy) {
+                    return res.error.html(404, `Programme of study '${programmeOfStudyId}' was not found.`);
                 }
+                const exams = _.map(programmeOfStudy.Courses, course => course.Exams).flatten();
+                const output = { programmeOfStudy, exams };
+                res.render('programmeofstudy', output);
             });
         } catch (error) {
-            res.error.html(500, `Cannot fetch programme of study data.`);
+            res.error.html(500, `Cannot fetch programme of study data  ${error}.`);
         }
     });
 
