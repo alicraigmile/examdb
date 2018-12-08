@@ -44,5 +44,11 @@ html
 				div
 					| 2. Send it to us! 
 					input(type='submit' name='' value='Upload')
+
+			if errors
+				h2 Import Errors
+				ul
+					for error in errors
+						li #{error}
 		script
 			| $('.message .close').click(function(e) { $('.message').slideUp() });

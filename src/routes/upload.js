@@ -220,26 +220,27 @@ const router = Router({ mergeParams: true })
             return true; // no data, no need to continue. bug out.
         }
 
-        // parse the CSV records into a format examdb can understand.
-        // make sure they match the schema too, or they're no good to us!
-        const records = [];
-        const errors = [];
-        _.each(csvRecords, data => {
-            try {
-                const record = new Record(data);
-                records.push(record);
-            } catch (err) {
-                errors.push(err);
-            }
-        });
-
         const cache = {
             courses: [],
+            errors: [],
             exams: [],
             examBoards: [],
             programmesOfStudy: [],
             qualifications: []
         };
+
+        // parse the CSV records into a format examdb can understand.
+        // make sure they match the schema too, or they're no good to us!
+        const records = [];
+        _.each(csvRecords, data => {
+            try {
+                const record = new Record(data);
+                records.push(record);
+            } catch (err) {
+                cache.errors.push(err);
+            }
+        });
+
 
         // scan the dataset for examboards
         // then fetch (or create) entries for them in the db.
@@ -260,7 +261,9 @@ const router = Router({ mergeParams: true })
         const successMessage = `Upload complete. Imported ${successCount} of ${totalRecordCount} exam records from '${
             file.name
         }'.`;
-        res.error.html(200, successMessage, template); // not officially an error of course if 200 - OK.
+        const output = { message: successMessage, status: 200, headline: 'OK', errors: cache.errors };
+//        console.log(cache.errors);
+        res.render(template, output);
         return true;
     });
 

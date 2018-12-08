@@ -22,7 +22,7 @@ const parseTimeOfDay = str => {
     if (str.match(/afternoon/i) || str.match(/PM/i)) {
         return PM;
     }
-    throw new Error('Unable to parse Time of Day');
+    throw new Error(`Unable to parse Time of Day - '${str}`);
 };
 
 class Record {
