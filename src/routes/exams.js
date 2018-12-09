@@ -1,26 +1,5 @@
 import { Router } from 'express';
-
-const throwError = (code, errorMessage) => () => {
-    const error = Error(); // debug
-    error.code = code;
-    error.message = errorMessage;
-    throw error;
-};
-const throwIf = (fn, code, errorMessage) => result => {
-    if (fn(result)) {
-        return throwError(code, errorMessage)();
-    }
-    return result;
-};
-
-const catchError = (error, fn) => {
-    const canCatch = e => e instanceof Error && e.code;
-    if (canCatch(error)) {
-        fn();
-    } else {
-        throw error;
-    }
-};
+import { catchError, throwError, throwIf } from '../helpers';
 
 const router = Router({ mergeParams: true })
     .get('/exams.json', async (req, res) => {
@@ -36,7 +15,7 @@ const router = Router({ mergeParams: true })
         const { Qualification } = req.db;
         const template = 'examsindex';
         try {
-            const qualifications = await Qualification.findAll();
+            const qualifications = await Qualification.findAll({order:[['name', 'ASC']]});
             res.render(template, { qualifications });
         } catch (error) {
             catchError(error, () => res.render(template, {}));
