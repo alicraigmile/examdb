@@ -5,6 +5,13 @@ import moment from 'moment';
 import db from '../../models';
 import { isISODate } from '../helpers';
 
+class NoQueryError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'NoQueryError';
+    }
+}
+
 const todayRegex = /^today$/i;
 const tomorrowRegex = /^tomorrow$/i;
 const template = 'search';
@@ -46,7 +53,7 @@ const findExamsByDate = query => {
 };
 const searchFor = rawQuery => {
     let query = rawQuery;
-    if (!query) return Promise.reject(new Error('no-query'));
+    if (!query) throw new NoQueryError('You need to supply a query');
 
     const isToday = query.match(todayRegex);
     const isTomorrow = query.match(tomorrowRegex);
@@ -73,24 +80,32 @@ const searchFor = rawQuery => {
 
 const router = Router({ mergeParams: true })
     .get('/search.json', async (req, res) => {
-        const query = req.query.q;
+        const { q: query } = req.query;
         try {
             const results = await searchFor(query);
             const output = { query, results };
             res.json(output);
-        } catch (error) {
-            res.error.json(500, `Could not complete search for ${query} - ${error}`);
+        } catch (err) {
+            if (err instanceof NoQueryError) {
+                res.json({ query: '', results: [] });
+            } else {
+                res.error.json(500, `Could not complete search for ${query} - ${err}`);
+            }
         }
     })
 
-    .get('/search', async (req, res, next) => {
-        const query = req.query.q;
+    .get('/search', async (req, res) => {
+        const { q: query } = req.query;
         try {
             const results = await searchFor(query);
             const output = { query, results };
             res.render(template, output);
-        } catch (error) {
-            next();
+        } catch (err) {
+            if (err instanceof NoQueryError) {
+                res.render('search');
+            } else {
+                res.error.html(500, `Could not complete search for ${query} - ${err}`);
+            }
         }
     });
 
