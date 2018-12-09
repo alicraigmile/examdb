@@ -3,7 +3,7 @@ html
 	head
 		title #{qualification.name} programmes of study | ExamDB
 		meta(charset='UTF-8')
-		meta(name='description' content='There are '+ programmesofstudy.length+' ' + qualification.name + ' programmes of study.')
+		meta(name='description' content='There are '+ qualification.ProgrammeOfStudies.length+' ' + qualification.name + ' programmes of study.')
 		include meta.pug
 		meta(name='viewport' content='width=device-width, initial-scale=1')
 		link(rel='stylesheet' href='/examdb.css')
@@ -17,15 +17,14 @@ html
 		section
 			h1 #{qualification.name} programmes of study
 
-
-			p There 
-				= programmesofstudy.length==1?' is ':' are '
-				| #{programmesofstudy.length} #{qualification.name}
-				= programmesofstudy.length==1?' programme ':' programmes '
+			p There
+				= qualification.ProgrammeOfStudies.length==1?' is ':' are '
+				| #{qualification.ProgrammeOfStudies.length} #{qualification.name}
+				= qualification.ProgrammeOfStudies.length==1?' programme ':' programmes '
 				| of study.
 
 			ul
-				each programmeofstudy in programmesofstudy
+				each programmeofstudy in qualification.ProgrammeOfStudies
 					li
 						a(href='/programmesofstudy/'+programmeofstudy.id) #{programmeofstudy.name}
 

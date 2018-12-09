@@ -42,8 +42,7 @@ const router = Router({ mergeParams: true })
                 if (! qualification) {
                     return res.error.html(404, `Qualification '${qualificationId}' was not found.`);
                 }
-                const programmesofstudy = qualification.ProgrammeOfStudies;
-                const output = { qualification, programmesofstudy };
+                const output = { qualification };
                 return res.render('qualification', output);             
             });
         } catch (error) {
