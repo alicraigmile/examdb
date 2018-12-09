@@ -29,21 +29,23 @@ const router = Router({ mergeParams: true })
         }
     })
 
-    .get('/qualifications/:qualification', (req, res) => {
-        const qualificationId = req.params.qualification;
+    .get('/qualifications/:qualificationId', (req, res) => {
+        const { Qualification, ProgrammeOfStudy } = req.db;
+        const { qualificationId } = req.params;
         try {
-            req.db.Qualification.findByPk(qualificationId).then(qualification => {
-                if (qualification) {
-                    qualification.getProgrammeOfStudies().then(programmesofstudy => {
-                        const output = { qualification, programmesofstudy };
-                        return res.render('qualification', output);
-                    });
-                } else {
-                    res.error.html(404, `Qualification '${qualificationId}' was not found.`);
+            Qualification.findByPk(qualificationId, {
+                order: [[ProgrammeOfStudy, 'name', 'ASC']],
+                include: [{ model: ProgrammeOfStudy }]
+            }).then(qualification => {
+                if (! qualification) {
+                    return res.error.html(404, `Qualification '${qualificationId}' was not found.`);
                 }
+                const programmesofstudy = qualification.ProgrammeOfStudies;
+                const output = { qualification, programmesofstudy };
+                return res.render('qualification', output); ß               
             });
         } catch (error) {
-            res.error.html(500, `Cannot fetch qualifications data.`);
+            res.error.html(500, `Cannot fetch qualifications data.- ${error}`);
         }
     });
 
