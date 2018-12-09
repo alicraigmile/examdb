@@ -5,7 +5,7 @@ const router = Router({ mergeParams: true })
     .get('/courses.json', async (req, res, next) => {
         const { Course } = req.db;
         try {
-            res.json(await Course.findAll({order: [['id','ASC']]}));
+            res.json(await Course.findAll({ order: [['id', 'ASC']] }));
         } catch (error) {
             res.error.json(500, 'Cannot fetch courses data', error);
         }
@@ -26,9 +26,9 @@ const router = Router({ mergeParams: true })
                 ],
                 order: [[Exam, 'date', 'ASC']]
             });
-            if (! course) {
+            if (!course) {
                 throwError(404, `Course '${courseId}' was not found.`);
-            }   
+            }
             res.json({ course });
         } catch (error) {
             if (error.code) {
@@ -49,7 +49,7 @@ const router = Router({ mergeParams: true })
                     { model: ProgrammeOfStudy, include: [{ model: Qualification }] },
                     { model: ExamBoard, include: [{ model: WebResource, as: 'Homepage' }] },
                     { model: Exam }
-                ], 
+                ],
                 order: [[Exam, 'date', 'ASC']]
             }).then(
                 throwIf(r => !r, 404, `Course '${courseId}' was not found.`),

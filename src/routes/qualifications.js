@@ -19,17 +19,17 @@ const router = Router({ mergeParams: true })
                 order: [[ProgrammeOfStudy, 'name', 'ASC']],
                 include: [{ model: ProgrammeOfStudy }]
             }).then(qualification => {
-                if (! qualification) {
+                if (!qualification) {
                     return res.error.json(404, `Qualification '${qualificationId}' was not found.`);
                 }
                 const programmesofstudy = qualification.ProgrammeOfStudies;
                 const output = { qualification, programmesofstudy };
-                res.json(output);             
+                res.json(output);
             });
         } catch (error) {
             res.error.json(500, `Cannot fetch qualifications data.- ${error}`);
         }
-    })             
+    })
 
     .get('/qualifications/:qualificationId', (req, res) => {
         const { Qualification, ProgrammeOfStudy } = req.db;
@@ -39,11 +39,11 @@ const router = Router({ mergeParams: true })
                 order: [[ProgrammeOfStudy, 'name', 'ASC']],
                 include: [{ model: ProgrammeOfStudy }]
             }).then(qualification => {
-                if (! qualification) {
+                if (!qualification) {
                     return res.error.html(404, `Qualification '${qualificationId}' was not found.`);
                 }
                 const output = { qualification };
-                return res.render('qualification', output);             
+                return res.render('qualification', output);
             });
         } catch (error) {
             res.error.html(500, `Cannot fetch qualifications data.- ${error}`);

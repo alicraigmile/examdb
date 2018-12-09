@@ -15,7 +15,7 @@ const router = Router({ mergeParams: true })
         const { Qualification } = req.db;
         const template = 'examsindex';
         try {
-            const qualifications = await Qualification.findAll({order:[['name', 'ASC']]});
+            const qualifications = await Qualification.findAll({ order: [['name', 'ASC']] });
             res.render(template, { qualifications });
         } catch (error) {
             catchError(error, () => res.render(template, {}));

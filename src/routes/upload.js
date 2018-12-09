@@ -18,7 +18,6 @@ const fetchExamboardByName = db => async examBoardName => {
     return examBoard;
 };
 
-
 // given a db connection,
 // returns a function which promises to look up a qualification by name
 // note: the function will create the qualification if it does not exist
@@ -64,21 +63,18 @@ const scanForQualifications = (db, cache) => records => {
     return qualifications;
 };
 
-
-
 // given a set of records, scan for programmes of study
 // then fetch (or create) entries for them in the db
 // returns an object with promises for each, keyed by programmes of study name
 // there is an option to cache the promises
 
 const scanForProgrammesOfStudy = (db, cache) => records => {
-    
     const posNameFromRecord = record => record.programmeOfStudyName();
     const posStubFromRecord = record => ({
         programmeOfStudyName: record.programmeOfStudyName(),
         qualificationName: record.qualificationName
     });
-    
+
     // extract the names of programmes of study from the CSV records
     // return a unique list of those
     // (along with details of the associated qualification )
@@ -86,23 +82,22 @@ const scanForProgrammesOfStudy = (db, cache) => records => {
         .unique(posNameFromRecord)
         .map(posStubFromRecord)
         .value();
-    
+
     const uniqueNames = _.pluck(stubs, 'programmeOfStudyName');
 
     const promises = _.map(stubs, async stub => {
-
         const { ProgrammeOfStudy } = db;
-       
+
         // const [programmeOfStudy, created] = await ProgrammeOfStudy.findOrCreate({
         const [programmeOfStudy] = await ProgrammeOfStudy.findOrCreate({
             where: { name: stub.programmeOfStudyName }
         });
-        
+
         // if (created) {
         const qualification = await cache.qualifications[stub.qualificationName];
         programmeOfStudy.setQualification(qualification);
         // };
-      
+
         return programmeOfStudy;
     });
 
@@ -117,14 +112,13 @@ const scanForProgrammesOfStudy = (db, cache) => records => {
 // returns an object with promises for each, keyed by programmes of study name
 // there is an option to cache the promises
 const scanForCourses = (db, cache) => records => {
-
     const courseNameFromRecord = record => record.courseNameLong();
     const courseStubFromRecord = record => ({
         courseName: record.courseNameLong(),
         examBoardName: record.examBoardName,
         programmeOfStudyName: record.programmeOfStudyName()
     });
-    
+
     // extract the names of programmes of study from the CSV records
     // return a unique list of those
     // (along with details of the associated qualification )
@@ -132,7 +126,7 @@ const scanForCourses = (db, cache) => records => {
         .unique(courseNameFromRecord)
         .map(courseStubFromRecord)
         .value();
-    
+
     const uniqueNames = _.pluck(stubs, 'courseName');
 
     const promises = _.map(stubs, async stub => {
@@ -142,14 +136,14 @@ const scanForCourses = (db, cache) => records => {
         const [course] = await Course.findOrCreate({
             where: { name: stub.courseName }
         });
-        
+
         // if (created) {
         const programmeOfStudy = await cache.programmesOfStudy[stub.programmeOfStudyName];
         const examBoard = await cache.examBoards[stub.examBoardName];
         course.setProgrammeOfStudy(programmeOfStudy);
         course.setExamBoard(examBoard);
         // }
-        
+
         return course;
     });
 
@@ -161,7 +155,7 @@ const scanForCourses = (db, cache) => records => {
 
 const saveExam = (db, cache) => async record => {
     const { Exam } = db;
-    
+
     // exam
     const examDetails = {
         code: record.examCode,
@@ -241,7 +235,6 @@ const router = Router({ mergeParams: true })
             }
         });
 
-
         // scan the dataset for examboards
         // then fetch (or create) entries for them in the db.
         // we can then find them in the cache
@@ -262,7 +255,7 @@ const router = Router({ mergeParams: true })
             file.name
         }'.`;
         const output = { message: successMessage, status: 200, headline: 'OK', errors: cache.errors };
-//        console.log(cache.errors);
+        //        console.log(cache.errors);
         res.render(template, output);
         return true;
     });

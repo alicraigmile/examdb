@@ -19,7 +19,7 @@ const router = Router({ mergeParams: true })
         const examboardId = req.params.examboard;
         try {
             ExamBoard.findByPk(examboardId, {
-                include: [{ model: WebResource, as: 'Homepage' }, {model: Course, order: [[Course, 'id','ASC']]}]
+                include: [{ model: WebResource, as: 'Homepage' }, { model: Course, order: [[Course, 'id', 'ASC']] }]
             }).then(examboard => {
                 if (examboard) {
                     res.json(examboard);
@@ -37,14 +37,11 @@ const router = Router({ mergeParams: true })
         const examboardId = req.params.examboard;
         try {
             ExamBoard.findByPk(examboardId, {
-                include: [
-                    { model: WebResource, as: 'Homepage' },
-                    { model: Course },
-                ],
-                order: [[ Course, 'name', 'ASC' ]]
+                include: [{ model: WebResource, as: 'Homepage' }, { model: Course }],
+                order: [[Course, 'name', 'ASC']]
             }).then(examboard => {
                 if (examboard) {
-                    return res.render('examboard', {examboard});
+                    return res.render('examboard', { examboard });
                 } else {
                     res.error.html(404, `Exam board '${examboardId}' was not found.`);
                 }

@@ -19,11 +19,10 @@ const router = Router({ mergeParams: true })
         const { programmeOfStudyId } = req.params;
         try {
             ProgrammeOfStudy.findByPk(programmeOfStudyId, {
-                include: [{ model: Qualification },{ model: Course, include:[{model:Exam}] }]
+                include: [{ model: Qualification }, { model: Course, include: [{ model: Exam }] }]
             }).then(programmeOfStudy => {
                 if (programmeOfStudy) {
-                    res.json({programmeOfStudy});
-                
+                    res.json({ programmeOfStudy });
                 } else {
                     res.error.json(404, `Programme of study '${programmeOfStudyId}' was not found.`);
                 }
@@ -38,12 +37,14 @@ const router = Router({ mergeParams: true })
         const { programmeOfStudyId } = req.params;
         try {
             ProgrammeOfStudy.findByPk(programmeOfStudyId, {
-                include: [{ model: Qualification },{ model: Course, include:[{model:Exam}] }]
+                include: [{ model: Qualification }, { model: Course, include: [{ model: Exam }] }]
             }).then(programmeOfStudy => {
-                if (! programmeOfStudy) {
+                if (!programmeOfStudy) {
                     return res.error.text(404, `Programme of study '${programmeOfStudyId}' was not found.`);
                 }
-                const exams = _.map(programmeOfStudy.Courses, course => course.Exams).flatten().map(exam => exam.get({ plain: true }));
+                const exams = _.map(programmeOfStudy.Courses, course => course.Exams)
+                    .flatten()
+                    .map(exam => exam.get({ plain: true }));
                 return res.csv(exams, true);
             });
         } catch (error) {
@@ -56,9 +57,12 @@ const router = Router({ mergeParams: true })
         const { programmeOfStudyId } = req.params;
         try {
             ProgrammeOfStudy.findByPk(programmeOfStudyId, {
-                include: [{ model: Qualification },{ model: Course, include:[{model:Exam, include:[{model:Course}]}] }]
+                include: [
+                    { model: Qualification },
+                    { model: Course, include: [{ model: Exam, include: [{ model: Course }] }] }
+                ]
             }).then(programmeOfStudy => {
-                if (! programmeOfStudy) {
+                if (!programmeOfStudy) {
                     return res.error.html(404, `Programme of study '${programmeOfStudyId}' was not found.`);
                 }
                 const exams = _.map(programmeOfStudy.Courses, course => course.Exams).flatten();
