@@ -1,30 +1,43 @@
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
-import { isDDMMYYYY, isYYYYMMDD, reverseDate, toISODate } from '../../src/helpers';
+import { isDDMMYYYY, isISODate, isYYYYMMDD, reverseDate, toISODate } from '../../src/helpers';
 
 describe('isDDMMYYYY', () => {
     it('20/12/2019 => true', () => {
         const date = '20/12/2019';
-        const newDate = isDDMMYYYY(date);
-        return expect(newDate).to.be.true;
+        const result = isDDMMYYYY(date);
+        return expect(result).to.be.true;
     });
     it('2019/12/20 => false', () => {
         const date = '2019/12/20';
-        const newDate = isDDMMYYYY(date);
-        return expect(newDate).to.be.false;
+        const result = isDDMMYYYY(date);
+        return expect(result).to.be.false;
+    });
+});
+
+describe('isISODate', () => {
+    it('2019-12-20 => true', () => {
+        const date = '2019-12-20';
+        const result = isISODate(date);
+        return expect(result).to.be.true;
+    });
+    it('2019/12/20 => false', () => {
+        const date = '2019/12/20';
+        const result = isISODate(date);
+        return expect(result).to.be.false;
     });
 });
 
 describe('isYYYYMMDD', () => {
-    it('2019/12/20 => false', () => {
+    it('2019/12/20 => true', () => {
         const date = '2019/12/20';
-        const newDate = isYYYYMMDD(date);
-        return expect(newDate).to.be.true;
+        const result = isYYYYMMDD(date);
+        return expect(result).to.be.true;
     });
-    it('20/12/2019 => true', () => {
+    it('20/12/2019 => false', () => {
         const date = '20/12/2019';
-        const newDate = isYYYYMMDD(date);
-        return expect(newDate).to.be.false;
+        const result = isYYYYMMDD(date);
+        return expect(result).to.be.false;
     });
 });
 

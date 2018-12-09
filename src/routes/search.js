@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import { Op } from 'sequelize';
 import _ from 'underscore';
+import moment from 'moment';
 import db from '../../models';
+import { isISODate } from '../helpers';
 
 const todayRegex = /^today$/i;
 const tomorrowRegex = /^tomorrow$/i;
@@ -29,6 +31,15 @@ const findCourses = query =>
     db.Course.findAll({ raw: true, where: { name: { [Op.like]: `%${query}%` } } }).then(tag('Course'));
 const findExams = query =>
     db.Exam.findAll({ raw: true, where: { paper: { [Op.like]: `%${query}%` } } }).then(tag('Exam'));
+const findExamsByDate = query => {
+    const { Exam } = db;
+    if (!isISODate(query)) {
+        return [];
+    }
+    console.log(`query='${query}'`);
+    const where = { date: { [Op.gt]: moment(query).toDate(), [Op.lt]: moment(query).add(1, 'days').toDate() } };
+    return Exam.findAll({ raw: true, where }).then(tag('Exam'));
+};
 const searchFor = rawQuery => {
     let query = rawQuery;
     if (!query) return Promise.reject(new Error('no-query'));
@@ -51,7 +62,8 @@ const searchFor = rawQuery => {
         findQualifications(query),
         findExamboards(query),
         findCourses(query),
-        findExams(query)
+        findExams(query),
+        findExamsByDate(query)
     ]).then(_.flatten);
 };
 

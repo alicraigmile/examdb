@@ -25,6 +25,10 @@ const ddmmyyyy = /^\d{2}\/\d{2}\/\d{4}$/;
 export const isDDMMYYYY = date => date.match(ddmmyyyy) !== null;
 // 20/12/2019 => true
 
+const yyyymmddiso = /^\d{4}-\d{2}-\d{2}$/;
+export const isISODate = date => date.match(yyyymmddiso) !== null;
+// 2019-12-20 => true
+
 const yyyymmdd = /^\d{4}\/\d{2}\/\d{2}$/;
 export const isYYYYMMDD = date => date.match(yyyymmdd) !== null;
 
