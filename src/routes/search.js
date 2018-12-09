@@ -37,7 +37,10 @@ const findExamboards = query =>
 const findCourses = query =>
     db.Course.findAll({ raw: true, where: { name: { [Op.like]: `%${query}%` } } }).then(tag('Course'));
 const findExams = query =>
-    db.Exam.findAll({ raw: true, where: { paper: { [Op.like]: `%${query}%` } } }).then(tag('Exam'));
+    db.Exam.findAll({
+        raw: true,
+        where: { [Op.or]: [{ paper: { [Op.like]: `%${query}%` } }, { code: { [Op.like]: `%${query}%` } }] }
+    }).then(tag('Exam'));
 const findExamsByDate = query => {
     const { Exam } = db;
     if (!isISODate(query)) {
