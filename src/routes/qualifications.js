@@ -11,23 +11,25 @@ const router = Router({ mergeParams: true })
 
     .get('/qualifications', (req, res) => res.redirect('/'))
 
-    .get('/qualifications/:qualification.json', (req, res) => {
-        const qualificationId = req.params.qualification;
+    .get('/qualifications/:qualificationId.json', (req, res) => {
+        const { Qualification, ProgrammeOfStudy } = req.db;
+        const { qualificationId } = req.params;
         try {
-            req.db.Qualification.findByPk(qualificationId).then(qualification => {
-                if (qualification) {
-                    qualification.getProgrammeOfStudies().then(programmesofstudy => {
-                        const output = { qualification, programmesofstudy };
-                        res.json(output);
-                    });
-                } else {
-                    res.error.json(404, `Qualification '${qualificationId}' was not found.`);
+            Qualification.findByPk(qualificationId, {
+                order: [[ProgrammeOfStudy, 'name', 'ASC']],
+                include: [{ model: ProgrammeOfStudy }]
+            }).then(qualification => {
+                if (! qualification) {
+                    return res.error.json(404, `Qualification '${qualificationId}' was not found.`);
                 }
+                const programmesofstudy = qualification.ProgrammeOfStudies;
+                const output = { qualification, programmesofstudy };
+                res.json(output);             
             });
         } catch (error) {
-            res.error.json(500, `Cannot fetch qualifications data.`);
+            res.error.json(500, `Cannot fetch qualifications data.- ${error}`);
         }
-    })
+    })             
 
     .get('/qualifications/:qualificationId', (req, res) => {
         const { Qualification, ProgrammeOfStudy } = req.db;
@@ -42,7 +44,7 @@ const router = Router({ mergeParams: true })
                 }
                 const programmesofstudy = qualification.ProgrammeOfStudies;
                 const output = { qualification, programmesofstudy };
-                return res.render('qualification', output); ß               
+                return res.render('qualification', output);             
             });
         } catch (error) {
             res.error.html(500, `Cannot fetch qualifications data.- ${error}`);
