@@ -40,10 +40,10 @@ const router = Router({ mergeParams: true })
                 include: [{ model: WebResource, as: 'Homepage' }, { model: Course }],
                 order: [[Course, 'name', 'ASC']]
             }).then(examboard => {
-                if (examboard) {
-                    return res.render('examboard', { examboard });
-                } else {
+                if (!examboard) {
                     res.error.html(404, `Exam board '${examboardId}' was not found.`);
+                } else {
+                    res.render('examboard', { examboard });
                 }
             });
         } catch (error) {

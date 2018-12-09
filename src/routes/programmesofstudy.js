@@ -67,7 +67,7 @@ const router = Router({ mergeParams: true })
                 }
                 const exams = _.map(programmeOfStudy.Courses, course => course.Exams).flatten();
                 const output = { programmeOfStudy, exams };
-                res.render('programmeofstudy', output);
+                return res.render('programmeofstudy', output);
             });
         } catch (error) {
             res.error.html(500, `Cannot fetch programme of study data  ${error}.`);

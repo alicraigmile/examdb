@@ -24,7 +24,7 @@ const router = Router({ mergeParams: true })
                 }
                 const programmesofstudy = qualification.ProgrammeOfStudies;
                 const output = { qualification, programmesofstudy };
-                res.json(output);
+                return res.json(output);
             });
         } catch (error) {
             res.error.json(500, `Cannot fetch qualifications data.- ${error}`);

@@ -15,7 +15,7 @@ const router = Router({ mergeParams: true })
     .get('/courses', (req, res) => res.redirect('/'))
 
     .get('/courses/:course.json', async (req, res, next) => {
-        const { Course, Exam, ExamBoard, ProgrammeOfStudy, Qualification, WebResource, Sequelize } = req.db;
+        const { Course, Exam, ExamBoard, ProgrammeOfStudy, Qualification, WebResource } = req.db;
         const courseId = req.params.course;
         try {
             const course = await Course.findByPk(courseId, {
