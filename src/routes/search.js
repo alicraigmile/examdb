@@ -36,8 +36,12 @@ const findExamsByDate = query => {
     if (!isISODate(query)) {
         return [];
     }
-    console.log(`query='${query}'`);
-    const where = { date: { [Op.gt]: moment(query).toDate(), [Op.lt]: moment(query).add(1, 'days').toDate() } };
+    const where = {
+        date: {
+            [Op.gt]: moment(query),
+            [Op.lt]: moment(query).add(1, 'days')
+        }
+    };
     return Exam.findAll({ raw: true, where }).then(tag('Exam'));
 };
 const searchFor = rawQuery => {
