@@ -16,15 +16,18 @@ html
         section
             h1 #{exam.paper} (exam)
 
-            p This #{exam.Course.name} examination, is scheduled to take place on the #{exam.timeofday} of #{exam.date} and will run for #{exam.duration}.
+            p This #{exam.Course.name} examination, is scheduled to take place on the #{exam.timeOfDay} of #{moment(exam.date).format('DD/MMM/Y')} and will run for #{exam.duration}.
 
-            p
-                a(href='/courses/'+exam.Course.id) More like this
+            ul
+                li
+                    a(href='/courses/'+exam.Course.id) More from this course
+                li
+                    a(href='/search?q='+moment(exam.date).format('Y-MM-DD')) More on this date
             p Code: #{exam.code}
             p Notes: #{exam.notes}
-            p Date and time: #{exam.timeofday} of #{exam.date}
+            p Date and time: #{exam.timeOfDay} of #{moment(exam.date).format('DD/MMM/Y')}
                 = ' ('
-                a(href='/course/'+exam.Course.id+'/calendar/week?date='+exam.date) Open calendar
+                a(href='/course/'+exam.Course.id+'/calendar/week?date='+moment(exam.date).format('Y-MM-DD')) Open calendar
                 = ')'
             p Duration: #{exam.duration}
             p Course: 

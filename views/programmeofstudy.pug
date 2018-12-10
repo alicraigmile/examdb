@@ -45,7 +45,9 @@ html
                                 td
                                     a(href='/exams/'+exam.id)= exam.paper
                                 td= exam.notes
-                                td(data-sort-value=dateSort)= moment(exam.date).format('DD/MMM/Y')
+                                td(data-sort-value=dateSort)
+                                    a(href='/search?q='+moment(exam.date).format('Y-MM-DD'))
+                                        = moment(exam.date).format('DD/MMM/Y')
                                 td= exam.timeofday
                                 td= exam.duration
 
