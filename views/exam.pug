@@ -14,7 +14,8 @@ html
                 a(href='/' title='ExamDB Homepage')
                     img(src='/examdb.png' width='64' height='64' alt='')
         section
-            h1 #{exam.paper} (exam)
+            h1 #{exam.Course.name}
+            h2 Exam: #{exam.paper}
 
             p This #{exam.Course.name} examination, is scheduled to take place on the #{exam.timeOfDay} of #{moment(exam.date).format('DD/MMM/Y')} and will run for #{exam.duration}.
 
