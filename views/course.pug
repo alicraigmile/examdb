@@ -17,9 +17,9 @@ html
                     img(src='/examdb.png' width='64' height='64' alt='')
 
         section
-            h1 #{course.name} exams
+            h1 #{course.name}
 
-
+            h2 Upcoming Exams
             p There are #{course.Exams.length} #{course.name} exams.
 
             table
@@ -39,30 +39,24 @@ html
                             td
                                 a(href='/exams/'+exam.id)= exam.paper
                             td= exam.notes
-                            td(data-sort-value=dateSort)= exam.date
+                            td(data-sort-value=dateSort)
+                                a(href='/search?q='+moment(exam.date).format('Y-MM-DD'))
+                                    = moment(exam.date).format('DD/MMM/Y')
                             td= exam.timeOfDay
                             td= exam.duration
 
 
-            h2 Revison guides
-            ul(class='revision-guides')
-                if course.bitesize
-
-                    li
-                        a(href='https://www.bbc.com/education/examspecs/'+course.bitesize)
-                            img(src='/bbc-bitesize.png' alt='BBC Bitesize revision guides' width='40' height='40')
-                            = ' BBC Bitesize' 
-
-                else
-                    if course.ProgrammeOfStudy.bitesize
-                
+            h2 Related links from around the web
+            ul(id='WebResources', class='revision-guides')
+                if course.WebResources
+                    for webResource in course.WebResources
                         li
-                           a(href='https://www.bbc.com/education/subjects/'+course.ProgrammeOfStudy.bitesize)
-                                img(src='/bbc-bitesize.png' alt='BBC Bitesize revision guides' width='40' height='40')
-                                = ' BBC Bitesize' 
+                            a(href=webResource.url)= webResource.title 
                     else
                         li None listed
 
+                p  
+                    a(href='/courses/'+course.id+'/webresources/add') Add a link
             h2 More like this
 
             ul

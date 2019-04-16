@@ -1,0 +1,47 @@
+doctype html
+html
+    head
+        title Add a web resource to #{course.name} | ExamDB
+        meta(charset='UTF-8')
+        meta(name='description' content='Add a web resource to ' + course.name + '.')
+        include meta.pug
+        link(rel='stylesheet' href='/examdb.css')
+        link(rel='alternate' type='application/json' title='JSON' href='/courses/'+course.id+'.json')
+        meta(name='viewport' content='width=device-width, initial-scale=1')
+        script(src='/library/jquery/jquery.min.js')
+        script(src='/library/jquery-tablesort/jquery.tablesort.min.js')
+    body
+        header
+            p
+                a(href='/' title='ExamDB Homepage')
+                    img(src='/examdb.png' width='64' height='64' alt='')
+
+        if message
+            div(class='message message-'+status)
+                
+                span
+                    strong #{headline}
+                    = ': '
+                    | #{message}
+                span(class='buttonContainer')
+                    button(class='close' title='close') ❌ Ok 
+
+        section
+            h1 #{course.name}
+
+            h2 Add a web resource
+
+            form(method='post' action='/courses/'+course.id+'/webresources/add' encType='multipart/form-data')
+                div
+                    label(for='url') 
+                        | 1. Enter the url
+                    input(type='text' name='url' value=defaults.url)
+                div
+                    label(for='title') 
+                        | 2. Enter a title
+                    input(type='text' name='title' value=defaults.title)
+                div
+                    | 3. Save 
+                    input(type='submit' name='' value='Save')
+
+

@@ -8,8 +8,9 @@ const model = (sequelize, DataTypes) => {
         {}
     );
     WebResource.associate = models => {
-        const { Dataset } = models;
+        const { Course, Dataset } = models;
         WebResource.belongsTo(Dataset);
+        WebResource.belongsToMany(Course, { through: 'CourseWebResource' });
     };
     return WebResource;
 };

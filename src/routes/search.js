@@ -48,8 +48,8 @@ const findExamsByDate = query => {
     }
     const where = {
         date: {
-            [Op.gt]: moment(query),
-            [Op.lt]: moment(query).add(1, 'days')
+            [Op.gte]: moment(query).format('Y-MM-DD'),
+            [Op.lt]: moment(query).add(1, 'days').format('Y-MM-DD')
         }
     };
     return Exam.findAll({ raw: true, where }).then(tag('Exam'));

@@ -1,7 +1,9 @@
 import path from 'path';
 import express from 'express';
 import fileUpload from 'express-fileupload';
+import bodyParser from 'body-parser';
 import 'express-async-errors';
+import moment from 'moment';
 import 'csv-express';
 import expressError from './express-error';
 import Store from './memorystore'; // depricated
@@ -14,7 +16,13 @@ const store = new Store(); // instance
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, '..', 'views'));
 app.use(fileUpload());
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 app.use(expressError());
+
+app.locals.moment = moment;
 
 // make base, store and db available to all routes
 app.use((req, res, next) => {
