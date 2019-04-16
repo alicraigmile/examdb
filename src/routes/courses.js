@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import isUrl from 'is-url';
-import { throwError, throwIf} from '../helpers';
+import { throwError, throwIf } from '../helpers';
 
 class RequiredFieldMissingError extends Error {
     constructor(message) {
@@ -22,7 +22,6 @@ class NotFoundError extends Error {
         this.name = 'NotFoundError';
     }
 }
-
 
 const router = Router({ mergeParams: true })
     .get('/courses.json', async (req, res, next) => {
@@ -62,7 +61,6 @@ const router = Router({ mergeParams: true })
         }
     })
 
-
     .get('/courses/:courseId/webresources/add', async (req, res, next) => {
         const { Course, Exam, ExamBoard, ProgrammeOfStudy, Qualification, WebResource } = req.db;
         const { courseId } = req.params;
@@ -90,7 +88,7 @@ const router = Router({ mergeParams: true })
 
     .post('/courses/:courseId/webresources/add', async (req, res, next) => {
         const { Course, Exam, ExamBoard, ProgrammeOfStudy, Qualification, WebResource } = req.db;
-        const { courseId }  = req.params;
+        const { courseId } = req.params;
         const { title, url } = req.body;
 
         let course;
@@ -104,20 +102,24 @@ const router = Router({ mergeParams: true })
                 order: [[Exam, 'date', 'ASC']]
             });
             if (!course) {
-                throw(new NotFoundError(`Course '${courseId}' was not found.`));
-               
+                throw new NotFoundError(`Course '${courseId}' was not found.`);
             }
 
-            if (! title) throw(new RequiredFieldMissingError('title'));
-            if (! url) throw(new RequiredFieldMissingError('url'));
-            if (! isUrl(url)) throw(new InvalidFieldError('url'));
-            await WebResource.create({title, url}).then(link => link.addCourse(courseId));
+            if (!title) throw new RequiredFieldMissingError('title');
+            if (!url) throw new RequiredFieldMissingError('url');
+            if (!isUrl(url)) throw new InvalidFieldError('url');
+            await WebResource.create({ title, url }).then(link => link.addCourse(courseId));
             res.redirect(`/courses/${courseId}#WebResources`);
         } catch (error) {
             if (error instanceof NotFoundError) {
                 res.error.html(404, error.message);
             } else if (error instanceof RequiredFieldMissingError || error instanceof InvalidFieldError) {
-                res.render('course-add-webresource', { course, headline: error.name, message: error.message, defaults: {title, url} });
+                res.render('course-add-webresource', {
+                    course,
+                    headline: error.name,
+                    message: error.message,
+                    defaults: { title, url }
+                });
             } else if (error.code) {
                 res.error.html(error.code, error.message);
             } else {
