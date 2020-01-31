@@ -1,4 +1,4 @@
-﻿Exam board,Date,Morning/Afternoon,Code,Course,Qualification,Paper,Notes,Duration,POS,Exam spec
+Exam board,Date,Morning/Afternoon,Code,Course,Qualification,Paper,Notes,Duration,POS,Exam spec
 AQA,04/06/2018,Morning,8145/1A to 1E,History,GCSE,History Paper 1 (new) (all options A to E),,1h 45m,zj26n39,zxjk4j6
 AQA,04/06/2018,Afternoon,46352F,Bengali,GCSE,Bengali (Full and Short Course) Unit 2 Reading,F,30m,,
 AQA,04/06/2018,Afternoon,46352H,Bengali,GCSE,Bengali (Full and Short Course) Unit 2 Reading,H,50m,,
@@ -13,9 +13,9 @@ AQA,04/06/2018,Afternoon,48101,Media Studies,GCSE,Media Studies (Full Course and
 AQA,04/06/2018,Afternoon,41802,Psychology,GCSE,Psychology Unit 2,,1h 30m,,
 AQA,05/06/2018,Morning,8700/1,English Language,GCSE,English Language Paper 1,,1h 45m,zr9d7ty,zcbchv4
 AQA,05/06/2018,Afternoon,8035/2,Geography,GCSE,Geography Paper 2 (new),,1h 30m,zkw76sg,zy3ptyc
-AQA,06/06/2018,Morning,8698/LF ,Spanish,GCSE,Spanish Paper 1 (new),F,35m ,z4dqxnb,
-AQA,06/06/2018,Morning,8698/LH,Spanish,GCSE,Spanish Paper 1 (new),H,45m ,z4dqxnb,
-AQA,06/06/2018,Morning,8698/RF ,Spanish,GCSE,Spanish Paper 3 (new),F,45m,z4dqxnb,
+AQA,06/06/2018,Morning,8698/LF,Spanish,GCSE,Spanish Paper 1 (new),F,35m,z4dqxnb,
+AQA,06/06/2018,Morning,8698/LH,Spanish,GCSE,Spanish Paper 1 (new),H,45m,z4dqxnb,
+AQA,06/06/2018,Morning,8698/RF,Spanish,GCSE,Spanish Paper 3 (new),F,45m,z4dqxnb,
 AQA,06/06/2018,Morning,8698/RH,Spanish,GCSE,Spanish Paper 3 (new),H,1h,z4dqxnb,
 AQA,06/06/2018,Afternoon,413002,Business Studies,GCSE,Business Studies Unit 2,,1h,zpsvr82,
 AQA,06/06/2018,Afternoon,413012,Economics,GCSE,Economics Unit 12,,1h 15m,,
@@ -58,8 +58,8 @@ and Double Award) Unit 1",,1h 15m,,
 AQA,13/06/2018,Afternoon,48103,Media Studies,GCSE,Media Studies Unit 3 (Double Award),,1h 30m,ztnygk7,
 AQA,14/06/2018,Afternoon,40203F,Classical Civilisation,GCSE,Classical Civilisation (Full and Short Course) Unit 3,F,1h,,
 AQA,14/06/2018,Afternoon,40203H,Classical Civilisation,GCSE,Classical Civilisation (Full and Short Course) Unit 3,H,1h,,
-AQA,14/06/2018,Afternoon,45601,Design and Technology: Resistant Materials Technology ,GCSE,Design and Technology: Resistant Materials Technology Unit 1,,2h,zg9d7ty,
-AQA,14/06/2018,Afternoon,8585/W,Food preparation and nutritian,GCSE,Food preparation and nutrition written paper (new),,1h 45m,,
+AQA,14/06/2018,Afternoon,45601,Design and Technology (Resistant Materials Technology),GCSE,Design and Technology: Resistant Materials Technology Unit 1,,2h,zg9d7ty,
+AQA,14/06/2018,Afternoon,8585/W,Food preparation and Nutrition,GCSE,Food preparation and nutrition written paper (new),,1h 45m,,
 AQA,14/06/2018,Afternoon,46801F,Panjabi,GCSE,"Panjabi (Full and Short Course)
 Unit 1 Listening",F,35m,,
 AQA,14/06/2018,Afternoon,46801H,Panjabi,GCSE,"Panjabi (Full and Short Course)
@@ -67,7 +67,7 @@ Unit 1 Listening",H,45m,,
 AQA,15/06/2018,Afternoon,8100/1,Citizenship Studies,GCSE,Citizenship Studies Paper 1 (new),,1h 45m,,
 AQA,15/06/2018,Afternoon,46851,Polish,GCSE,"Polish (Full and Short Course) Unit 1
 Listening",,50m,,
-AQA,18/06/2018,Morning,413008,Buiness and Commication Systems,GCSE,Business and Communication Systems Unit 8,,1h,,
+AQA,18/06/2018,Morning,413008,Business and Communication Systems,GCSE,Business and Communication Systems Unit 8,,1h,,
 AQA,18/06/2018,Morning,8100/2,Citizenship Studies,GCSE,Citizenship Studies Paper 2 (new),,1h 45m,,
 AQA,18/06/2018,Morning,8668/LF,German,GCSE,German Paper 1 (new),F,35m,z8j2tfr,
 AQA,18/06/2018,Morning,8668/LH,German,GCSE,German Paper 1 (new),H,45m,z8j2tfr,
@@ -100,7 +100,7 @@ AQA,11/05/2018,Afternoon,4801/2,Preparation for Working Life,GCSE,Certificate in
 AQA,14/05/2018,Morning,8520/1,Computer Science,GCSE,"Computer Science Paper 1 (new)
  ",,1h 30m,z34k7ty,
 AQA,14/05/2018,Morning,45201,Information and Communication Technology,GCSE,Information and Communication Technology Unit 1 – paper based,,1h 30m,zqmtsbk,
-AQA,14/05/2018,Morning,45201S,Information and Communication Technology,GCSE,Information and Communication Technology Unit 1 – on screen ,,1h 30m,zqmtsbk,
+AQA,14/05/2018,Morning,45201S,Information and Communication Technology,GCSE,Information and Communication Technology Unit 1 – on screen,,1h 30m,zqmtsbk,
 AQA,14/05/2018,Morning,45204,Information and Communication Technology,GCSE,"Information and Communication Technology Unit 1 (Short Course)
 – paper based",,1h,zqmtsbk,
 AQA,14/05/2018,Morning,45204S,Information and Communication Technology,GCSE,"Information and Communication
@@ -178,14 +178,11 @@ AQA,23/05/2018,Afternoon,8464/P/1F and 1H,Combined Science,GCSE,"Combined Scienc
 Paper 1 (new) (both tiers)",F & H,1h 15m,zp266yc,z8r997h
 AQA,23/05/2018,Afternoon,8463/1F and 1H,Physics,GCSE,Physics Paper 1 (new) (both tiers),F & H,1h 15m,zpm6fg8,zsc9rdm
 AQA,25/05/2018,Morning,8702/2,English Literature,GCSE,English Literature Paper 2,,2h 15m,zckw2hv,zxqncwx
-AQA,25/05/2018,Afternoon,45401,"Design and Technology:
-Electronic Product",GCSE,"Design and Technology:
+AQA,25/05/2018,Afternoon,45401,Design and Technology (Electronic Products),GCSE,"Design and Technology:
 Electronic Products Unit 1",,2h,zg48q6f,
-AQA,25/05/2018,Afternoon,45651,"Design and Technology:
-Systems and Control Technology",GCSE,"Design and Technology:
+AQA,25/05/2018,Afternoon,45651,Design and Technology (Systems and Control Technology),GCSE,"Design and Technology:
 Systems and Control Technology Unit 1",,2h,z9w76sg,
-AQA,25/05/2018,Afternoon,45701,"Design and Technology:
-Textiles Technology",GCSE,"Design and Technology:
+AQA,25/05/2018,Afternoon,45701,Design and Technology (Textiles Technology),GCSE,"Design and Technology:
 Textiles Technology Unit 1",,2h,zkj2tfr,
 AQA,25/05/2018,Afternoon,45751,Design and Technology,GCSE,"Design and Technology (Short Course)
 Unit 1",,1h,,
