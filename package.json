@@ -54,7 +54,7 @@
     "morgan": "^1.10.1",
     "pg": "^7.6.0",
     "pg-hstore": "^2.3.2",
-    "pg-promise": "^8.4.4",
+    "pg-promise": "^11.5.5",
     "prettier": "^1.13.7",
     "pug": "^3.0.3",
     "sequelize": ">=5.15.1",
