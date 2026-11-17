@@ -42,7 +42,7 @@
     "bluebird": "^3.5.1",
     "body-parser": "^1.20.9",
     "csv-express": "^1.2.2",
-    "csv-parse": "^4.4.6",
+    "csv-parse": "^7.0.2",
     "express": "^4.22.2",
     "express-async-errors": "^3.1.1",
     "express-fileupload": "^1.1.10",
